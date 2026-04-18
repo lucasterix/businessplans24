@@ -1,0 +1,167 @@
+{
+  "app": {
+    "name": "Businessplan24",
+    "tagline": "KI-gestützter Businessplan in 30 Minuten"
+  },
+  "nav": {
+    "pricing": "Preise",
+    "login": "Anmelden",
+    "account": "Mein Konto",
+    "logout": "Abmelden",
+    "start": "Jetzt starten"
+  },
+  "landing": {
+    "hero_title": "Dein Businessplan — von KI geschrieben, von dir perfektioniert.",
+    "hero_sub": "Beantworte den geführten Fragebogen, Claude generiert einen professionellen Plan. Für Banken, Investoren, Arbeitsagentur.",
+    "cta_start": "Businessplan erstellen",
+    "cta_pricing": "Preise ansehen",
+    "features_title": "Alles drin, was du brauchst",
+    "f1_title": "Geführter Wizard",
+    "f1_desc": "Struktur aus den wichtigsten Businessplan-Sektionen. Kein leeres Blatt.",
+    "f2_title": "KI-Texte",
+    "f2_desc": "Claude schreibt professionelle Abschnitte aus deinen Stichpunkten.",
+    "f3_title": "Finanzgrafiken",
+    "f3_desc": "Live-Charts für Liquidität, Rentabilität, Cashflow.",
+    "f4_title": "PDF-Export",
+    "f4_desc": "Hochwertiges A4-PDF, bereit zum Einreichen.",
+    "how_title": "So funktioniert's",
+    "how1": "Geschäftsidee beschreiben",
+    "how2": "Fragen beantworten, KI generiert Texte",
+    "how3": "Finanzen planen mit Live-Charts",
+    "how4": "Plan kaufen und als PDF exportieren"
+  },
+  "wizard": {
+    "back": "Zurück",
+    "next": "Weiter",
+    "generate": "Text generieren",
+    "regenerate": "Neu generieren",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "progress": "Schritt {{step}} von {{total}}",
+    "generating": "Claude schreibt …",
+    "generated_hint": "Du kannst den Text frei bearbeiten.",
+    "required_missing": "Bitte fülle die mit * markierten Felder aus.",
+    "add_custom": "Eigene Option hinzufügen",
+    "finish": "Vorschau anzeigen",
+    "review_intro": "Basierend auf deinen Angaben generiert Claude die Zusammenfassung."
+  },
+  "preview": {
+    "title": "Vorschau deines Businessplans",
+    "watermark_note": "Diese Vorschau enthält ein Wasserzeichen. Nach der Zahlung erhältst du die saubere Version.",
+    "unlock_onetime": "Für {{price}} {{currency}} freischalten",
+    "unlock_subscription": "Jahresabo für {{price}} {{currency}}",
+    "download_pdf": "PDF herunterladen"
+  },
+  "pricing": {
+    "title": "Ein fairer Preis. Kein Abo-Zwang.",
+    "one_time": "Einzelplan",
+    "subscription": "Jahresabo",
+    "one_time_desc": "Ein kompletter Businessplan, einmalige Zahlung.",
+    "sub_desc": "Unbegrenzte Businesspläne für ein Jahr. Konto & Versionen.",
+    "sub_features": ["Unbegrenzte Pläne", "Gespeicherte Entwürfe", "Priorisierter Support", "Alle Formatvorlagen"],
+    "select_onetime": "Einzelplan wählen",
+    "select_sub": "Abo wählen",
+    "detected": "Preis für {{country}}"
+  },
+  "auth": {
+    "login_title": "Anmelden",
+    "register_title": "Konto erstellen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit_login": "Anmelden",
+    "submit_register": "Registrieren",
+    "switch_to_register": "Noch kein Konto? Registrieren",
+    "switch_to_login": "Bereits registriert? Anmelden",
+    "invalid": "E-Mail oder Passwort falsch.",
+    "email_taken": "Diese E-Mail ist bereits registriert."
+  },
+  "account": {
+    "title": "Mein Konto",
+    "plans_title": "Meine Businesspläne",
+    "subscription_active": "Abo aktiv bis {{date}}",
+    "no_subscription": "Kein aktives Abo.",
+    "new_plan": "Neuen Plan starten"
+  },
+  "sections": {
+    "business_idea": { "title": "Geschäftsidee", "desc": "Produkte, Kundennutzen, Markt & Wettbewerb" },
+    "customers": { "title": "Kunden", "desc": "Zielgruppe, Vertrieb, Kundenbindung" },
+    "company": { "title": "Unternehmen", "desc": "Gründer, Team, Standort, Rechtsform, Risiken" },
+    "finance": { "title": "Finanzen", "desc": "Umsatz, Kosten, Kapitalbedarf, Rentabilität, Liquidität" },
+    "appendix": { "title": "Anhang", "desc": "Ergänzende Informationen" },
+    "executive_summary": { "title": "Zusammenfassung", "desc": "Wird am Ende aus deinen Angaben generiert." }
+  },
+  "steps": {
+    "idea_core": { "title": "Deine Geschäftsidee" },
+    "market": { "title": "Markt & Wettbewerb" },
+    "target_group": { "title": "Zielgruppe" },
+    "channels": { "title": "Vertrieb & Bindung" },
+    "founders": { "title": "Gründer & Team" },
+    "location_legal": { "title": "Standort & Recht" },
+    "capital": { "title": "Kapitalbedarf & Finanzierung" },
+    "plan": { "title": "Umsatz- & Liquiditätsplan", "desc": "Trage Umsatz, Kosten und Cashflow pro Periode ein. Die Grafiken aktualisieren sich live." },
+    "extras": { "title": "Anhang" },
+    "summary_review": { "title": "Executive Summary", "desc": "Claude fasst deinen Plan prägnant zusammen." }
+  },
+  "f": {
+    "company_name": "Unternehmensname *",
+    "business_model": "Geschäftsmodell *",
+    "one_liner": "Einzeiler zu deinem Unternehmen *",
+    "one_liner.help": "Ein Satz: Was tut ihr, für wen?",
+    "products": "Produkte / Dienstleistungen *",
+    "products.help": "Was genau verkauft ihr? Zu welchen Preisen?",
+    "customer_value": "Kundenbedarf & Nutzen *",
+    "market_size": "Marktgröße (Schätzung)",
+    "competitors": "Wichtige Wettbewerber",
+    "usp": "Alleinstellungsmerkmal *",
+    "target_type": "Zielgruppentyp",
+    "target_description": "Beschreibung der Zielgruppe *",
+    "channels": "Vertriebswege",
+    "retention": "Wie bindet ihr Kunden?",
+    "founders": "Gründer:innen — Name, Rolle, Qualifikation *",
+    "founders.help": "Kurzes Profil pro Person",
+    "employees": "Geplante Mitarbeiter:innen",
+    "partners": "Wichtige Partner (Lieferanten, Technologie, Vertrieb)",
+    "location": "Standort",
+    "legal_form": "Rechtsform *",
+    "regulations": "Relevante Vorschriften / Genehmigungen",
+    "risks": "Wesentliche Risiken",
+    "capital_need": "Gesamter Kapitalbedarf *",
+    "equity": "Eigenkapital",
+    "financing": "Geplante Finanzierungsquellen",
+    "private_need": "Privater Kapitalbedarf pro Monat",
+    "extra_notes": "Zusätzliche Notizen oder Anlagen"
+  },
+  "models": {
+    "retail": "Einzelhandel", "ecommerce": "E-Commerce / Online-Shop", "saas": "Software / SaaS",
+    "service": "Dienstleistung", "consulting": "Beratung", "gastro": "Gastronomie",
+    "craft": "Handwerk", "agency": "Agentur", "manufacturing": "Produktion", "other": "Anderes"
+  },
+  "legal": {
+    "einzelunternehmen": "Einzelunternehmen", "gbr": "GbR", "ug": "UG (haftungsbeschränkt)",
+    "gmbh": "GmbH", "ag": "AG", "freelancer": "Freiberuflich", "other": "Andere"
+  },
+  "target": {
+    "b2c_private": "Privatkunden (B2C)", "b2b_small": "Kleinunternehmen",
+    "b2b_mid": "Mittelstand", "b2b_enterprise": "Konzerne", "public": "Öffentliche Hand"
+  },
+  "channels": {
+    "web": "Eigene Website", "store": "Ladengeschäft", "direct": "Direktvertrieb",
+    "partners": "Partner / Reseller", "marketplace": "Marktplätze (Amazon, etc.)", "social": "Social Media"
+  },
+  "fin": {
+    "equity": "Eigenkapital", "bank_loan": "Bankdarlehen", "kfw": "KfW-Förderung",
+    "microloan": "Mikrokredit", "grant": "Zuschuss / Förderung", "investor": "Investor / Business Angel",
+    "crowdfunding": "Crowdfunding"
+  },
+  "common": {
+    "loading": "Lädt …",
+    "error": "Etwas ist schiefgelaufen.",
+    "try_again": "Erneut versuchen",
+    "currency_amount": "{{amount}} {{currency}}"
+  },
+  "footer": {
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "terms": "AGB"
+  }
+}

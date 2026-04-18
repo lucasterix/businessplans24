@@ -1,0 +1,167 @@
+{
+  "app": {
+    "name": "Businessplan24",
+    "tagline": "AI-powered business plan in 30 minutes"
+  },
+  "nav": {
+    "pricing": "Pricing",
+    "login": "Sign in",
+    "account": "My account",
+    "logout": "Sign out",
+    "start": "Start now"
+  },
+  "landing": {
+    "hero_title": "Your business plan — written by AI, polished by you.",
+    "hero_sub": "Answer a guided questionnaire; Claude generates a professional plan. Ready for banks, investors, grants.",
+    "cta_start": "Create business plan",
+    "cta_pricing": "See pricing",
+    "features_title": "Everything you need",
+    "f1_title": "Guided wizard",
+    "f1_desc": "Structured around the key business-plan sections. No blank page.",
+    "f2_title": "AI-written text",
+    "f2_desc": "Claude turns your notes into professional sections.",
+    "f3_title": "Financial charts",
+    "f3_desc": "Live charts for liquidity, profitability, cashflow.",
+    "f4_title": "PDF export",
+    "f4_desc": "Polished A4 PDF, ready to submit.",
+    "how_title": "How it works",
+    "how1": "Describe your idea",
+    "how2": "Answer questions, AI drafts text",
+    "how3": "Plan finances with live charts",
+    "how4": "Pay and export the clean PDF"
+  },
+  "wizard": {
+    "back": "Back",
+    "next": "Next",
+    "generate": "Generate text",
+    "regenerate": "Regenerate",
+    "edit": "Edit",
+    "save": "Save",
+    "progress": "Step {{step}} of {{total}}",
+    "generating": "Claude is writing …",
+    "generated_hint": "Feel free to edit the generated text.",
+    "required_missing": "Please fill in the fields marked with *.",
+    "add_custom": "Add a custom option",
+    "finish": "Show preview",
+    "review_intro": "Claude will summarise your plan based on your inputs."
+  },
+  "preview": {
+    "title": "Preview of your business plan",
+    "watermark_note": "This preview has a watermark. After payment you get the clean version.",
+    "unlock_onetime": "Unlock for {{price}} {{currency}}",
+    "unlock_subscription": "Yearly subscription for {{price}} {{currency}}",
+    "download_pdf": "Download PDF"
+  },
+  "pricing": {
+    "title": "Fair pricing. No lock-in.",
+    "one_time": "Single plan",
+    "subscription": "Yearly subscription",
+    "one_time_desc": "One complete business plan, one-time payment.",
+    "sub_desc": "Unlimited business plans for a year. Account & versions.",
+    "sub_features": ["Unlimited plans", "Saved drafts", "Priority support", "All templates"],
+    "select_onetime": "Pick single plan",
+    "select_sub": "Pick subscription",
+    "detected": "Price for {{country}}"
+  },
+  "auth": {
+    "login_title": "Sign in",
+    "register_title": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "submit_login": "Sign in",
+    "submit_register": "Register",
+    "switch_to_register": "No account yet? Register",
+    "switch_to_login": "Already registered? Sign in",
+    "invalid": "Invalid email or password.",
+    "email_taken": "This email is already registered."
+  },
+  "account": {
+    "title": "My account",
+    "plans_title": "My business plans",
+    "subscription_active": "Subscription active until {{date}}",
+    "no_subscription": "No active subscription.",
+    "new_plan": "Start a new plan"
+  },
+  "sections": {
+    "business_idea": { "title": "Business idea", "desc": "Products, customer value, market & competition" },
+    "customers": { "title": "Customers", "desc": "Target group, channels, retention" },
+    "company": { "title": "Company", "desc": "Founders, team, location, legal form, risks" },
+    "finance": { "title": "Finance", "desc": "Revenue, costs, capital need, profitability, liquidity" },
+    "appendix": { "title": "Appendix", "desc": "Additional information" },
+    "executive_summary": { "title": "Executive summary", "desc": "Generated at the end from your inputs." }
+  },
+  "steps": {
+    "idea_core": { "title": "Your business idea" },
+    "market": { "title": "Market & competition" },
+    "target_group": { "title": "Target group" },
+    "channels": { "title": "Channels & retention" },
+    "founders": { "title": "Founders & team" },
+    "location_legal": { "title": "Location & legal" },
+    "capital": { "title": "Capital need & financing" },
+    "plan": { "title": "Revenue & liquidity plan", "desc": "Enter revenue, costs, and cashflow per period. Charts update live." },
+    "extras": { "title": "Appendix" },
+    "summary_review": { "title": "Executive summary", "desc": "Claude summarises your plan concisely." }
+  },
+  "f": {
+    "company_name": "Company name *",
+    "business_model": "Business model *",
+    "one_liner": "One-liner about your company *",
+    "one_liner.help": "One sentence: what do you do, for whom?",
+    "products": "Products / services *",
+    "products.help": "What exactly do you sell? At which price points?",
+    "customer_value": "Customer need & value *",
+    "market_size": "Market size (estimate)",
+    "competitors": "Key competitors",
+    "usp": "Unique selling proposition *",
+    "target_type": "Target-group type",
+    "target_description": "Target-group description *",
+    "channels": "Channels",
+    "retention": "How do you retain customers?",
+    "founders": "Founders — name, role, qualification *",
+    "founders.help": "Short profile per person",
+    "employees": "Planned employees",
+    "partners": "Key partners (suppliers, technology, distribution)",
+    "location": "Location",
+    "legal_form": "Legal form *",
+    "regulations": "Relevant regulations / permits",
+    "risks": "Main risks",
+    "capital_need": "Total capital need *",
+    "equity": "Equity",
+    "financing": "Planned financing sources",
+    "private_need": "Private capital need per month",
+    "extra_notes": "Additional notes or attachments"
+  },
+  "models": {
+    "retail": "Retail", "ecommerce": "E-commerce", "saas": "Software / SaaS",
+    "service": "Service", "consulting": "Consulting", "gastro": "Hospitality",
+    "craft": "Crafts", "agency": "Agency", "manufacturing": "Manufacturing", "other": "Other"
+  },
+  "legal": {
+    "einzelunternehmen": "Sole proprietorship", "gbr": "Partnership (GbR)", "ug": "Limited liability (UG)",
+    "gmbh": "Limited liability (GmbH)", "ag": "Joint-stock (AG)", "freelancer": "Freelancer", "other": "Other"
+  },
+  "target": {
+    "b2c_private": "Consumers (B2C)", "b2b_small": "Small businesses",
+    "b2b_mid": "Mid-market", "b2b_enterprise": "Enterprises", "public": "Public sector"
+  },
+  "channels": {
+    "web": "Own website", "store": "Physical store", "direct": "Direct sales",
+    "partners": "Partners / resellers", "marketplace": "Marketplaces (Amazon, etc.)", "social": "Social media"
+  },
+  "fin": {
+    "equity": "Equity", "bank_loan": "Bank loan", "kfw": "Development bank (KfW)",
+    "microloan": "Microloan", "grant": "Grant / subsidy", "investor": "Investor / Angel",
+    "crowdfunding": "Crowdfunding"
+  },
+  "common": {
+    "loading": "Loading …",
+    "error": "Something went wrong.",
+    "try_again": "Try again",
+    "currency_amount": "{{amount}} {{currency}}"
+  },
+  "footer": {
+    "imprint": "Imprint",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  }
+}
