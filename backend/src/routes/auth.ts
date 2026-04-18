@@ -29,8 +29,8 @@ router.post('/register', async (req, res) => {
      VALUES (?, ?, ?, ?, ?, ?)`
   ).run(id, email, hash, country || null, language || null, Date.now());
 
-  const token = signToken({ sub: id, email });
-  res.json({ token, user: { id, email, country, language } });
+  const token = signToken({ sub: id, email, role: 'user' });
+  res.json({ token, user: { id, email, country, language, role: 'user' } });
 });
 
 router.post('/login', async (req, res) => {
@@ -38,7 +38,11 @@ router.post('/login', async (req, res) => {
   if (!parsed.success) return res.status(400).json({ error: 'invalid_input' });
 
   const row = db
-    .prepare('SELECT id, email, password_hash, country, language, subscription_tier, subscription_expires_at FROM users WHERE email = ?')
+    .prepare(
+      `SELECT id, email, password_hash, country, language, role,
+              subscription_tier, subscription_expires_at
+       FROM users WHERE email = ?`
+    )
     .get(parsed.data.email) as
     | {
         id: string;
@@ -46,6 +50,7 @@ router.post('/login', async (req, res) => {
         password_hash: string;
         country: string | null;
         language: string | null;
+        role: string;
         subscription_tier: string | null;
         subscription_expires_at: number | null;
       }
@@ -55,7 +60,8 @@ router.post('/login', async (req, res) => {
   const ok = await bcrypt.compare(parsed.data.password, row.password_hash);
   if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
 
-  const token = signToken({ sub: row.id, email: row.email });
+  const role = (row.role === 'admin' ? 'admin' : 'user') as 'admin' | 'user';
+  const token = signToken({ sub: row.id, email: row.email, role });
   res.json({
     token,
     user: {
@@ -63,6 +69,7 @@ router.post('/login', async (req, res) => {
       email: row.email,
       country: row.country,
       language: row.language,
+      role,
       subscription: row.subscription_tier
         ? { tier: row.subscription_tier, expiresAt: row.subscription_expires_at }
         : null,

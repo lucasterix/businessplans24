@@ -6,6 +6,7 @@ const EXPIRES = '30d';
 export interface JwtUser {
   sub: string;
   email: string;
+  role: 'user' | 'admin';
 }
 
 export function signToken(user: JwtUser): string {

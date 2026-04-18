@@ -6,6 +6,7 @@ export interface AuthUser {
   email: string;
   country?: string;
   language?: string;
+  role?: 'admin' | 'user';
   subscription?: { tier: string; expiresAt: number | null } | null;
 }
 

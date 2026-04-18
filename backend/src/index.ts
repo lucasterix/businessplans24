@@ -11,6 +11,8 @@ import pricingRouter from './routes/pricing.js';
 import checkoutRouter from './routes/checkout.js';
 import webhookRouter from './routes/webhook.js';
 import exportRouter from './routes/export.js';
+import adminRouter from './routes/admin.js';
+import { ensureInitialAdmin } from './lib/bootstrap.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
@@ -38,6 +40,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/pricing', pricingRouter);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/export', exportRouter);
+app.use('/api/admin', adminRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'not_found' });
@@ -48,6 +51,13 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: 'internal_error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Businessplans24 backend on http://localhost:${PORT}`);
-});
+ensureInitialAdmin()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Businessplans24 backend on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('[bootstrap] failed', err);
+    process.exit(1);
+  });

@@ -11,6 +11,16 @@ const Login = lazy(() => import('./pages/Login'));
 const Account = lazy(() => import('./pages/Account'));
 const PaymentReturn = lazy(() => import('./pages/PaymentReturn'));
 
+const AdminLayout = lazy(() => import('./admin/AdminLayout'));
+const AdminLogin = lazy(() => import('./admin/pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./admin/pages/AdminDashboard'));
+const AdminUsers = lazy(() => import('./admin/pages/AdminUsers'));
+const AdminPayments = lazy(() => import('./admin/pages/AdminPayments'));
+const AdminPlans = lazy(() => import('./admin/pages/AdminPlans'));
+const AdminAds = lazy(() => import('./admin/pages/AdminAds'));
+const AdminKeywords = lazy(() => import('./admin/pages/AdminKeywords'));
+const RequireAdmin = lazy(() => import('./admin/RequireAdmin'));
+
 function Header() {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
@@ -61,7 +71,7 @@ function Footer() {
   );
 }
 
-export default function App() {
+function PublicShell() {
   return (
     <>
       <Header />
@@ -83,4 +93,36 @@ export default function App() {
       <Footer />
     </>
   );
+}
+
+export default function App() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+
+  if (isAdmin) {
+    return (
+      <Suspense fallback={<div className="loading-fallback" />}>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            element={
+              <RequireAdmin>
+                <AdminLayout />
+              </RequireAdmin>
+            }
+          >
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/plans" element={<AdminPlans />} />
+            <Route path="/admin/ads" element={<AdminAds />} />
+            <Route path="/admin/ads/keywords" element={<AdminKeywords />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/admin" replace />} />
+        </Routes>
+      </Suspense>
+    );
+  }
+
+  return <PublicShell />;
 }
