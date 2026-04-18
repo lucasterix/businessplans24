@@ -2,10 +2,11 @@ import { Router } from 'express';
 import { db } from '../lib/db.js';
 import { renderPlanPdf } from '../lib/pdf.js';
 import { optionalAuth } from '../middleware/auth.js';
+import { burstLimiter, dailyQuotaLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
-router.get('/:id/pdf', optionalAuth, async (req, res) => {
+router.get('/:id/pdf', burstLimiter, optionalAuth, dailyQuotaLimiter('export'), async (req, res) => {
   const row = db.prepare('SELECT * FROM plans WHERE id = ?').get(req.params.id) as
     | {
         id: string;

@@ -4,8 +4,11 @@ import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { db } from '../lib/db.js';
 import { signToken } from '../lib/auth.js';
+import { authLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
+
+router.use(authLimiter);
 
 const credsSchema = z.object({
   email: z.string().email(),
