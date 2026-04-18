@@ -71,13 +71,18 @@ export const generationHourlyLimiter = rateLimit({
   skip: (req) => getAuthRole(req) === 'admin',
 });
 
-/** Auth endpoints — protect login/register from brute force. */
+/**
+ * Auth endpoints — protect login/register from brute force.
+ * Only failed attempts (4xx/5xx) count against the limit; successful logins
+ * never consume quota, so a legit user is never locked out.
+ */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   keyGenerator: (req) => ipKey(req),
+  skipSuccessfulRequests: true,
   message: { error: 'too_many_attempts' },
 });
 
