@@ -8,8 +8,8 @@ export default function Privacy() {
 
       <h2>1. Verantwortlicher</h2>
       <p>
-        Businessplan24 UG (haftungsbeschränkt) i. G., Lucas Schmutz, Wilhelm-Berg-Straße 2, 37079 Göttingen, Deutschland.<br />
-        E-Mail: <a href="mailto:lucas.schmutz@businessplans24.com">lucas.schmutz@businessplans24.com</a>
+        Lucas Schmutz, Hans-Böckler-Straße 2c, 37079 Göttingen, Deutschland.<br />
+        E-Mail: <a href="mailto:info@businessplans24.com">info@businessplans24.com</a>
       </p>
 
       <h2>2. Welche Daten wir erheben</h2>
@@ -35,9 +35,10 @@ export default function Privacy() {
 
       <h2>4. Auftragsverarbeiter</h2>
       <ul>
-        <li>Hetzner Online GmbH, Deutschland — Hosting.</li>
+        <li>Hetzner Online GmbH, Deutschland — Hosting (Frankfurt).</li>
         <li>Anthropic PBC, USA — Generierung der Businessplan-Texte. Datenübermittlung auf Basis der EU-Standardvertragsklauseln.</li>
         <li>Stripe Payments Europe Ltd., Irland — Zahlungsabwicklung.</li>
+        <li>Google Ireland Ltd. — E-Mail-Versand über Google Workspace (info@businessplans24.com).</li>
       </ul>
 
       <h2>5. Speicherdauer</h2>
@@ -54,7 +55,7 @@ export default function Privacy() {
 
       <h2>7. Cookies</h2>
       <p>
-        Wir setzen ausschließlich technisch notwendige Session-Cookies (zur Anmeldung) und lokalen Browser-Speicher (Local Storage) für deinen Plan-Entwurf. Keine Tracker, keine Werbe-Cookies.
+        Wir setzen ausschließlich technisch notwendige Session-Cookies (zur Anmeldung) und lokalen Browser-Speicher (Local Storage) für deinen Plan-Entwurf. Keine Tracker, keine Werbe-Cookies, kein Google Analytics.
       </p>
     </div>
   );

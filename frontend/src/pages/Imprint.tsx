@@ -6,20 +6,21 @@ export default function Imprint() {
 
       <h2>Diensteanbieter</h2>
       <p>
-        Businessplan24 UG (haftungsbeschränkt) i. G.<br />
         Lucas Schmutz<br />
-        Wilhelm-Berg-Straße 2<br />
+        Hans-Böckler-Straße 2c<br />
         37079 Göttingen<br />
         Deutschland
       </p>
 
       <h2>Kontakt</h2>
       <p>
-        E-Mail: <a href="mailto:lucas.schmutz@businessplans24.com">lucas.schmutz@businessplans24.com</a>
+        E-Mail: <a href="mailto:info@businessplans24.com">info@businessplans24.com</a>
       </p>
 
-      <h2>Umsatzsteuer-Identifikationsnummer</h2>
-      <p>Wird nach Eintragung ergänzt.</p>
+      <h2>Umsatzsteuer</h2>
+      <p>
+        Kleinunternehmer gemäß § 19 UStG. Es wird keine Umsatzsteuer ausgewiesen.
+      </p>
 
       <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
       <p>Lucas Schmutz, Anschrift wie oben.</p>

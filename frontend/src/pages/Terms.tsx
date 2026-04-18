@@ -6,7 +6,7 @@ export default function Terms() {
 
       <h2>§ 1 Geltungsbereich</h2>
       <p>
-        Diese AGB gelten für alle Verträge zwischen der Businessplan24 UG (haftungsbeschränkt) i. G. („wir") und dir über die Nutzung der Dienste unter <a href="https://businessplans24.com">businessplans24.com</a>.
+        Diese AGB gelten für alle Verträge zwischen Lucas Schmutz, Hans-Böckler-Straße 2c, 37079 Göttingen („wir") und dir über die Nutzung der Dienste unter <a href="https://businessplans24.com">businessplans24.com</a>.
       </p>
 
       <h2>§ 2 Vertragsgegenstand</h2>
@@ -16,7 +16,7 @@ export default function Terms() {
 
       <h2>§ 3 Preise und Zahlung</h2>
       <p>
-        Der Einzelplan kostet 49 € (inkl. MwSt., länderabhängig ggf. abweichend). Das Jahresabo kostet 99 € (inkl. MwSt., länderabhängig). Die Zahlung erfolgt über Stripe. Das Abo verlängert sich automatisch, wenn es nicht bis zum Ablauf gekündigt wird.
+        Der Einzelplan kostet 49 € (Kleinunternehmer nach § 19 UStG, keine USt ausgewiesen; länderabhängig ggf. abweichend). Das Jahresabo kostet 99 €. Die Zahlung erfolgt über Stripe. Das Abo verlängert sich automatisch, wenn es nicht bis zum Ablauf gekündigt wird.
       </p>
 
       <h2>§ 4 Widerrufsrecht</h2>

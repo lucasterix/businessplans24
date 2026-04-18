@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { SECTIONS } from '../wizard/schema';
 import { StepView } from '../wizard/StepView';
 import LivePreview from '../components/LivePreview';
+import TrustRow from '../components/TrustRow';
+import PriceAnchor from '../components/PriceAnchor';
+import Testimonials from '../components/Testimonials';
+import FaqHome from '../components/FaqHome';
 import { usePlanStore } from '../store/usePlanStore';
 import { createPlan } from '../api/client';
 
@@ -65,8 +69,10 @@ export default function Home() {
   return (
     <>
       <section className="home-hero">
+        <div className="home-hero-badge">✨ Claude Sonnet 4.6 · 30 Minuten · keine Abo-Falle</div>
         <h1>{t('landing.hero_title')}</h1>
         <p>{t('landing.hero_sub')}</p>
+        <TrustRow />
       </section>
 
       <div className="home-shell">
@@ -130,10 +136,26 @@ export default function Home() {
           <li>{t('landing.how3')}</li>
           <li>{t('landing.how4')}</li>
         </ol>
-        <p style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <Link to="/pricing" className="btn btn-ghost">{t('landing.cta_pricing')}</Link>
-        </p>
       </section>
+
+      <div className="home-shell">
+        <PriceAnchor />
+        <Testimonials />
+        <FaqHome />
+
+        <section className="home-final-cta">
+          <h2>Bereit, deinen Plan in 30 Minuten zu haben?</h2>
+          <p className="muted">
+            Kein Risiko: Du beginnst jetzt. Bezahlen erst, wenn dein Plan fertig ist und du ihn ohne Wasserzeichen willst.
+          </p>
+          <div className="home-final-ctas">
+            <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="btn btn-primary btn-lg">
+              Jetzt starten
+            </a>
+            <Link to="/pricing" className="btn btn-ghost btn-lg">{t('landing.cta_pricing')}</Link>
+          </div>
+        </section>
+      </div>
 
       {/* Mobile preview sheet */}
       <button
