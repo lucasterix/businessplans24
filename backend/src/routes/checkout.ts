@@ -15,7 +15,7 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN?.split(',')[0].trim() || 'ht
 
 const schema = z.object({
   planId: z.string().optional(),
-  type: z.enum(['one_time', 'subscription']),
+  type: z.enum(['one_time', 'subscription', 'plan_review']),
   country: z.string().optional(),
   email: z.string().email().optional(),
 });
@@ -62,21 +62,30 @@ router.post('/session', optionalAuth, async (req, res) => {
   }
 
   const price = priceForCountry(parsed.data.country);
-  const amount = (parsed.data.type === 'subscription' ? price.yearly : price.oneTime) * 100;
+  const REVIEW_PRICE = 99;
+  const unitAmountEur =
+    parsed.data.type === 'subscription'
+      ? price.yearly
+      : parsed.data.type === 'plan_review'
+        ? REVIEW_PRICE
+        : price.oneTime;
+  const amount = unitAmountEur * 100;
+
+  const productNames: Record<string, string> = {
+    subscription: 'Businessplan24 Jahres-Abo',
+    one_time: 'Businessplan24 Einzel-Plan',
+    plan_review: 'Persönliches Plan-Review durch den Gründer',
+  };
 
   const session = await stripe.checkout.sessions.create({
     mode: parsed.data.type === 'subscription' ? 'subscription' : 'payment',
     customer_email: parsed.data.email || req.user?.email,
+    allow_promotion_codes: true,
     line_items: [
       {
         price_data: {
           currency: price.currency.toLowerCase(),
-          product_data: {
-            name:
-              parsed.data.type === 'subscription'
-                ? 'Businessplan24 Jahres-Abo'
-                : 'Businessplan24 Einzel-Plan',
-          },
+          product_data: { name: productNames[parsed.data.type] },
           unit_amount: amount,
           ...(parsed.data.type === 'subscription'
             ? { recurring: { interval: 'year' } }

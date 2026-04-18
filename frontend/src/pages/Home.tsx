@@ -8,6 +8,9 @@ import TrustRow from '../components/TrustRow';
 import PriceAnchor from '../components/PriceAnchor';
 import Testimonials from '../components/Testimonials';
 import FaqHome from '../components/FaqHome';
+import PlanCounter from '../components/PlanCounter';
+import ExitIntent from '../components/ExitIntent';
+import WizardToast from '../components/WizardToast';
 import { usePlanStore } from '../store/usePlanStore';
 import { createPlan } from '../api/client';
 
@@ -18,6 +21,7 @@ export default function Home() {
   const store = usePlanStore();
   const navigate = useNavigate();
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
 
   useEffect(() => {
     if (!store.planId) {
@@ -46,6 +50,9 @@ export default function Home() {
       return;
     }
     if (isLastStepOfSection) {
+      const next = SECTIONS[store.currentSectionIndex + 1];
+      const pct = Math.round(((currentFlatIndex) / totalSteps) * 100);
+      setToast({ show: true, message: `Super! ${pct}% geschafft. Weiter mit „${next ? 'nächste Sektion' : 'Vorschau'}".` });
       store.setPosition(store.currentSectionIndex + 1, 0);
     } else {
       store.setPosition(store.currentSectionIndex, store.currentStepIndex + 1);
@@ -72,6 +79,7 @@ export default function Home() {
         <div className="home-hero-badge">✨ Claude Sonnet 4.6 · 30 Minuten · keine Abo-Falle</div>
         <h1>{t('landing.hero_title')}</h1>
         <p>{t('landing.hero_sub')}</p>
+        <PlanCounter />
         <TrustRow />
       </section>
 
@@ -181,6 +189,13 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      <WizardToast
+        show={toast.show}
+        message={toast.message}
+        onDone={() => setToast({ show: false, message: '' })}
+      />
+      <ExitIntent />
     </>
   );
 }

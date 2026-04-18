@@ -86,6 +86,29 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_ads_keywords_campaign ON ads_keywords(campaign_id);
   CREATE INDEX IF NOT EXISTS idx_ads_keywords_country ON ads_keywords(country);
+
+  CREATE TABLE IF NOT EXISTS partners (
+    id TEXT PRIMARY KEY,
+    email TEXT NOT NULL,
+    name TEXT NOT NULL,
+    company TEXT,
+    message TEXT,
+    country TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    referral_code TEXT UNIQUE,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS drip_queue (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    email TEXT NOT NULL,
+    template TEXT NOT NULL,
+    send_at INTEGER NOT NULL,
+    sent_at INTEGER,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+  CREATE INDEX IF NOT EXISTS idx_drip_due ON drip_queue(send_at, sent_at);
 `);
 
 const cols = db.prepare("PRAGMA table_info(users)").all() as Array<{ name: string }>;

@@ -35,7 +35,7 @@ function getTransporter(): Transporter | null {
 
 const FROM = process.env.MAIL_FROM || 'Businessplan24 <no-reply@businessplans24.com>';
 
-async function send(to: string, subject: string, html: string, text: string) {
+export async function send(to: string, subject: string, html: string, text: string) {
   const t = getTransporter();
   if (!t) {
     console.log(`[mailer.stub] to=${to} subject="${subject}"\n${text}\n---`);

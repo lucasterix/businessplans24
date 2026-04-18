@@ -12,7 +12,11 @@ import checkoutRouter from './routes/checkout.js';
 import webhookRouter from './routes/webhook.js';
 import exportRouter from './routes/export.js';
 import adminRouter from './routes/admin.js';
+import publicRouter from './routes/public.js';
+import partnerRouter from './routes/partner.js';
 import { ensureInitialAdmin } from './lib/bootstrap.js';
+import { startDripScheduler } from './lib/drip.js';
+import { send as sendMail } from './lib/mailer.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
@@ -41,6 +45,8 @@ app.use('/api/pricing', pricingRouter);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/export', exportRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/public', publicRouter);
+app.use('/api/partner', partnerRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'not_found' });
@@ -53,6 +59,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 
 ensureInitialAdmin()
   .then(() => {
+    startDripScheduler(sendMail);
     app.listen(PORT, () => {
       console.log(`Businessplans24 backend on http://localhost:${PORT}`);
     });

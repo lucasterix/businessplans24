@@ -7,6 +7,7 @@ import { signToken } from '../lib/auth.js';
 import { authLimiter } from '../middleware/rateLimit.js';
 import { requireAuth } from '../middleware/auth.js';
 import { sendWelcomeEmail } from '../lib/mailer.js';
+import { scheduleDrip } from '../lib/drip.js';
 
 const router = Router();
 
@@ -34,6 +35,7 @@ router.post('/register', authLimiter, async (req, res) => {
 
   const token = signToken({ sub: id, email, role: 'user' });
   sendWelcomeEmail(email, language || 'de').catch((err) => console.warn('[mail.welcome]', err));
+  scheduleDrip(id, email, Date.now());
   res.json({ token, user: { id, email, country, language, role: 'user' } });
 });
 
