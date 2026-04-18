@@ -3,13 +3,17 @@ import { Navigate, Route, Routes, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './store/useAuth';
 
-const Landing = lazy(() => import('./pages/Landing'));
+const Home = lazy(() => import('./pages/Home'));
 const Wizard = lazy(() => import('./pages/Wizard'));
 const Preview = lazy(() => import('./pages/Preview'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Login = lazy(() => import('./pages/Login'));
 const Account = lazy(() => import('./pages/Account'));
+const Profile = lazy(() => import('./pages/Profile'));
 const PaymentReturn = lazy(() => import('./pages/PaymentReturn'));
+const Imprint = lazy(() => import('./pages/Imprint'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
 
 const AdminLayout = lazy(() => import('./admin/AdminLayout'));
 const AdminLogin = lazy(() => import('./admin/pages/AdminLogin'));
@@ -24,24 +28,22 @@ const RequireAdmin = lazy(() => import('./admin/RequireAdmin'));
 function Header() {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
-  const location = useLocation();
-  const hide = location.pathname.startsWith('/wizard');
 
   return (
-    <header className={`site-header ${hide ? 'site-header--minimal' : ''}`}>
+    <header className="site-header">
       <Link to="/" className="logo">
         <span className="logo-mark">B24</span>
         <span className="logo-name">{t('app.name')}</span>
       </Link>
       <nav className="site-nav">
-        <Link to="/pricing">{t('nav.pricing')}</Link>
+        <Link to="/pricing" className="nav-hide-sm">{t('nav.pricing')}</Link>
         {user ? (
           <>
-            <Link to="/account">{t('nav.account')}</Link>
-            <button className="btn btn-ghost" onClick={logout}>{t('nav.logout')}</button>
+            <Link to="/account" className="nav-hide-sm">{t('nav.account')}</Link>
+            <button className="btn btn-ghost btn-sm" onClick={logout}>{t('nav.logout')}</button>
           </>
         ) : (
-          <Link to="/login">{t('nav.login')}</Link>
+          <Link to="/login" className="nav-hide-sm">{t('nav.login')}</Link>
         )}
         <select
           className="lang-select"
@@ -52,7 +54,6 @@ function Header() {
           <option value="de">DE</option>
           <option value="en">EN</option>
         </select>
-        <Link to="/wizard" className="btn btn-primary">{t('nav.start')}</Link>
       </nav>
     </header>
   );
@@ -63,10 +64,9 @@ function Footer() {
   return (
     <footer className="site-footer">
       <span>© {new Date().getFullYear()} Businessplan24</span>
-      <span>·</span>
       <Link to="/imprint">{t('footer.imprint')}</Link>
-      <span>·</span>
       <Link to="/privacy">{t('footer.privacy')}</Link>
+      <Link to="/terms">{t('footer.terms')}</Link>
     </footer>
   );
 }
@@ -78,13 +78,17 @@ function PublicShell() {
       <main className="site-main">
         <Suspense fallback={<div className="loading-fallback" />}>
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<Home />} />
             <Route path="/wizard" element={<Wizard />} />
             <Route path="/wizard/:planId" element={<Wizard />} />
             <Route path="/preview/:planId" element={<Preview />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/imprint" element={<Imprint />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="/payment/:state" element={<PaymentReturn />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

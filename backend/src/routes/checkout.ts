@@ -20,6 +20,22 @@ const schema = z.object({
   email: z.string().email().optional(),
 });
 
+router.get('/verify/:sessionId', async (req, res) => {
+  if (!stripe) return res.json({ ok: false, mock: true });
+  try {
+    const session = await stripe.checkout.sessions.retrieve(req.params.sessionId);
+    res.json({
+      ok: session.payment_status === 'paid',
+      planId: session.metadata?.planId,
+      amount: session.amount_total,
+      currency: session.currency,
+    });
+  } catch (err) {
+    console.error('[checkout.verify]', err);
+    res.status(404).json({ ok: false });
+  }
+});
+
 router.post('/session', optionalAuth, async (req, res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: 'invalid_input' });
