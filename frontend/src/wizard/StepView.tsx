@@ -166,7 +166,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
                 <span /><span /><span />
               </div>
               <p>
-                Claude schreibt <strong>{t(section.titleKey)}</strong> — erscheint live rechts in der Vorschau.
+                Plani schreibt <strong>{t(section.titleKey)}</strong> — erscheint live rechts in der Vorschau.
               </p>
               <button
                 type="button"
@@ -220,7 +220,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
           disabled={generating || (isLastStepOfSection && !textComplete)}
           title={
             generating
-              ? 'Warten bis Claude fertig geschrieben hat'
+              ? 'Warten bis Plani fertig geschrieben hat'
               : isLastStepOfSection && !textComplete
                 ? 'Bitte erst den Text generieren oder ausfüllen'
                 : undefined

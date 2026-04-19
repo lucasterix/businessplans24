@@ -49,7 +49,7 @@ export default function Founder() {
 
         <p>
           Businessplan24 nimmt dir diese Hürde ab, ohne dir die inhaltliche Kontrolle zu nehmen.
-          Du beantwortest konkrete Fragen, Claude formuliert daraus den Entwurf, du liest,
+          Du beantwortest konkrete Fragen, Plani formuliert daraus den Entwurf, du liest,
           korrigierst, druckst. Am Ende steht ein Plan, den eine Sparkasse, eine KfW-Stelle oder
           die Arbeitsagentur akzeptiert — in 30 Minuten statt drei Wochen.
         </p>

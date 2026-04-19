@@ -100,7 +100,7 @@
     "capital": { "title": "Kapitalbedarf & Finanzierung" },
     "plan": { "title": "Umsatz- & Liquiditätsplan", "desc": "Trage Umsatz, Kosten und Cashflow pro Periode ein. Die Grafiken aktualisieren sich live." },
     "extras": { "title": "Anhang" },
-    "summary_review": { "title": "Executive Summary", "desc": "Claude fasst deinen Plan prägnant zusammen." }
+    "summary_review": { "title": "Executive Summary", "desc": "Plani fasst deinen Plan prägnant zusammen." }
   },
   "f": {
     "company_name": "Unternehmensname *",

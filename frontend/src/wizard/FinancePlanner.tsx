@@ -256,7 +256,7 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
           </>
         ) : (
           <div className="wizard-generate-cta">
-            <p className="muted">Claude fasst deine Finanzplanung mit den obigen Zahlen in einen professionellen Text zusammen.</p>
+            <p className="muted">Plani fasst deine Finanzplanung mit den obigen Zahlen in einen professionellen Text zusammen.</p>
             <button className="btn btn-primary" onClick={handleGenerate} disabled={generating}>
               {t('wizard.generate')}
             </button>

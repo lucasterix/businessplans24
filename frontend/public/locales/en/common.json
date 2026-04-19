@@ -100,7 +100,7 @@
     "capital": { "title": "Capital need & financing" },
     "plan": { "title": "Revenue & liquidity plan", "desc": "Enter revenue, costs, and cashflow per period. Charts update live." },
     "extras": { "title": "Appendix" },
-    "summary_review": { "title": "Executive summary", "desc": "Claude summarises your plan concisely." }
+    "summary_review": { "title": "Executive summary", "desc": "Plani summarises your plan concisely." }
   },
   "f": {
     "company_name": "Company name *",
