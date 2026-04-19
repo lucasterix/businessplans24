@@ -1,7 +1,63 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api/client';
+
+interface VerifyResult {
+  ok: boolean;
+  amount?: number;
+  currency?: string;
+  email?: string;
+  mock?: boolean;
+}
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+  }
+}
+
+/**
+ * Fire a Google Ads conversion event. Idempotent per session_id via a
+ * sessionStorage flag so reloads of the success page don't double-count.
+ * Also sets user_data for Enhanced Conversions (Google hashes client-side).
+ */
+function fireGoogleConversion(sessionId: string, amount: number, currency: string, email?: string) {
+  const KEY = `bp24_gads_fired_${sessionId}`;
+  if (sessionStorage.getItem(KEY)) return;
+
+  const adsId = import.meta.env.VITE_GOOGLE_ADS_ID;
+  const adsLabel = import.meta.env.VITE_GOOGLE_ADS_LABEL;
+  if (!adsId || !adsLabel || !window.gtag) return;
+
+  // Enhanced Conversions: pass customer email; gtag.js will normalise + hash
+  // it in-browser before transmitting. No plaintext PII leaves the client.
+  if (email) {
+    try {
+      window.gtag('set', 'user_data', { email });
+    } catch { /* ignore */ }
+  }
+
+  window.gtag('event', 'conversion', {
+    send_to: `${adsId}/${adsLabel}`,
+    value: amount / 100,
+    currency: currency.toUpperCase(),
+    transaction_id: sessionId,
+  });
+
+  // Meta Pixel: purchase event parallel
+  if (window.fbq) {
+    try {
+      window.fbq('track', 'Purchase', {
+        value: amount / 100,
+        currency: currency.toUpperCase(),
+      });
+    } catch { /* ignore */ }
+  }
+
+  sessionStorage.setItem(KEY, '1');
+}
 
 export default function PaymentReturn() {
   const { t } = useTranslation();
@@ -10,18 +66,28 @@ export default function PaymentReturn() {
   const planId = params.get('plan');
   const sessionId = params.get('session_id');
 
-  const [verified, setVerified] = useState<null | { ok: boolean; amount?: number; currency?: string }>(null);
+  const [verified, setVerified] = useState<VerifyResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const firedRef = useRef(false);
 
   useEffect(() => {
     if (state !== 'success' || !sessionId) return;
     setLoading(true);
     api
-      .get(`/checkout/verify/${sessionId}`)
+      .get<VerifyResult>(`/checkout/verify/${sessionId}`)
       .then((r) => setVerified(r.data))
       .catch(() => setVerified({ ok: false }))
       .finally(() => setLoading(false));
   }, [state, sessionId]);
+
+  // Fire ad-platform conversion events exactly once per verified purchase
+  useEffect(() => {
+    if (firedRef.current) return;
+    if (!verified?.ok || !sessionId) return;
+    if (typeof verified.amount !== 'number' || !verified.currency) return;
+    fireGoogleConversion(sessionId, verified.amount, verified.currency, verified.email);
+    firedRef.current = true;
+  }, [verified, sessionId]);
 
   if (state === 'cancel') {
     return (

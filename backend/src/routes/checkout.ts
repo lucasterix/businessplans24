@@ -29,6 +29,7 @@ router.get('/verify/:sessionId', async (req, res) => {
       planId: session.metadata?.planId,
       amount: session.amount_total,
       currency: session.currency,
+      email: session.customer_email || session.customer_details?.email || undefined,
     });
   } catch (err) {
     console.error('[checkout.verify]', err);
