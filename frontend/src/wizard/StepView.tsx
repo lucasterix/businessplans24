@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Section, Step } from './schema';
 import { FieldRenderer } from './fields/FieldRenderer';
-import { generateSection } from '../api/client';
+import { generateSectionStreamed } from '../api/client';
 import { usePlanStore } from '../store/usePlanStore';
+import { toast } from '../store/useToasts';
 
 interface Props {
   section: Section;
@@ -14,52 +15,84 @@ interface Props {
   onBack: () => void;
 }
 
+function isEmpty(v: unknown): boolean {
+  if (Array.isArray(v)) return v.length === 0;
+  if (typeof v === 'string') return v.trim() === '';
+  return v === undefined || v === null;
+}
+
 export function StepView({ section, step, isLastStepOfSection, isLastSection, onNext, onBack }: Props) {
   const { t, i18n } = useTranslation();
   const store = usePlanStore();
   const stepAnswers = store.answers[step.id] || {};
   const [generating, setGenerating] = useState(false);
   const [localText, setLocalText] = useState<string | undefined>(store.texts[section.id]);
-  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [triedSubmit, setTriedSubmit] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const missingRequired = step.fields
-    .filter((f) => f.required)
-    .some((f) => {
-      const v = stepAnswers[f.id];
-      if (Array.isArray(v)) return v.length === 0;
-      if (typeof v === 'string') return v.trim() === '';
-      return v === undefined || v === null;
-    });
+  const invalidFields = step.fields.filter((f) => f.required && isEmpty(stepAnswers[f.id]));
+  const missingRequired = invalidFields.length > 0;
 
   const handleGenerate = async () => {
+    if (missingRequired) {
+      setTriedSubmit(true);
+      return;
+    }
     setGenerating(true);
-    setError(null);
+    abortRef.current = new AbortController();
+    setLocalText('');
     try {
       const sectionAnswers = section.steps.reduce<Record<string, unknown>>((acc, s) => {
         const a = store.answers[s.id] || {};
         return { ...acc, ...a };
       }, {});
       const planContext = section.id === 'executive_summary' ? { texts: store.texts } : undefined;
-      const text = await generateSection({
-        section: section.id,
-        answers: sectionAnswers,
-        language: i18n.language.slice(0, 2),
-        planContext,
-      });
-      setLocalText(text);
-      store.setText(section.id, text);
-      await store.persistToServer();
-    } catch (err) {
-      console.error(err);
-      setError(t('common.error'));
+      let streamed = '';
+      await generateSectionStreamed(
+        {
+          section: section.id,
+          answers: sectionAnswers,
+          language: i18n.language.slice(0, 2),
+          planContext,
+        },
+        (chunk) => {
+          streamed += chunk;
+          setLocalText(streamed);
+        },
+        abortRef.current.signal
+      );
+      store.setText(section.id, streamed.trim());
+      store.persistToServer().catch(() => {});
+    } catch (err: unknown) {
+      const msg = (err as Error).message || '';
+      if (msg.includes('429') || msg.includes('rate_limited')) {
+        toast.error('Rate-Limit erreicht. Bitte in einer Minute erneut versuchen.');
+      } else if (msg.includes('AbortError')) {
+        // cancelled by user or navigation
+      } else {
+        toast.error('Generierung fehlgeschlagen.', {
+          action: { label: 'Erneut', onClick: () => void handleGenerate() },
+        });
+      }
     } finally {
       setGenerating(false);
+      abortRef.current = null;
     }
   };
 
-  const handleTextEdit = (t: string) => {
-    setLocalText(t);
-    store.setText(section.id, t);
+  const handleTextEdit = (v: string) => {
+    setLocalText(v);
+    store.setText(section.id, v);
+  };
+
+  const handleNext = () => {
+    if (missingRequired) {
+      setTriedSubmit(true);
+      toast.error(t('wizard.required_missing'));
+      return;
+    }
+    onNext();
   };
 
   return (
@@ -72,34 +105,59 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
 
       {step.fields.length > 0 && (
         <div className="wizard-fields">
-          {step.fields.map((f) => (
-            <FieldRenderer
-              key={f.id}
-              field={f}
-              value={stepAnswers[f.id]}
-              onChange={(v) => store.setAnswer(step.id, f.id, v)}
-            />
-          ))}
+          {step.fields.map((f) => {
+            const showError =
+              f.required && isEmpty(stepAnswers[f.id]) && (touched[f.id] || triedSubmit);
+            return (
+              <div key={f.id} className={showError ? 'field-wrap field-wrap--error' : 'field-wrap'}>
+                <FieldRenderer
+                  field={f}
+                  value={stepAnswers[f.id]}
+                  onChange={(v) => {
+                    store.setAnswer(step.id, f.id, v);
+                    setTouched((t) => ({ ...t, [f.id]: true }));
+                  }}
+                />
+                {showError && <p className="field-error">Bitte ausfüllen</p>}
+              </div>
+            );
+          })}
         </div>
       )}
 
       {isLastStepOfSection && (
         <div className="wizard-generate-block">
-          {localText ? (
+          {localText != null && (localText.length > 0 || generating) ? (
             <>
               <div className="wizard-generated-head">
                 <h3>{t(section.titleKey)}</h3>
-                <button className="btn btn-ghost" onClick={handleGenerate} disabled={generating}>
-                  {generating ? t('wizard.generating') : t('wizard.regenerate')}
-                </button>
+                {!generating && (
+                  <button className="btn btn-ghost btn-sm" onClick={handleGenerate}>
+                    {t('wizard.regenerate')}
+                  </button>
+                )}
+                {generating && (
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => abortRef.current?.abort()}
+                  >
+                    Abbrechen
+                  </button>
+                )}
               </div>
               <p className="muted tiny">{t('wizard.generated_hint')}</p>
               <textarea
-                className="generated-text"
+                className={`generated-text ${generating ? 'is-streaming' : ''}`}
                 rows={10}
                 value={localText}
+                readOnly={generating}
                 onChange={(e) => handleTextEdit(e.target.value)}
               />
+              {generating && (
+                <div className="streaming-bar" aria-hidden>
+                  <span /><span /><span />
+                </div>
+              )}
             </>
           ) : (
             <div className="wizard-generate-cta">
@@ -113,22 +171,22 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
                 onClick={handleGenerate}
                 disabled={generating || missingRequired}
               >
-                {generating ? t('wizard.generating') : t('wizard.generate')}
+                {t('wizard.generate')}
               </button>
-              {missingRequired && <p className="error-text">{t('wizard.required_missing')}</p>}
+              {missingRequired && triedSubmit && (
+                <p className="error-text">{t('wizard.required_missing')}</p>
+              )}
             </div>
           )}
         </div>
       )}
 
-      {error && <p className="error-text">{error}</p>}
-
       <div className="wizard-nav">
         <button className="btn btn-ghost" onClick={onBack}>{t('wizard.back')}</button>
         <button
           className="btn btn-primary"
-          onClick={onNext}
-          disabled={missingRequired || (isLastStepOfSection && !localText)}
+          onClick={handleNext}
+          disabled={isLastStepOfSection && !localText}
         >
           {isLastSection && isLastStepOfSection ? t('wizard.finish') : t('wizard.next')}
         </button>

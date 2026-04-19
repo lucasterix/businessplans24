@@ -5,6 +5,8 @@ import { useAuth } from './store/useAuth';
 import CookieBanner from './components/CookieBanner';
 import LangLayout from './components/LangLayout';
 import RootRedirect from './components/RootRedirect';
+import Toasts from './components/Toasts';
+import Skeleton from './components/Skeleton';
 import { SUPPORTED_LANGUAGES, isSupportedLanguage } from './i18n/supportedLanguages';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -129,11 +131,13 @@ function LegacyExampleRedirect() {
 }
 
 function PublicShell() {
+  const location = useLocation();
   return (
     <>
+      <a href="#site-main" className="skip-link">Zum Hauptinhalt springen</a>
       <Header />
-      <main className="site-main">
-        <Suspense fallback={<div className="loading-fallback" />}>
+      <main className="site-main" id="site-main" key={location.pathname}>
+        <Suspense fallback={<Skeleton variant="page" />}>
           <Routes>
             {/* Language-prefixed content routes */}
             <Route path="/:lang" element={<LangLayout />}>
@@ -186,6 +190,7 @@ function PublicShell() {
       </main>
       <Footer />
       <CookieBanner />
+      <Toasts />
     </>
   );
 }
@@ -196,7 +201,7 @@ export default function App() {
 
   if (isAdmin) {
     return (
-      <Suspense fallback={<div className="loading-fallback" />}>
+      <Suspense fallback={<Skeleton variant="page" />}>
         <Routes>
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route

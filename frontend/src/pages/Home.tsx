@@ -13,6 +13,8 @@ import PlanCounter from '../components/PlanCounter';
 import ExitIntent from '../components/ExitIntent';
 import WizardToast from '../components/WizardToast';
 import DocHead from '../components/DocHead';
+import DraftRecovery from '../components/DraftRecovery';
+import AutosaveIndicator, { type SaveState } from '../components/AutosaveIndicator';
 import { usePlanStore } from '../store/usePlanStore';
 import { createPlan } from '../api/client';
 
@@ -25,6 +27,9 @@ export default function Home() {
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
   const [toast, setToast] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
   const loc = useLocalizedPath();
+  const [saveState, setSaveState] = useState<SaveState>('idle');
+  const [savedAt, setSavedAt] = useState<number | undefined>();
+  const [showDraft, setShowDraft] = useState(true);
 
   useEffect(() => {
     if (!store.planId) {
@@ -33,6 +38,19 @@ export default function Home() {
         .catch((err) => console.warn('[home] createPlan failed, continuing local', err));
     }
   }, [store, i18n.language]);
+
+  // Debounced autosave: persist 1.5s after the last change
+  useEffect(() => {
+    if (!store.planId) return;
+    const t = setTimeout(() => {
+      setSaveState('saving');
+      store
+        .persistToServer()
+        .then(() => { setSaveState('saved'); setSavedAt(Date.now()); })
+        .catch(() => setSaveState('error'));
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [store.answers, store.texts, store.finance, store.planId, store]);
 
   const section = SECTIONS[store.currentSectionIndex];
   const step = section?.steps[store.currentStepIndex];
@@ -47,7 +65,14 @@ export default function Home() {
   const isLastSection = store.currentSectionIndex === SECTIONS.length - 1;
 
   const onNext = async () => {
-    await store.persistToServer();
+    setSaveState('saving');
+    try {
+      await store.persistToServer();
+      setSaveState('saved');
+      setSavedAt(Date.now());
+    } catch {
+      setSaveState('error');
+    }
     if (isLastSection && isLastStepOfSection) {
       navigate(`/preview/${store.planId}`);
       return;
@@ -91,6 +116,12 @@ export default function Home() {
       </section>
 
       <div className="home-shell">
+        {showDraft && (
+          <DraftRecovery
+            onContinue={() => setShowDraft(false)}
+            onReset={() => { store.reset(); setShowDraft(false); }}
+          />
+        )}
         <div className="home-progress-wrap">
           <div className="wizard-progress">
             <div className="wizard-progress-bar">
@@ -99,9 +130,12 @@ export default function Home() {
                 style={{ width: `${(currentFlatIndex / totalSteps) * 100}%` }}
               />
             </div>
-            <span className="wizard-progress-label">
-              {t('wizard.progress', { step: currentFlatIndex, total: totalSteps })}
-            </span>
+            <div className="wizard-progress-meta">
+              <span className="wizard-progress-label">
+                {t('wizard.progress', { step: currentFlatIndex, total: totalSteps })}
+              </span>
+              <AutosaveIndicator state={saveState} savedAt={savedAt} />
+            </div>
           </div>
         </div>
 

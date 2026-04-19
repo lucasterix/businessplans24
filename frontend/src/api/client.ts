@@ -37,6 +37,53 @@ export async function generateSection(input: GenerateInput): Promise<string> {
   return data.text;
 }
 
+export async function generateSectionStreamed(
+  input: GenerateInput,
+  onDelta: (chunk: string) => void,
+  signal?: AbortSignal
+): Promise<string> {
+  const baseURL = import.meta.env.VITE_API_URL || '/api';
+  const token = localStorage.getItem('bp24_token');
+  const resp = await fetch(`${baseURL}/generate/section/stream`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(input),
+    signal,
+  });
+  if (!resp.ok || !resp.body) {
+    throw new Error(`stream_failed_${resp.status}`);
+  }
+  const reader = resp.body.pipeThrough(new TextDecoderStream()).getReader();
+  let buffer = '';
+  let full = '';
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += value;
+    const events = buffer.split('\n\n');
+    buffer = events.pop() || '';
+    for (const raw of events) {
+      const lines = raw.split('\n');
+      const ev = lines.find((l) => l.startsWith('event:'))?.slice(6).trim();
+      const dataLine = lines.find((l) => l.startsWith('data:'))?.slice(5).trim() || '{}';
+      let payload: { text?: string; error?: string };
+      try { payload = JSON.parse(dataLine); } catch { payload = {}; }
+      if (ev === 'delta' && payload.text) {
+        full += payload.text;
+        onDelta(payload.text);
+      } else if (ev === 'error') {
+        throw new Error(payload.error || 'stream_failed');
+      } else if (ev === 'done') {
+        return full.trim();
+      }
+    }
+  }
+  return full.trim();
+}
+
 export async function createPlan(input: { title?: string; language: string; country?: string }): Promise<string> {
   const { data } = await api.post<{ id: string }>('/plans', input);
   return data.id;

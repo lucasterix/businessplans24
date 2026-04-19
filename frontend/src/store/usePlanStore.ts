@@ -59,9 +59,7 @@ export const usePlanStore = create<PlanState>()(
       persistToServer: async () => {
         const { planId, answers, texts, finance } = get();
         if (!planId) return;
-        await updatePlan(planId, { answers, texts, finance }).catch((err) => {
-          console.warn('[plan.persist] failed, keeping local state', err);
-        });
+        await updatePlan(planId, { answers, texts, finance });
       },
     }),
     { name: 'bp24-plan' }

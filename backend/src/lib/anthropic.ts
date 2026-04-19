@@ -20,8 +20,8 @@ export interface GenerateInput {
   planContext?: Record<string, unknown>;
 }
 
-export async function generateSection(input: GenerateInput): Promise<string> {
-  const userMsg = [
+function buildUserMessage(input: GenerateInput): string {
+  return [
     `Zielsprache des Outputs: ${input.language}`,
     '',
     'Antworten des Nutzers (JSON):',
@@ -30,23 +30,21 @@ export async function generateSection(input: GenerateInput): Promise<string> {
       ? `\nBereits vorhandener Plan-Kontext (JSON):\n${JSON.stringify(input.planContext, null, 2)}`
       : '',
   ].join('\n');
+}
 
+function buildSystem(input: GenerateInput) {
+  return [
+    { type: 'text' as const, text: SYSTEM_BASE, cache_control: { type: 'ephemeral' as const } },
+    { type: 'text' as const, text: sectionPrompt(input.section), cache_control: { type: 'ephemeral' as const } },
+  ];
+}
+
+export async function generateSection(input: GenerateInput): Promise<string> {
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: 2048,
-    system: [
-      {
-        type: 'text',
-        text: SYSTEM_BASE,
-        cache_control: { type: 'ephemeral' },
-      },
-      {
-        type: 'text',
-        text: sectionPrompt(input.section),
-        cache_control: { type: 'ephemeral' },
-      },
-    ],
-    messages: [{ role: 'user', content: userMsg }],
+    system: buildSystem(input),
+    messages: [{ role: 'user', content: buildUserMessage(input) }],
   });
 
   const out = response.content
@@ -54,4 +52,23 @@ export async function generateSection(input: GenerateInput): Promise<string> {
     .map((b) => (b as { text: string }).text)
     .join('\n\n');
   return out.trim();
+}
+
+/**
+ * Streaming variant — yields text deltas as they arrive.
+ * Caller iterates and pipes each chunk to the client (SSE).
+ */
+export async function* generateSectionStream(input: GenerateInput): AsyncGenerator<string> {
+  const stream = await client.messages.stream({
+    model: MODEL,
+    max_tokens: 2048,
+    system: buildSystem(input),
+    messages: [{ role: 'user', content: buildUserMessage(input) }],
+  });
+
+  for await (const event of stream) {
+    if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+      yield event.delta.text;
+    }
+  }
 }

@@ -26,12 +26,23 @@ export default function LivePreview({ activeSectionId }: Props) {
     .map((id) => SECTIONS.find((s) => s.id === id))
     .filter((s): s is (typeof SECTIONS)[number] => !!s);
 
+  const title = (flatAnswers.company_name as string) || t('app.name');
+  const today = new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' });
+
   return (
     <div className="live-preview">
-      <h3>{t('preview.title', { defaultValue: 'Vorschau' })}</h3>
-      <h2>{(flatAnswers.company_name as string) || t('app.name')}</h2>
+      <div className="live-preview-toolbar">
+        <h3>Vorschau</h3>
+        <span className="live-preview-status">Live</span>
+      </div>
 
-      <div className="preview-doc">
+      <article className="preview-paper" aria-label="Businessplan-Vorschau">
+        <header className="preview-cover">
+          <p className="preview-cover-eyebrow">Businessplan</p>
+          <h1 className="preview-cover-title">{title}</h1>
+          <p className="preview-cover-date">{today}</p>
+        </header>
+
         {order.map((section) => {
           const hasText = !!texts[section.id];
           const isActive = activeSectionId === section.id;
@@ -39,13 +50,13 @@ export default function LivePreview({ activeSectionId }: Props) {
           const stateClass = state === 'done' ? 'is-done' : state === 'active' ? 'is-active' : '';
 
           return (
-            <div key={section.id} className="preview-section">
-              <h4>
-                {t(section.titleKey)}
+            <section key={section.id} className={`preview-paper-section ${stateClass}`}>
+              <header className="preview-paper-section-head">
+                <h2>{t(section.titleKey)}</h2>
                 <span className={`preview-section-state ${stateClass}`}>
                   {state === 'done' ? '✓ fertig' : state === 'active' ? 'aktiv' : 'offen'}
                 </span>
-              </h4>
+              </header>
 
               {section.id === 'business_idea' && (
                 <FactList
@@ -84,10 +95,10 @@ export default function LivePreview({ activeSectionId }: Props) {
               )}
 
               {hasText ? (
-                <div className="preview-text">
+                <div className="preview-paper-text">
                   {texts[section.id]
                     .split(/\n{2,}/)
-                    .slice(0, 6)
+                    .slice(0, 8)
                     .map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
@@ -99,10 +110,14 @@ export default function LivePreview({ activeSectionId }: Props) {
                     : 'Wird im Wizard ausgefüllt.'}
                 </p>
               )}
-            </div>
+            </section>
           );
         })}
-      </div>
+
+        <footer className="preview-paper-footer">
+          <span>{title} · Businessplan · {today}</span>
+        </footer>
+      </article>
     </div>
   );
 }
@@ -114,13 +129,13 @@ function FactList({ items }: { items: Array<[string, unknown]> }) {
   });
   if (present.length === 0) return null;
   return (
-    <div className="preview-facts">
+    <dl className="preview-facts">
       {present.map(([label, value]) => (
         <div key={label}>
-          <span className="preview-fact-label">{label}:</span>
-          <span>{friendlyValue(value)}</span>
+          <dt>{label}</dt>
+          <dd>{friendlyValue(value)}</dd>
         </div>
       ))}
-    </div>
+    </dl>
   );
 }

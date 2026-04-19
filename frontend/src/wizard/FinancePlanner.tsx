@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDataStore } from '../store/useDataStore';
 import { usePlanStore } from '../store/usePlanStore';
-import { generateSection } from '../api/client';
+import { generateSectionStreamed } from '../api/client';
+import { toast } from '../store/useToasts';
 import { ProfitabilityMini, LiquidityMini } from '../components/MiniCharts';
 
 interface Props {
@@ -16,9 +17,12 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
   const store = usePlanStore();
   const [generating, setGenerating] = useState(false);
   const [text, setText] = useState<string | undefined>(store.texts.finance);
+  const abortRef = useRef<AbortController | null>(null);
 
   const handleGenerate = async () => {
     setGenerating(true);
+    abortRef.current = new AbortController();
+    setText('');
     try {
       const allAnswers = Object.values(store.answers).reduce<Record<string, unknown>>(
         (acc, a) => ({ ...acc, ...a }),
@@ -26,16 +30,28 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
       );
       const financePayload = { startingCash, periods };
       store.setFinance(financePayload);
-      const out = await generateSection({
-        section: 'finance',
-        answers: { ...allAnswers, finance: financePayload },
-        language: i18n.language.slice(0, 2),
+      let streamed = '';
+      await generateSectionStreamed(
+        {
+          section: 'finance',
+          answers: { ...allAnswers, finance: financePayload },
+          language: i18n.language.slice(0, 2),
+        },
+        (chunk) => {
+          streamed += chunk;
+          setText(streamed);
+        },
+        abortRef.current.signal
+      );
+      store.setText('finance', streamed.trim());
+      store.persistToServer().catch(() => {});
+    } catch {
+      toast.error('Generierung fehlgeschlagen.', {
+        action: { label: 'Erneut', onClick: () => void handleGenerate() },
       });
-      setText(out);
-      store.setText('finance', out);
-      await store.persistToServer();
     } finally {
       setGenerating(false);
+      abortRef.current = null;
     }
   };
 
@@ -50,7 +66,7 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
       <div className="finance-grid">
         <div className="finance-inputs">
           <label className="field">
-            <span className="field-label">Startkapital</span>
+            <span className="field-label">Startkapital (€)</span>
             <input
               type="number"
               value={startingCash}
@@ -58,7 +74,8 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
             />
           </label>
 
-          <table className="finance-table">
+          {/* Desktop: compact table */}
+          <table className="finance-table finance-table--desktop">
             <thead>
               <tr>
                 <th>Periode</th>
@@ -72,48 +89,52 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
             <tbody>
               {periods.map((p, i) => (
                 <tr key={i}>
-                  <td>
-                    <input
-                      type="text"
-                      value={p.label}
-                      onChange={(e) => upsertPeriod(i, { label: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={p.revenue}
-                      onChange={(e) => upsertPeriod(i, { revenue: Number(e.target.value) || 0 })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={p.costs}
-                      onChange={(e) => upsertPeriod(i, { costs: Number(e.target.value) || 0 })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={p.cashIn}
-                      onChange={(e) => upsertPeriod(i, { cashIn: Number(e.target.value) || 0 })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={p.cashOut}
-                      onChange={(e) => upsertPeriod(i, { cashOut: Number(e.target.value) || 0 })}
-                    />
-                  </td>
-                  <td>
-                    <button type="button" className="btn btn-ghost btn-sm" onClick={() => removePeriod(i)}>×</button>
-                  </td>
+                  <td><input type="text" value={p.label} onChange={(e) => upsertPeriod(i, { label: e.target.value })} /></td>
+                  <td><input type="number" value={p.revenue} onChange={(e) => upsertPeriod(i, { revenue: Number(e.target.value) || 0 })} /></td>
+                  <td><input type="number" value={p.costs} onChange={(e) => upsertPeriod(i, { costs: Number(e.target.value) || 0 })} /></td>
+                  <td><input type="number" value={p.cashIn} onChange={(e) => upsertPeriod(i, { cashIn: Number(e.target.value) || 0 })} /></td>
+                  <td><input type="number" value={p.cashOut} onChange={(e) => upsertPeriod(i, { cashOut: Number(e.target.value) || 0 })} /></td>
+                  <td><button type="button" className="btn btn-ghost btn-sm" onClick={() => removePeriod(i)} aria-label="Entfernen">×</button></td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {/* Mobile: card-per-period */}
+          <div className="finance-cards">
+            {periods.map((p, i) => (
+              <div key={i} className="finance-card">
+                <div className="finance-card-head">
+                  <input
+                    type="text"
+                    value={p.label}
+                    onChange={(e) => upsertPeriod(i, { label: e.target.value })}
+                    className="finance-card-label"
+                  />
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => removePeriod(i)} aria-label="Periode entfernen">×</button>
+                </div>
+                <div className="finance-card-grid">
+                  <label>
+                    <span>Umsatz</span>
+                    <input type="number" inputMode="numeric" value={p.revenue} onChange={(e) => upsertPeriod(i, { revenue: Number(e.target.value) || 0 })} />
+                  </label>
+                  <label>
+                    <span>Kosten</span>
+                    <input type="number" inputMode="numeric" value={p.costs} onChange={(e) => upsertPeriod(i, { costs: Number(e.target.value) || 0 })} />
+                  </label>
+                  <label>
+                    <span>Cash in</span>
+                    <input type="number" inputMode="numeric" value={p.cashIn} onChange={(e) => upsertPeriod(i, { cashIn: Number(e.target.value) || 0 })} />
+                  </label>
+                  <label>
+                    <span>Cash out</span>
+                    <input type="number" inputMode="numeric" value={p.cashOut} onChange={(e) => upsertPeriod(i, { cashOut: Number(e.target.value) || 0 })} />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <button type="button" className="btn btn-ghost" onClick={addPeriod}>+ Periode</button>
         </div>
 
@@ -124,28 +145,30 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
       </div>
 
       <div className="wizard-generate-block">
-        {text ? (
+        {text != null && (text.length > 0 || generating) ? (
           <>
             <div className="wizard-generated-head">
               <h3>{t('sections.finance.title')}</h3>
-              <button className="btn btn-ghost" onClick={handleGenerate} disabled={generating}>
-                {generating ? t('wizard.generating') : t('wizard.regenerate')}
-              </button>
+              {!generating && (
+                <button className="btn btn-ghost btn-sm" onClick={handleGenerate}>{t('wizard.regenerate')}</button>
+              )}
+              {generating && (
+                <button className="btn btn-ghost btn-sm" onClick={() => abortRef.current?.abort()}>Abbrechen</button>
+              )}
             </div>
             <textarea
-              className="generated-text"
+              className={`generated-text ${generating ? 'is-streaming' : ''}`}
               rows={10}
               value={text}
-              onChange={(e) => {
-                setText(e.target.value);
-                store.setText('finance', e.target.value);
-              }}
+              readOnly={generating}
+              onChange={(e) => { setText(e.target.value); store.setText('finance', e.target.value); }}
             />
+            {generating && <div className="streaming-bar" aria-hidden><span /><span /><span /></div>}
           </>
         ) : (
           <div className="wizard-generate-cta">
             <button className="btn btn-primary" onClick={handleGenerate} disabled={generating}>
-              {generating ? t('wizard.generating') : t('wizard.generate')}
+              {t('wizard.generate')}
             </button>
           </div>
         )}
@@ -153,7 +176,7 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
 
       <div className="wizard-nav">
         <button className="btn btn-ghost" onClick={onBack}>{t('wizard.back')}</button>
-        <button className="btn btn-primary" onClick={onNext} disabled={!text}>
+        <button className="btn btn-primary" onClick={onNext} disabled={!text || generating}>
           {t('wizard.next')}
         </button>
       </div>
