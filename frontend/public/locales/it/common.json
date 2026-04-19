@@ -1,0 +1,98 @@
+{
+  "app": { "name": "Businessplan24", "tagline": "Business plan pro in 30 minuti" },
+  "nav": { "pricing": "Prezzi", "login": "Accedi", "account": "Account", "logout": "Esci", "start": "Inizia" },
+  "landing": {
+    "hero_title": "Business plan professionale — in 30 minuti, verificato da esperti.",
+    "hero_sub": "Metodologia e modelli sviluppati con commercialisti, revisori e ex-consulenti delle principali società di strategia. Struttura conforme agli standard. Pronto per la banca. 49 € — nessun abbonamento obbligato.",
+    "cta_start": "Crea il tuo piano",
+    "cta_pricing": "Vedi i prezzi",
+    "features_title": "Tutto quello che ti serve",
+    "f1_title": "Procedura guidata",
+    "f1_desc": "Struttura allineata a ciò che banche ed enti richiedono. Nessuna pagina bianca.",
+    "f2_title": "Testi di esperti",
+    "f2_desc": "Passaggi pre-redatti da consulenti esperti — tu li adatti con le tue parole.",
+    "f3_title": "Grafici finanziari",
+    "f3_desc": "Redditività, liquidità, cashflow — agli standard richiesti dalle banche.",
+    "f4_title": "Esportazione PDF",
+    "f4_desc": "Documento A4 curato, pronto da inviare.",
+    "how_title": "Come funziona",
+    "how1": "Descrivi la tua idea",
+    "how2": "Rispondi alle domande — i modelli redigono",
+    "how3": "Pianifica le finanze con grafici live",
+    "how4": "Paga ed esporta il PDF pulito"
+  },
+  "wizard": {
+    "back": "Indietro",
+    "next": "Avanti",
+    "generate": "Genera testo",
+    "regenerate": "Rigenera",
+    "edit": "Modifica",
+    "save": "Salva",
+    "progress": "Passo {{step}} di {{total}}",
+    "generating": "Redazione in corso…",
+    "generated_hint": "Il testo segue modelli collaudati — puoi adattarlo liberamente.",
+    "required_missing": "Compila i campi contrassegnati con *.",
+    "add_custom": "Aggiungi un'opzione personalizzata",
+    "finish": "Mostra anteprima",
+    "review_intro": "Il riassunto sarà redatto dalle tue risposte."
+  },
+  "preview": {
+    "title": "Anteprima del tuo piano",
+    "watermark_note": "Questa anteprima ha una filigrana. Dopo il pagamento ricevi la versione pulita.",
+    "unlock_onetime": "Sblocca per {{price}} {{currency}}",
+    "unlock_subscription": "Abbonamento annuale {{price}} {{currency}}",
+    "download_pdf": "Scarica il PDF"
+  },
+  "pricing": {
+    "title": "Prezzo onesto. Nessun vincolo.",
+    "one_time": "Piano singolo",
+    "subscription": "Abbonamento annuale",
+    "one_time_desc": "Un business plan completo, pagamento unico.",
+    "sub_desc": "Piani illimitati per un anno. Account & versioni.",
+    "sub_features": ["Piani illimitati", "Bozze salvate", "Supporto prioritario", "Tutti i modelli"],
+    "select_onetime": "Scegli il piano singolo",
+    "select_sub": "Scegli l'abbonamento",
+    "detected": "Prezzo per {{country}}"
+  },
+  "auth": {
+    "login_title": "Accedi",
+    "register_title": "Crea account",
+    "email": "E-mail",
+    "password": "Password",
+    "submit_login": "Accedi",
+    "submit_register": "Registrati",
+    "switch_to_register": "Nessun account? Registrati",
+    "switch_to_login": "Già registrato? Accedi",
+    "invalid": "E-mail o password errate.",
+    "email_taken": "Questa e-mail è già registrata."
+  },
+  "account": {
+    "title": "Account",
+    "plans_title": "I miei piani",
+    "subscription_active": "Abbonamento attivo fino al {{date}}",
+    "no_subscription": "Nessun abbonamento attivo.",
+    "new_plan": "Crea un nuovo piano"
+  },
+  "sections": {
+    "business_idea": { "title": "Idea imprenditoriale", "desc": "Prodotti, valore cliente, mercato & concorrenza" },
+    "customers": { "title": "Clienti", "desc": "Target, canali, fidelizzazione" },
+    "company": { "title": "Azienda", "desc": "Fondatori, team, sede, forma giuridica, rischi" },
+    "finance": { "title": "Finanze", "desc": "Fatturato, costi, fabbisogno, redditività, liquidità" },
+    "appendix": { "title": "Appendice", "desc": "Informazioni aggiuntive" },
+    "executive_summary": { "title": "Sintesi esecutiva", "desc": "Generata alla fine dalle tue risposte." }
+  },
+  "steps": {
+    "idea_core": { "title": "La tua idea" },
+    "market": { "title": "Mercato & concorrenza" },
+    "target_group": { "title": "Target" },
+    "channels": { "title": "Canali & fidelizzazione" },
+    "founders": { "title": "Fondatori & team" },
+    "location_legal": { "title": "Sede & legale" },
+    "capital": { "title": "Capitale & finanziamento" },
+    "plan": { "title": "Fatturato & liquidità", "desc": "Inserisci fatturato, costi e cashflow per periodo. I grafici si aggiornano in diretta." },
+    "extras": { "title": "Appendice" },
+    "summary_review": { "title": "Sintesi esecutiva", "desc": "La sintesi si basa sulle tue risposte." }
+  },
+  "common": { "loading": "Caricamento…", "error": "Qualcosa è andato storto.", "try_again": "Riprova" },
+  "footer": { "imprint": "Note legali", "privacy": "Privacy", "terms": "Termini" }
+}

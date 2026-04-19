@@ -109,6 +109,40 @@ db.exec(`
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
   CREATE INDEX IF NOT EXISTS idx_drip_due ON drip_queue(send_at, sent_at);
+
+  CREATE TABLE IF NOT EXISTS page_views (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    path TEXT NOT NULL,
+    referrer TEXT,
+    country TEXT,
+    lang TEXT,
+    device TEXT,
+    session TEXT,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_pv_path ON page_views(path, created_at);
+  CREATE INDEX IF NOT EXISTS idx_pv_created ON page_views(created_at);
+
+  CREATE TABLE IF NOT EXISTS newsletter_signups (
+    id TEXT PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    source TEXT,
+    language TEXT,
+    country TEXT,
+    confirmed INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS plan_shares (
+    token TEXT PRIMARY KEY,
+    plan_id TEXT NOT NULL,
+    created_by TEXT,
+    revoked INTEGER NOT NULL DEFAULT 0,
+    view_count INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE
+  );
+  CREATE INDEX IF NOT EXISTS idx_shares_plan ON plan_shares(plan_id);
 `);
 
 const cols = db.prepare("PRAGMA table_info(users)").all() as Array<{ name: string }>;

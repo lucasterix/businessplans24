@@ -10,6 +10,8 @@ import PriceAnchor from '../components/PriceAnchor';
 import Testimonials from '../components/Testimonials';
 import FaqHome from '../components/FaqHome';
 import ExpertsRow from '../components/ExpertsRow';
+import TemplatesGallery from '../components/TemplatesGallery';
+import NewsletterForm from '../components/NewsletterForm';
 import PlanCounter from '../components/PlanCounter';
 import ExitIntent from '../components/ExitIntent';
 import WizardToast from '../components/WizardToast';
@@ -214,10 +216,12 @@ export default function Home() {
       </section>
 
       <div className="home-shell">
+        <TemplatesGallery />
         <ExpertsRow />
         <PriceAnchor />
         <Testimonials />
         <FaqHome />
+        <NewsletterForm source="home-footer" />
 
         <section className="home-final-cta">
           <h2>Bereit, deinen Plan in 30 Minuten zu haben?</h2>

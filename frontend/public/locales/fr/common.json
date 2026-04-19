@@ -1,0 +1,98 @@
+{
+  "app": { "name": "Businessplan24", "tagline": "Plan d'affaires pro en 30 minutes" },
+  "nav": { "pricing": "Tarifs", "login": "Connexion", "account": "Mon compte", "logout": "Déconnexion", "start": "Commencer" },
+  "landing": {
+    "hero_title": "Plan d'affaires professionnel — en 30 minutes, revu par des experts.",
+    "hero_sub": "Méthodologie et modèles développés avec des experts-comptables, commissaires aux comptes et anciens consultants des grandes maisons de stratégie. Structure conforme aux recommandations IHK. Prêt pour la banque. 49 € — sans abonnement.",
+    "cta_start": "Créer mon plan",
+    "cta_pricing": "Voir les tarifs",
+    "features_title": "Tout ce dont tu as besoin",
+    "f1_title": "Assistant guidé",
+    "f1_desc": "Structure alignée sur ce que banques et organismes attendent. Pas de page blanche.",
+    "f2_title": "Textes d'expert",
+    "f2_desc": "Passages pré-rédigés par des consultants expérimentés — tu les adaptes à ton style.",
+    "f3_title": "Graphiques financiers",
+    "f3_desc": "Rentabilité, liquidité, cashflow — au standard attendu par les banques.",
+    "f4_title": "Export PDF",
+    "f4_desc": "Document A4 soigné, prêt à soumettre.",
+    "how_title": "Comment ça marche",
+    "how1": "Décris ton idée",
+    "how2": "Réponds aux questions — les modèles rédigent",
+    "how3": "Planifie les finances avec graphiques en direct",
+    "how4": "Paie et exporte le PDF propre"
+  },
+  "wizard": {
+    "back": "Retour",
+    "next": "Suivant",
+    "generate": "Générer le texte",
+    "regenerate": "Régénérer",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "progress": "Étape {{step}} sur {{total}}",
+    "generating": "Rédaction en cours…",
+    "generated_hint": "Le brouillon suit des modèles éprouvés — libre à toi de l'adapter.",
+    "required_missing": "Merci de remplir les champs marqués d'un *.",
+    "add_custom": "Ajouter une option personnalisée",
+    "finish": "Voir l'aperçu",
+    "review_intro": "Ton résumé exécutif sera rédigé à partir de tes réponses."
+  },
+  "preview": {
+    "title": "Aperçu de ton plan",
+    "watermark_note": "Cet aperçu contient un filigrane. Après paiement, tu reçois la version propre.",
+    "unlock_onetime": "Débloquer pour {{price}} {{currency}}",
+    "unlock_subscription": "Abonnement annuel {{price}} {{currency}}",
+    "download_pdf": "Télécharger le PDF"
+  },
+  "pricing": {
+    "title": "Un prix juste. Pas d'abonnement imposé.",
+    "one_time": "Plan unique",
+    "subscription": "Abonnement annuel",
+    "one_time_desc": "Un plan d'affaires complet, paiement unique.",
+    "sub_desc": "Plans illimités pendant un an. Compte & versions.",
+    "sub_features": ["Plans illimités", "Brouillons enregistrés", "Support prioritaire", "Tous les modèles"],
+    "select_onetime": "Choisir le plan unique",
+    "select_sub": "Choisir l'abonnement",
+    "detected": "Prix pour {{country}}"
+  },
+  "auth": {
+    "login_title": "Connexion",
+    "register_title": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "submit_login": "Se connecter",
+    "submit_register": "S'inscrire",
+    "switch_to_register": "Pas encore de compte ? S'inscrire",
+    "switch_to_login": "Déjà inscrit ? Se connecter",
+    "invalid": "E-mail ou mot de passe incorrect.",
+    "email_taken": "Cet e-mail est déjà enregistré."
+  },
+  "account": {
+    "title": "Mon compte",
+    "plans_title": "Mes plans",
+    "subscription_active": "Abonnement actif jusqu'au {{date}}",
+    "no_subscription": "Pas d'abonnement actif.",
+    "new_plan": "Commencer un nouveau plan"
+  },
+  "sections": {
+    "business_idea": { "title": "Idée d'entreprise", "desc": "Produits, valeur client, marché & concurrence" },
+    "customers": { "title": "Clients", "desc": "Cible, canaux, fidélisation" },
+    "company": { "title": "Entreprise", "desc": "Fondateurs, équipe, implantation, forme juridique, risques" },
+    "finance": { "title": "Finances", "desc": "Chiffre d'affaires, coûts, besoin en capital, rentabilité, liquidité" },
+    "appendix": { "title": "Annexe", "desc": "Informations complémentaires" },
+    "executive_summary": { "title": "Résumé exécutif", "desc": "Généré à la fin depuis tes réponses." }
+  },
+  "steps": {
+    "idea_core": { "title": "Ton idée d'entreprise" },
+    "market": { "title": "Marché & concurrence" },
+    "target_group": { "title": "Cible" },
+    "channels": { "title": "Canaux & fidélisation" },
+    "founders": { "title": "Fondateurs & équipe" },
+    "location_legal": { "title": "Implantation & droit" },
+    "capital": { "title": "Besoin en capital & financement" },
+    "plan": { "title": "Plan CA & liquidité", "desc": "Saisis le chiffre d'affaires, coûts et trésorerie par période. Les graphiques se mettent à jour en direct." },
+    "extras": { "title": "Annexe" },
+    "summary_review": { "title": "Résumé exécutif", "desc": "Le résumé est préparé à partir de tes réponses." }
+  },
+  "common": { "loading": "Chargement…", "error": "Une erreur est survenue.", "try_again": "Réessayer" },
+  "footer": { "imprint": "Mentions légales", "privacy": "Confidentialité", "terms": "CGU" }
+}

@@ -1,60 +1,92 @@
 import { Router } from 'express';
 import { db } from '../lib/db.js';
 import { renderPlanPdf } from '../lib/pdf.js';
+import { renderPlanDocx } from '../lib/docx.js';
 import { optionalAuth } from '../middleware/auth.js';
 import { burstLimiter, dailyQuotaLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
+interface PlanRow {
+  id: string;
+  user_id: string | null;
+  title: string | null;
+  language: string;
+  country: string | null;
+  answers_json: string;
+  texts_json: string;
+  finance_json: string;
+  paid: number;
+}
+
+function loadPlan(id: string): PlanRow | undefined {
+  return db.prepare('SELECT * FROM plans WHERE id = ?').get(id) as PlanRow | undefined;
+}
+
+function userHasActiveSub(userId?: string | null): boolean {
+  if (!userId) return false;
+  const user = db
+    .prepare('SELECT subscription_tier, subscription_expires_at FROM users WHERE id = ?')
+    .get(userId) as { subscription_tier: string | null; subscription_expires_at: number | null } | undefined;
+  return !!(
+    user?.subscription_tier &&
+    user.subscription_expires_at &&
+    user.subscription_expires_at > Date.now()
+  );
+}
+
+function authorize(row: PlanRow | undefined, userId?: string | null): { ok: boolean; status?: number } {
+  if (!row) return { ok: false, status: 404 };
+  if (row.user_id && row.user_id !== userId) return { ok: false, status: 403 };
+  return { ok: true };
+}
+
 router.get('/:id/pdf', burstLimiter, optionalAuth, dailyQuotaLimiter('export'), async (req, res) => {
-  const row = db.prepare('SELECT * FROM plans WHERE id = ?').get(req.params.id) as
-    | {
-        id: string;
-        user_id: string | null;
-        title: string | null;
-        language: string;
-        country: string | null;
-        answers_json: string;
-        texts_json: string;
-        finance_json: string;
-        paid: number;
-      }
-    | undefined;
+  const row = loadPlan(req.params.id);
+  const auth = authorize(row, req.user?.sub);
+  if (!auth.ok) return res.status(auth.status!).json({ error: auth.status === 404 ? 'not_found' : 'forbidden' });
 
-  if (!row) return res.status(404).json({ error: 'not_found' });
-  if (row.user_id && row.user_id !== req.user?.sub) {
-    return res.status(403).json({ error: 'forbidden' });
-  }
-
-  let hasActiveSub = false;
-  if (req.user?.sub) {
-    const user = db
-      .prepare('SELECT subscription_tier, subscription_expires_at FROM users WHERE id = ?')
-      .get(req.user.sub) as { subscription_tier: string | null; subscription_expires_at: number | null } | undefined;
-    if (user?.subscription_tier && user.subscription_expires_at && user.subscription_expires_at > Date.now()) {
-      hasActiveSub = true;
-    }
-  }
-
-  const watermarked = !row.paid && !hasActiveSub;
-
+  const watermarked = !row!.paid && !userHasActiveSub(req.user?.sub);
   try {
     const pdf = await renderPlanPdf({
-      title: row.title || 'Businessplan',
-      language: row.language,
-      texts: JSON.parse(row.texts_json),
-      finance: JSON.parse(row.finance_json),
+      title: row!.title || 'Businessplan',
+      language: row!.language,
+      texts: JSON.parse(row!.texts_json),
+      finance: JSON.parse(row!.finance_json),
       watermarked,
     });
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `inline; filename="businessplan${watermarked ? '-preview' : ''}.pdf"`
-    );
+    res.setHeader('Content-Disposition', `inline; filename="businessplan${watermarked ? '-preview' : ''}.pdf"`);
     res.send(pdf);
   } catch (err) {
     console.error('[export.pdf]', err);
     res.status(500).json({ error: 'pdf_failed' });
+  }
+});
+
+router.get('/:id/docx', burstLimiter, optionalAuth, dailyQuotaLimiter('export'), async (req, res) => {
+  const row = loadPlan(req.params.id);
+  const auth = authorize(row, req.user?.sub);
+  if (!auth.ok) return res.status(auth.status!).json({ error: auth.status === 404 ? 'not_found' : 'forbidden' });
+
+  const watermarked = !row!.paid && !userHasActiveSub(req.user?.sub);
+  try {
+    const buf = await renderPlanDocx({
+      title: row!.title || 'Businessplan',
+      language: row!.language,
+      texts: JSON.parse(row!.texts_json),
+      watermarked,
+    });
+    const filename = `businessplan${watermarked ? '-vorschau' : ''}.docx`;
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(buf);
+  } catch (err) {
+    console.error('[export.docx]', err);
+    res.status(500).json({ error: 'docx_failed' });
   }
 });
 

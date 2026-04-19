@@ -40,7 +40,39 @@ router.get('/stats', (_req, res) => {
     .prepare('SELECT country, COUNT(*) AS count FROM users WHERE country IS NOT NULL GROUP BY country ORDER BY count DESC')
     .all() as Array<{ country: string; count: number }>;
 
-  res.json({ totalUsers, totalPlans, paidPlans, activeSubs, revenue30d, usersByCountry });
+  const sevenDays = Date.now() - 7 * 24 * 3600 * 1000;
+  const pageViews7d = (db.prepare('SELECT COUNT(*) AS c FROM page_views WHERE created_at > ?').get(sevenDays) as { c: number }).c;
+  const uniqueSessions7d = (db
+    .prepare('SELECT COUNT(DISTINCT session) AS c FROM page_views WHERE created_at > ? AND session IS NOT NULL')
+    .get(sevenDays) as { c: number }).c;
+  const topPaths = db
+    .prepare(
+      `SELECT path, COUNT(*) AS views
+       FROM page_views WHERE created_at > ?
+       GROUP BY path ORDER BY views DESC LIMIT 10`
+    )
+    .all(sevenDays) as Array<{ path: string; views: number }>;
+  const newsletterSignups = (db.prepare('SELECT COUNT(*) AS c FROM newsletter_signups').get() as { c: number }).c;
+
+  res.json({
+    totalUsers,
+    totalPlans,
+    paidPlans,
+    activeSubs,
+    revenue30d,
+    usersByCountry,
+    pageViews7d,
+    uniqueSessions7d,
+    topPaths,
+    newsletterSignups,
+  });
+});
+
+router.get('/newsletter', (_req, res) => {
+  const rows = db
+    .prepare('SELECT email, source, language, country, created_at FROM newsletter_signups ORDER BY created_at DESC LIMIT 500')
+    .all();
+  res.json({ signups: rows });
 });
 
 router.get('/users', (req, res) => {

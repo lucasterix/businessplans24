@@ -7,6 +7,8 @@ import LangLayout from './components/LangLayout';
 import RootRedirect from './components/RootRedirect';
 import Toasts from './components/Toasts';
 import Skeleton from './components/Skeleton';
+import AnalyticsBeacon from './components/AnalyticsBeacon';
+import ContactFAB from './components/ContactFAB';
 import { SUPPORTED_LANGUAGES, isSupportedLanguage } from './i18n/supportedLanguages';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -25,6 +27,7 @@ const Example = lazy(() => import('./pages/Example'));
 const Partner = lazy(() => import('./pages/Partner'));
 const SeoLanding = lazy(() => import('./pages/SeoLanding'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
+const SharedPreview = lazy(() => import('./pages/SharedPreview'));
 
 const AdminLayout = lazy(() => import('./admin/AdminLayout'));
 const AdminLogin = lazy(() => import('./admin/pages/AdminLogin'));
@@ -162,6 +165,7 @@ function PublicShell() {
 
             {/* Sitemap without lang prefix also works (common SEO expectation) */}
             <Route path="/sitemap" element={<Sitemap />} />
+            <Route path="/share/:token" element={<SharedPreview />} />
 
             {/* Application routes — language-agnostic (inherit user setting) */}
             <Route path="/wizard" element={<Wizard />} />
@@ -197,6 +201,8 @@ function PublicShell() {
       <Footer />
       <CookieBanner />
       <Toasts />
+      <AnalyticsBeacon />
+      <ContactFAB />
     </>
   );
 }

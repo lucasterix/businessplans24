@@ -14,6 +14,8 @@ import exportRouter from './routes/export.js';
 import adminRouter from './routes/admin.js';
 import publicRouter from './routes/public.js';
 import partnerRouter from './routes/partner.js';
+import newsletterRouter from './routes/newsletter.js';
+import shareRouter from './routes/share.js';
 import { ensureInitialAdmin } from './lib/bootstrap.js';
 import { startDripScheduler } from './lib/drip.js';
 import { send as sendMail } from './lib/mailer.js';
@@ -47,6 +49,8 @@ app.use('/api/export', exportRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/public', publicRouter);
 app.use('/api/partner', partnerRouter);
+app.use('/api/newsletter', newsletterRouter);
+app.use('/api/share', shareRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'not_found' });

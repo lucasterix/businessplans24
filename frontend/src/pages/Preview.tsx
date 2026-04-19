@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { fetchPricing, getPlan, startCheckout, type Plan, type PricingResponse } from '../api/client';
+import { fetchPricing, getPlan, startCheckout, api, type Plan, type PricingResponse } from '../api/client';
 import { usePlanStore } from '../store/usePlanStore';
 import { usePreviewTheme, ACCENT_COLORS, FONT_FAMILIES, mergeSectionOrder } from '../store/usePreviewTheme';
 import { useLocalizedPath } from '../i18n/useLocalizedPath';
@@ -13,6 +13,8 @@ export default function Preview() {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [pricing, setPricing] = useState<PricingResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [shareToken, setShareToken] = useState<string | null>(null);
+  const [sharing, setSharing] = useState(false);
   const store = usePlanStore();
   const loc = useLocalizedPath();
   const theme = usePreviewTheme();
@@ -133,8 +135,38 @@ export default function Preview() {
             target="_blank"
             rel="noreferrer"
           >
-            📄 {t('preview.download_pdf')} (Vorschau)
+            📄 PDF-Vorschau
           </a>
+          <a
+            className="btn btn-ghost btn-block"
+            href={`/api/export/${plan.id}/docx`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            📝 Word (.docx) herunterladen
+          </a>
+          <button
+            type="button"
+            className="btn btn-ghost btn-block"
+            disabled={sharing}
+            onClick={async () => {
+              setSharing(true);
+              try {
+                const { data } = await api.post<{ token: string }>(`/share/plan/${plan.id}`);
+                const url = `${window.location.origin}/share/${data.token}`;
+                setShareToken(data.token);
+                try { await navigator.clipboard.writeText(url); } catch { /* ignore */ }
+              } catch { /* ignore */ }
+              finally { setSharing(false); }
+            }}
+          >
+            🔗 {shareToken ? 'Link kopiert — erneut kopieren' : 'Nur-Lese-Link für Bank/Berater'}
+          </button>
+          {shareToken && (
+            <div className="preview-share-url">
+              <code>{`${window.location.origin}/share/${shareToken}`}</code>
+            </div>
+          )}
           <Link to={loc('')} className="btn btn-ghost btn-block">
             {t('wizard.back')} zum Wizard
           </Link>
