@@ -94,6 +94,11 @@ export default function LivePreview({ activeSectionId }: Props) {
       footerText={theme.footerText}
       showCoverDate={theme.showCoverDate}
       showToc={theme.showToc}
+      showHeader={theme.showHeader}
+      pageNumFormat={theme.pageNumFormat}
+      blankBetween={theme.blankBetween}
+      appendixTwoCol={theme.appendixTwoCol}
+      sectionStripe={theme.sectionStripe}
     />
   );
 }

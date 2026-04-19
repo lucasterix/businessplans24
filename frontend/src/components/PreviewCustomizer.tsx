@@ -8,6 +8,7 @@ import {
   type PreviewAccent,
   type PreviewFont,
   type CoverStyle,
+  type PageNumFormat,
 } from '../store/usePreviewTheme';
 import { toast } from '../store/useToasts';
 
@@ -38,6 +39,16 @@ export default function PreviewCustomizer({ sections }: Props) {
     toggleSection,
     moveSection,
     setSectionOrder,
+    showHeader,
+    pageNumFormat,
+    blankBetween,
+    appendixTwoCol,
+    sectionStripe,
+    setShowHeader,
+    setPageNumFormat,
+    setBlankBetween,
+    setAppendixTwoCol,
+    setSectionStripe,
   } = usePreviewTheme();
 
   const knownIds = sections.map((s) => s.key);
@@ -209,6 +220,50 @@ export default function PreviewCustomizer({ sections }: Props) {
               <input type="checkbox" checked={showToc} onChange={(e) => setShowToc(e.target.checked)} />
               <span>Inhaltsverzeichnis auf dem Deckblatt</span>
             </label>
+          </div>
+
+          <div className="preview-custom-section">
+            <div className="preview-custom-label">Seiten-Layout</div>
+            <label className="preview-toggle-row">
+              <input type="checkbox" checked={showHeader} onChange={(e) => setShowHeader(e.target.checked)} />
+              <span>Kopfzeile mit Logo + Firmenname</span>
+            </label>
+            <label className="preview-toggle-row">
+              <input type="checkbox" checked={sectionStripe} onChange={(e) => setSectionStripe(e.target.checked)} />
+              <span>Akzent-Streifen links am Rand</span>
+            </label>
+            <label className="preview-toggle-row">
+              <input type="checkbox" checked={blankBetween} onChange={(e) => setBlankBetween(e.target.checked)} />
+              <span>Trennseite zwischen Sektionen</span>
+            </label>
+            <label className="preview-toggle-row">
+              <input type="checkbox" checked={appendixTwoCol} onChange={(e) => setAppendixTwoCol(e.target.checked)} />
+              <span>Anhang zweispaltig</span>
+            </label>
+          </div>
+
+          <div className="preview-custom-section">
+            <div className="preview-custom-label">Seitenzahl</div>
+            <div className="preview-cover-styles">
+              {(['xOfY', 'simple', 'hidden'] as PageNumFormat[]).map((key) => {
+                const labels: Record<PageNumFormat, { name: string; desc: string }> = {
+                  xOfY: { name: 'Seite X von Y', desc: 'Empfohlen' },
+                  simple: { name: 'Nur Nummer', desc: 'Minimalistisch' },
+                  hidden: { name: 'Ausblenden', desc: 'Ohne Zählung' },
+                };
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`preview-cover-style-card ${key === pageNumFormat ? 'is-active' : ''}`}
+                    onClick={() => setPageNumFormat(key)}
+                  >
+                    <strong>{labels[key].name}</strong>
+                    <span>{labels[key].desc}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="preview-custom-section">

@@ -66,6 +66,11 @@ export default function Preview() {
     theme.footerText,
     theme.showCoverDate,
     theme.showToc,
+    theme.showHeader,
+    theme.pageNumFormat,
+    theme.blankBetween,
+    theme.appendixTwoCol,
+    theme.sectionStripe,
     theme.sectionOrder,
     theme.hiddenSections,
   ]);
@@ -209,6 +214,11 @@ export default function Preview() {
           footerText={theme.footerText}
           showCoverDate={theme.showCoverDate}
           showToc={theme.showToc}
+          showHeader={theme.showHeader}
+          pageNumFormat={theme.pageNumFormat}
+          blankBetween={theme.blankBetween}
+          appendixTwoCol={theme.appendixTwoCol}
+          sectionStripe={theme.sectionStripe}
         />
       </div>
     </div>

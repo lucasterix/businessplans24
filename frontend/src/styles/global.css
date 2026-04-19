@@ -3767,3 +3767,72 @@ body {
   z-index: 2;
 }
 .a4-stack.is-compact .a4-running-footer { font-size: 0.9cqw; }
+
+/* ===== NEW: running header, page X of Y, stripe, blank page, two-col ===== */
+.a4-running-header {
+  position: absolute;
+  top: 3%;
+  left: 9.5%;
+  right: 9.5%;
+  display: flex;
+  align-items: center;
+  gap: 1.5cqw;
+  padding-bottom: 0.8cqw;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 1.2cqw;
+  color: #6b7280;
+  z-index: 3;
+}
+.a4-header-logo { max-height: 3cqw; max-width: 8cqw; object-fit: contain; }
+.a4-header-title { letter-spacing: 0.05em; font-weight: 500; color: #4b5563; }
+
+/* When header is shown, push content down */
+.a4-content .a4-running-header + .a4-inner { top: 11.5%; }
+.a4-page:has(.a4-running-header) .a4-inner { top: 11.5%; }
+
+/* Accent stripe */
+.a4-stack.has-stripe .a4-content::before {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 0;
+  width: 1.4cqw;
+  height: 84%;
+  background: linear-gradient(180deg, var(--doc-accent, var(--accent)), transparent);
+  border-radius: 0 1cqw 1cqw 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Two-column body for appendix */
+.a4-body-twocol {
+  column-count: 2;
+  column-gap: 3cqw;
+  column-rule: 1px solid #e5e7eb;
+}
+.a4-body-twocol p { break-inside: avoid; }
+
+/* Blank separator page */
+.a4-blank {
+  background: #fafafb !important;
+}
+.a4-blank-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.a4-blank-label {
+  font-size: 1.4cqw;
+  color: #d1d5db;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Page number with more breathing room for "Seite X von Y" */
+.a4-page-num {
+  min-width: 15cqw;
+  text-align: right;
+}

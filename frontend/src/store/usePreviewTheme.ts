@@ -41,6 +41,8 @@ export const CURRENCIES: Currency[] = [
   { code: 'SEK', symbol: 'kr', label: 'Schwedische Krone' },
 ];
 
+export type PageNumFormat = 'simple' | 'xOfY' | 'hidden';
+
 interface PreviewThemeState {
   accent: PreviewAccent;
   font: PreviewFont;
@@ -49,6 +51,12 @@ interface PreviewThemeState {
   footerText: string;
   showCoverDate: boolean;
   showToc: boolean;
+  // New formatting options
+  showHeader: boolean;
+  pageNumFormat: PageNumFormat;
+  blankBetween: boolean;
+  appendixTwoCol: boolean;
+  sectionStripe: boolean;
   hiddenSections: string[];
   sectionOrder: string[];
   currency: string;
@@ -59,6 +67,11 @@ interface PreviewThemeState {
   setFooterText: (t: string) => void;
   setShowCoverDate: (v: boolean) => void;
   setShowToc: (v: boolean) => void;
+  setShowHeader: (v: boolean) => void;
+  setPageNumFormat: (f: PageNumFormat) => void;
+  setBlankBetween: (v: boolean) => void;
+  setAppendixTwoCol: (v: boolean) => void;
+  setSectionStripe: (v: boolean) => void;
   toggleSection: (id: string) => void;
   setSectionOrder: (order: string[]) => void;
   moveSection: (id: string, direction: 'up' | 'down') => void;
@@ -92,6 +105,11 @@ export const usePreviewTheme = create<PreviewThemeState>()(
       footerText: '',
       showCoverDate: true,
       showToc: true,
+      showHeader: false,
+      pageNumFormat: 'xOfY',
+      blankBetween: false,
+      appendixTwoCol: false,
+      sectionStripe: true,
       hiddenSections: [],
       sectionOrder: DEFAULT_SECTION_ORDER,
       currency: 'EUR',
@@ -102,6 +120,11 @@ export const usePreviewTheme = create<PreviewThemeState>()(
       setFooterText: (t) => set({ footerText: t }),
       setShowCoverDate: (v) => set({ showCoverDate: v }),
       setShowToc: (v) => set({ showToc: v }),
+      setShowHeader: (v) => set({ showHeader: v }),
+      setPageNumFormat: (f) => set({ pageNumFormat: f }),
+      setBlankBetween: (v) => set({ blankBetween: v }),
+      setAppendixTwoCol: (v) => set({ appendixTwoCol: v }),
+      setSectionStripe: (v) => set({ sectionStripe: v }),
       toggleSection: (id) => {
         const cur = get().hiddenSections;
         set({ hiddenSections: cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id] });
@@ -126,6 +149,11 @@ export const usePreviewTheme = create<PreviewThemeState>()(
           footerText: s.footerText,
           showCoverDate: s.showCoverDate,
           showToc: s.showToc,
+          showHeader: s.showHeader,
+          pageNumFormat: s.pageNumFormat,
+          blankBetween: s.blankBetween,
+          appendixTwoCol: s.appendixTwoCol,
+          sectionStripe: s.sectionStripe,
           sectionOrder: s.sectionOrder,
           hiddenSections: s.hiddenSections,
         };
@@ -141,6 +169,13 @@ export const usePreviewTheme = create<PreviewThemeState>()(
         if (typeof s.footerText === 'string') next.footerText = s.footerText;
         if (typeof s.showCoverDate === 'boolean') next.showCoverDate = s.showCoverDate;
         if (typeof s.showToc === 'boolean') next.showToc = s.showToc;
+        if (typeof s.showHeader === 'boolean') next.showHeader = s.showHeader;
+        if (typeof s.pageNumFormat === 'string' && ['simple', 'xOfY', 'hidden'].includes(s.pageNumFormat)) {
+          next.pageNumFormat = s.pageNumFormat as PageNumFormat;
+        }
+        if (typeof s.blankBetween === 'boolean') next.blankBetween = s.blankBetween;
+        if (typeof s.appendixTwoCol === 'boolean') next.appendixTwoCol = s.appendixTwoCol;
+        if (typeof s.sectionStripe === 'boolean') next.sectionStripe = s.sectionStripe;
         if (Array.isArray(s.sectionOrder)) next.sectionOrder = s.sectionOrder as string[];
         if (Array.isArray(s.hiddenSections)) next.hiddenSections = s.hiddenSections as string[];
         if (Object.keys(next).length > 0) set(next);
