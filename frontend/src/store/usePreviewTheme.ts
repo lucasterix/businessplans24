@@ -3,7 +3,8 @@ import { persist } from 'zustand/middleware';
 
 export type PreviewAccent = 'blue' | 'green' | 'graphite' | 'terracotta' | 'aubergine';
 export type PreviewFont = 'serif' | 'sans' | 'modern';
-export type CoverStyle = 'classic' | 'modern' | 'minimal';
+export type CoverStyle = 'classic' | 'modern' | 'minimal' | 'bold' | 'editorial';
+export type CoverDecor = 'none' | 'chart' | 'wave' | 'geometric';
 
 export const ACCENT_COLORS: Record<PreviewAccent, { name: string; hex: string; soft: string }> = {
   blue: { name: 'Klassisch', hex: '#0b5cff', soft: 'rgba(11, 92, 255, 0.1)' },
@@ -23,6 +24,15 @@ export const COVER_STYLES: Record<CoverStyle, { name: string; desc: string }> = 
   classic: { name: 'Klassisch', desc: 'Zentriert, formal — passt zu Banken' },
   modern: { name: 'Modern', desc: 'Linksbündig, kräftig — für Pitches & Investoren' },
   minimal: { name: 'Minimal', desc: 'Reduziert, viel Weißraum' },
+  bold: { name: 'Bold', desc: 'Große Akzentfläche — markant für Investoren' },
+  editorial: { name: 'Editorial', desc: 'Band oben, wie ein Magazin-Cover' },
+};
+
+export const COVER_DECORS: Record<CoverDecor, { name: string; desc: string }> = {
+  none: { name: 'Keine', desc: 'Schlicht, ohne Grafik' },
+  chart: { name: 'Wachstum', desc: 'Balken & Pfeil nach oben' },
+  wave: { name: 'Welle', desc: 'Geschwungener Akzent unten' },
+  geometric: { name: 'Geometrisch', desc: 'Kreise & Linien, abstrakt' },
 };
 
 export interface Currency {
@@ -47,6 +57,7 @@ interface PreviewThemeState {
   accent: PreviewAccent;
   font: PreviewFont;
   coverStyle: CoverStyle;
+  coverDecor: CoverDecor;
   logoDataUrl: string | null;
   footerText: string;
   showCoverDate: boolean;
@@ -63,6 +74,7 @@ interface PreviewThemeState {
   setAccent: (a: PreviewAccent) => void;
   setFont: (f: PreviewFont) => void;
   setCoverStyle: (s: CoverStyle) => void;
+  setCoverDecor: (d: CoverDecor) => void;
   setLogo: (dataUrl: string | null) => void;
   setFooterText: (t: string) => void;
   setShowCoverDate: (v: boolean) => void;
@@ -101,6 +113,7 @@ export const usePreviewTheme = create<PreviewThemeState>()(
       accent: 'blue',
       font: 'serif',
       coverStyle: 'classic',
+      coverDecor: 'chart',
       logoDataUrl: null,
       footerText: '',
       showCoverDate: true,
@@ -116,6 +129,7 @@ export const usePreviewTheme = create<PreviewThemeState>()(
       setAccent: (a) => set({ accent: a }),
       setFont: (f) => set({ font: f }),
       setCoverStyle: (s) => set({ coverStyle: s }),
+      setCoverDecor: (d) => set({ coverDecor: d }),
       setLogo: (dataUrl) => set({ logoDataUrl: dataUrl }),
       setFooterText: (t) => set({ footerText: t }),
       setShowCoverDate: (v) => set({ showCoverDate: v }),
@@ -145,6 +159,7 @@ export const usePreviewTheme = create<PreviewThemeState>()(
         return {
           accentHex: ACCENT_COLORS[s.accent].hex,
           coverStyle: s.coverStyle,
+          coverDecor: s.coverDecor,
           logoDataUrl: s.logoDataUrl,
           footerText: s.footerText,
           showCoverDate: s.showCoverDate,
@@ -162,6 +177,9 @@ export const usePreviewTheme = create<PreviewThemeState>()(
         const next: Partial<PreviewThemeState> = {};
         if (typeof s.coverStyle === 'string' && s.coverStyle in COVER_STYLES) {
           next.coverStyle = s.coverStyle as CoverStyle;
+        }
+        if (typeof s.coverDecor === 'string' && s.coverDecor in COVER_DECORS) {
+          next.coverDecor = s.coverDecor as CoverDecor;
         }
         if (typeof s.logoDataUrl === 'string' || s.logoDataUrl === null) {
           next.logoDataUrl = s.logoDataUrl as string | null;

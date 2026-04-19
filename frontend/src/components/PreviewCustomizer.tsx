@@ -4,10 +4,12 @@ import {
   ACCENT_COLORS,
   FONT_FAMILIES,
   COVER_STYLES,
+  COVER_DECORS,
   mergeSectionOrder,
   type PreviewAccent,
   type PreviewFont,
   type CoverStyle,
+  type CoverDecor,
   type PageNumFormat,
 } from '../store/usePreviewTheme';
 import { toast } from '../store/useToasts';
@@ -23,6 +25,7 @@ export default function PreviewCustomizer({ sections }: Props) {
     accent,
     font,
     coverStyle,
+    coverDecor,
     logoDataUrl,
     footerText,
     showCoverDate,
@@ -32,6 +35,7 @@ export default function PreviewCustomizer({ sections }: Props) {
     setAccent,
     setFont,
     setCoverStyle,
+    setCoverDecor,
     setLogo,
     setFooterText,
     setShowCoverDate,
@@ -165,6 +169,26 @@ export default function PreviewCustomizer({ sections }: Props) {
           </div>
 
           <div className="preview-custom-section">
+            <div className="preview-custom-label">Deckblatt-Grafik</div>
+            <div className="preview-cover-styles">
+              {(Object.keys(COVER_DECORS) as CoverDecor[]).map((key) => {
+                const d = COVER_DECORS[key];
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`preview-cover-style-card ${key === coverDecor ? 'is-active' : ''}`}
+                    onClick={() => setCoverDecor(key)}
+                  >
+                    <strong>{d.name}</strong>
+                    <span>{d.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="preview-custom-section">
             <div className="preview-custom-label">Akzentfarbe</div>
             <div className="preview-accent-row">
               {(Object.keys(ACCENT_COLORS) as PreviewAccent[]).map((key) => (
@@ -218,7 +242,7 @@ export default function PreviewCustomizer({ sections }: Props) {
             </label>
             <label className="preview-toggle-row">
               <input type="checkbox" checked={showToc} onChange={(e) => setShowToc(e.target.checked)} />
-              <span>Inhaltsverzeichnis auf dem Deckblatt</span>
+              <span>Eigene Seite fürs Inhaltsverzeichnis</span>
             </label>
           </div>
 

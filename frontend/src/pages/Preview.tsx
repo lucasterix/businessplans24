@@ -62,6 +62,7 @@ export default function Preview() {
     theme,
     theme.accent,
     theme.coverStyle,
+    theme.coverDecor,
     theme.logoDataUrl,
     theme.footerText,
     theme.showCoverDate,
@@ -211,6 +212,7 @@ export default function Preview() {
           watermark={!plan.paid}
           logoDataUrl={theme.logoDataUrl}
           coverStyle={theme.coverStyle}
+          coverDecor={theme.coverDecor}
           footerText={theme.footerText}
           showCoverDate={theme.showCoverDate}
           showToc={theme.showToc}

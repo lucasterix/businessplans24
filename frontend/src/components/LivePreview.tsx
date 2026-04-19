@@ -91,6 +91,7 @@ export default function LivePreview({ activeSectionId }: Props) {
       compact
       logoDataUrl={theme.logoDataUrl}
       coverStyle={theme.coverStyle}
+      coverDecor={theme.coverDecor}
       footerText={theme.footerText}
       showCoverDate={theme.showCoverDate}
       showToc={theme.showToc}
