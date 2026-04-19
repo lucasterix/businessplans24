@@ -5,7 +5,6 @@ import { useLocalizedPath } from '../i18n/useLocalizedPath';
 import { SECTIONS } from '../wizard/schema';
 import { StepView } from '../wizard/StepView';
 import LivePreview from '../components/LivePreview';
-import PreviewCustomizer from '../components/PreviewCustomizer';
 import TrustRow from '../components/TrustRow';
 import PriceAnchor from '../components/PriceAnchor';
 import Testimonials from '../components/Testimonials';
@@ -245,14 +244,6 @@ export default function Home() {
           <aside className="home-preview-pane">
             <LivePreview activeSectionId={section.id} />
           </aside>
-        </div>
-
-        {/* Full-width customizer below the wizard — more room than the sidebar. */}
-        <div className="home-customizer-wide">
-          <PreviewCustomizer
-            sections={SECTIONS.map((s) => ({ key: s.id, title: t(s.titleKey) }))}
-            defaultOpen={false}
-          />
         </div>
       </div>
 

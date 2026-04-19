@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import type { Section, Step } from './schema';
 import { FieldRenderer } from './fields/FieldRenderer';
 import { generateSectionStreamed } from '../api/client';
 import { usePlanStore } from '../store/usePlanStore';
 import { toast } from '../store/useToasts';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 interface Props {
   section: Section;
@@ -24,6 +26,7 @@ function isEmpty(v: unknown): boolean {
 export function StepView({ section, step, isLastStepOfSection, isLastSection, onNext, onBack }: Props) {
   const { t, i18n } = useTranslation();
   const store = usePlanStore();
+  const loc = useLocalizedPath();
   const stepAnswers = store.answers[step.id] || {};
   const [generating, setGenerating] = useState(false);
   const [localText, setLocalText] = useState<string | undefined>(store.texts[section.id]);
@@ -194,22 +197,32 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
                 <strong>{t(section.titleKey)}</strong> ist in der Vorschau eingefügt.
               </p>
               <div className="wizard-regen-group">
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={handleRegenerate}
-                  disabled={!canRegenerate}
-                  title={canRegenerate
-                    ? `Noch ${regenLeft} von ${MAX_REGENS} Neugenerierungen übrig`
-                    : 'Limit erreicht — weitere Neugenerierungen verfügbar nach Kauf'}
-                >
-                  {t('wizard.regenerate')}
-                </button>
-                <span className={`wizard-regen-counter ${canRegenerate ? '' : 'is-exhausted'}`}>
-                  {canRegenerate
-                    ? `${regenLeft}/${MAX_REGENS}`
-                    : 'Limit erreicht'}
-                </span>
+                {canRegenerate ? (
+                  <>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      onClick={handleRegenerate}
+                      title={`Noch ${regenLeft} von ${MAX_REGENS} Neugenerierungen übrig`}
+                    >
+                      {t('wizard.regenerate')}
+                    </button>
+                    <span className="wizard-regen-counter">
+                      {regenLeft}/{MAX_REGENS}
+                    </span>
+                  </>
+                ) : (
+                  <Link
+                    to={loc('pricing')}
+                    className="wizard-regen-upsell"
+                    title="Kauf einen Einzelplan für unbegrenzte Neugenerierungen"
+                  >
+                    <span className="wizard-regen-counter is-exhausted">3/3</span>
+                    <span className="wizard-regen-upsell-text">
+                      Mehr generieren → <strong>Einzelplan kaufen</strong>
+                    </span>
+                  </Link>
+                )}
               </div>
             </div>
           ) : (

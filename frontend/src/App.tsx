@@ -45,6 +45,14 @@ function currentLangFromPath(pathname: string): string {
   return isSupportedLanguage(seg) ? seg : 'de';
 }
 
+// Regional Indicator Symbols for each supported language. Browsers map these
+// to flag glyphs on all major platforms except Windows (where they fall
+// through to just the letters — still readable, no layout breakage).
+const LANG_FLAGS: Record<string, string> = {
+  de: '🇩🇪', en: '🇬🇧', fr: '🇫🇷', it: '🇮🇹', es: '🇪🇸',
+  pl: '🇵🇱', cs: '🇨🇿', hu: '🇭🇺', ro: '🇷🇴', bg: '🇧🇬',
+};
+
 function LangLink({ to, children, className }: { to: string; children: React.ReactNode; className?: string }) {
   const location = useLocation();
   const lang = currentLangFromPath(location.pathname);
@@ -80,7 +88,10 @@ function Header() {
     <header className="site-header">
       <LangLink to="" className="logo">
         <span className="logo-mark">B24</span>
-        <span className="logo-name">{t('app.name')}</span>
+        <span className="logo-text">
+          <span className="logo-name">Businessplans24</span>
+          <span className="logo-slogan">einfach gründen</span>
+        </span>
       </LangLink>
       <nav className="site-nav">
         <LangLink to="example" className="nav-hide-sm">
@@ -102,7 +113,7 @@ function Header() {
           onChange={(e) => switchLanguage(e.target.value)}
         >
           {SUPPORTED_LANGUAGES.map((l) => (
-            <option key={l} value={l}>{l.toUpperCase()}</option>
+            <option key={l} value={l}>{LANG_FLAGS[l] || ''} {l.toUpperCase()}</option>
           ))}
         </select>
       </nav>

@@ -227,11 +227,13 @@ export default function Preview() {
             {t('wizard.back')} zum Wizard
           </Link>
         </div>
-
-        <PreviewCustomizer sections={sectionsList} />
       </aside>
 
-      <div className="preview-doc-wrap" style={docStyle}>
+      <div className="preview-doc-column" style={docStyle}>
+        <div className="preview-toolbar">
+          <PreviewCustomizer sections={sectionsList} defaultOpen={false} />
+        </div>
+        <div className="preview-doc-wrap">
         <A4Document
           title={companyName}
           subtitle={subtitle}
@@ -252,6 +254,7 @@ export default function Preview() {
           sectionDividers={theme.sectionDividers}
           financeCharts={theme.financeCharts}
         />
+        </div>
       </div>
     </div>
   );
