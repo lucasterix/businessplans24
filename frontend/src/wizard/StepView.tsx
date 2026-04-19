@@ -96,12 +96,6 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
     }
   };
 
-  const handleTextEdit = (v: string) => {
-    setLocalText(v);
-    setTextComplete(v.trim().length > 0);
-    store.setText(section.id, v);
-  };
-
   const handleNext = () => {
     if (missingRequired) {
       setTriedSubmit(true);
@@ -166,38 +160,36 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
 
       {isLastStepOfSection && (
         <div className="wizard-generate-block">
-          {localText != null && (localText.length > 0 || generating) ? (
-            <>
-              <div className="wizard-generated-head">
-                <h3>{t(section.titleKey)}</h3>
-                {!generating && (
-                  <button className="btn btn-ghost btn-sm" onClick={handleGenerate}>
-                    {t('wizard.regenerate')}
-                  </button>
-                )}
-                {generating && (
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => abortRef.current?.abort()}
-                  >
-                    Abbrechen
-                  </button>
-                )}
+          {generating ? (
+            <div className="wizard-generate-status wizard-generate-status--streaming">
+              <div className="streaming-bar" aria-hidden>
+                <span /><span /><span />
               </div>
-              <p className="muted tiny">{t('wizard.generated_hint')}</p>
-              <textarea
-                className={`generated-text ${generating ? 'is-streaming' : ''}`}
-                rows={10}
-                value={localText}
-                readOnly={generating}
-                onChange={(e) => handleTextEdit(e.target.value)}
-              />
-              {generating && (
-                <div className="streaming-bar" aria-hidden>
-                  <span /><span /><span />
-                </div>
-              )}
-            </>
+              <p>
+                Claude schreibt <strong>{t(section.titleKey)}</strong> — erscheint live rechts in der Vorschau.
+              </p>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => abortRef.current?.abort()}
+              >
+                Abbrechen
+              </button>
+            </div>
+          ) : localText != null && localText.length > 0 ? (
+            <div className="wizard-generate-status wizard-generate-status--done">
+              <span className="wizard-generate-check" aria-hidden>✓</span>
+              <p>
+                <strong>{t(section.titleKey)}</strong> ist in der Vorschau eingefügt.
+              </p>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={handleGenerate}
+              >
+                {t('wizard.regenerate')}
+              </button>
+            </div>
           ) : (
             <div className="wizard-generate-cta">
               <p className="muted">

@@ -1883,6 +1883,43 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .preview-theme-body span { display: none; } /* desc only in tooltip */
 
+/* ===== Wizard generate status (replaces the editable textarea) ===== */
+.wizard-generate-status {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.wizard-generate-status p { margin: 0; flex: 1 1 auto; color: var(--text); }
+.wizard-generate-status--done {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+.wizard-generate-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+}
+.wizard-generate-status--streaming {
+  background: linear-gradient(90deg, rgba(11, 92, 255, 0.07), rgba(11, 92, 255, 0.03));
+  border-color: rgba(11, 92, 255, 0.3);
+  flex-wrap: wrap;
+}
+.wizard-generate-status--streaming .streaming-bar { flex: 0 0 auto; }
+
 /* ===== Wizard prefill banner + field prefill tag ===== */
 .wizard-prefill-banner {
   display: flex;
@@ -4153,9 +4190,16 @@ body {
 .preview-cover-styles {
   display: grid;
   gap: 0.4rem;
-  grid-template-columns: repeat(3, 1fr);
+  /* Container query on the customizer: 1-col in narrow sidebar (<360px),
+     2-col in medium, 3-col in wide contexts like the Preview-page rail. */
+  grid-template-columns: 1fr;
 }
-@media (max-width: 420px) { .preview-cover-styles { grid-template-columns: 1fr; } }
+@container (min-width: 360px) {
+  .preview-cover-styles { grid-template-columns: 1fr 1fr; }
+}
+@container (min-width: 520px) {
+  .preview-cover-styles { grid-template-columns: repeat(3, 1fr); }
+}
 .preview-cover-style-card {
   display: grid;
   gap: 0.15rem;
@@ -4167,6 +4211,9 @@ body {
   font-family: inherit;
   text-align: left;
   transition: all 120ms;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .preview-cover-style-card:hover { border-color: var(--border-hi); }
 .preview-cover-style-card strong { font-size: 12.5px; color: var(--text); }
