@@ -3,7 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { fetchPricing, getPlan, startCheckout, type Plan, type PricingResponse } from '../api/client';
 import { usePlanStore } from '../store/usePlanStore';
+import { usePreviewTheme, ACCENT_COLORS, FONT_FAMILIES } from '../store/usePreviewTheme';
 import { useLocalizedPath } from '../i18n/useLocalizedPath';
+import PreviewCustomizer from '../components/PreviewCustomizer';
 
 export default function Preview() {
   const { t, i18n } = useTranslation();
@@ -13,6 +15,7 @@ export default function Preview() {
   const [loading, setLoading] = useState(false);
   const store = usePlanStore();
   const loc = useLocalizedPath();
+  const theme = usePreviewTheme();
 
   useEffect(() => {
     if (!planId) return;
@@ -67,7 +70,15 @@ export default function Preview() {
     { key: 'appendix', title: t('sections.appendix.title') },
   ];
 
-  const sectionsDone = sections.filter((s) => plan.texts[s.key]).length;
+  const visibleSections = sections.filter((s) => !theme.hiddenSections.includes(s.key));
+  const sectionsDone = visibleSections.filter((s) => plan.texts[s.key]).length;
+  const accentCol = ACCENT_COLORS[theme.accent];
+  const fontStack = FONT_FAMILIES[theme.font].stack;
+  const docStyle: React.CSSProperties = {
+    '--doc-accent': accentCol.hex,
+    '--doc-accent-soft': accentCol.soft,
+    fontFamily: fontStack,
+  } as React.CSSProperties;
 
   return (
     <div className="preview-layout">
@@ -124,9 +135,11 @@ export default function Preview() {
             {t('wizard.back')} zum Wizard
           </Link>
         </div>
+
+        <PreviewCustomizer sections={sections} />
       </aside>
 
-      <article className="preview-document" lang={i18n.language.slice(0, 2)}>
+      <article className="preview-document" lang={i18n.language.slice(0, 2)} style={docStyle}>
         <header className="preview-document-cover">
           <p className="preview-document-eyebrow">Businessplan</p>
           <h1 className="preview-document-title">{companyName}</h1>
@@ -134,7 +147,7 @@ export default function Preview() {
           <div className="preview-document-divider" />
           <p className="preview-document-toc-title">Inhalt</p>
           <ol className="preview-document-toc">
-            {sections.map((s, i) => (
+            {visibleSections.map((s, i) => (
               <li key={s.key}>
                 <span className="toc-num">{String(i + 1).padStart(2, '0')}</span>
                 <span>{s.title}</span>
@@ -144,7 +157,7 @@ export default function Preview() {
           </ol>
         </header>
 
-        {sections.map((s, i) => (
+        {visibleSections.map((s, i) => (
           <section key={s.key} className="preview-section">
             <div className="preview-section-head">
               <span className="preview-section-num">{String(i + 1).padStart(2, '0')}</span>

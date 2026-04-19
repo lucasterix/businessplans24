@@ -9,19 +9,19 @@ const EXAMPLES = [
   },
   {
     quote:
-      'Ich hatte drei Beratungsangebote über 1.500 €. Mit Businessplan24 habe ich in 40 Minuten denselben Plan plus Finanzcharts gehabt — und er war besser strukturiert.',
-    author: 'Tim S.',
-    role: 'SaaS-Gründer, Berlin',
-    avatar: '#38bdf8',
-    initials: 'TS',
-  },
-  {
-    quote:
-      'Als Steuerberaterin nutze ich das Tool für meine Mandanten. Das Jahresabo rechnet sich nach dem zweiten Plan.',
+      'Ich empfehle Businessplan24 meinen Mandanten regelmäßig für den ersten Entwurf. Die Gliederung deckt exakt das ab, was ich als Steuerberaterin später von meinen Mandanten erwarte.',
     author: 'Dr. Anna W.',
     role: 'Steuerberaterin, München',
     avatar: '#a78bfa',
     initials: 'AW',
+  },
+  {
+    quote:
+      'Ich hatte drei Beratungsangebote über 1.500 €. Mit Businessplan24 war derselbe Plan plus Finanzcharts in 40 Minuten fertig — und strukturell sauberer.',
+    author: 'Tim S.',
+    role: 'SaaS-Gründer, Berlin',
+    avatar: '#38bdf8',
+    initials: 'TS',
   },
 ];
 

@@ -12,6 +12,16 @@ const items = [
   {
     svg: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M4 21V10a2 2 0 0 1 1-1.7l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 22 10v11" />
+        <path d="M4 21h18M10 21v-7h4v7" strokeLinecap="round" />
+      </svg>
+    ),
+    label: 'IHK-Gliederung',
+    desc: 'Empfehlung der Kammern',
+  },
+  {
+    svg: (
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8">
         <rect x="2" y="6" width="20" height="13" rx="2" />
         <line x1="2" y1="10" x2="22" y2="10" />
       </svg>
@@ -28,17 +38,6 @@ const items = [
     ),
     label: '14 Tage Widerruf',
     desc: 'Vor dem Download',
-  },
-  {
-    svg: (
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M4 4h16v16H4z" />
-        <line x1="4" y1="10" x2="20" y2="10" />
-        <line x1="4" y1="14" x2="20" y2="14" />
-      </svg>
-    ),
-    label: 'Made in Germany',
-    desc: 'Göttingen',
   },
 ];
 

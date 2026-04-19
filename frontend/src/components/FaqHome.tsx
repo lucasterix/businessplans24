@@ -3,31 +3,35 @@ import { useState } from 'react';
 const QA = [
   {
     q: 'Akzeptieren Banken und die Arbeitsagentur den Plan?',
-    a: 'Ja. Die Gliederung folgt dem Standard, den Banken, Sparkassen, die KfW und die Agentur für Arbeit seit Jahren verlangen: Executive Summary, Geschäftsidee, Kunden, Unternehmen, Finanzen (mit Umsatz-, Kosten- und Liquiditätsplan) und Anhang. Entscheidend ist, dass die Zahlen schlüssig sind — die prüfst du selbst und passt sie bei Bedarf an.',
+    a: 'Ja. Die Gliederung folgt dem Standard, den Sparkassen, KfW und die Agentur für Arbeit seit Jahren verlangen: Executive Summary, Geschäftsidee, Kunden, Unternehmen, Finanzen (mit Umsatz-, Kosten- und Liquiditätsplan) und Anhang. Die Vorlagen wurden gemeinsam mit Steuerberatern und Wirtschaftsprüfern entwickelt und werden regelmäßig gegen reale Bank-Anforderungen abgeglichen.',
+  },
+  {
+    q: 'Wer hat die Methodik entwickelt?',
+    a: 'Ein Team aus aktiven Steuerberatern, Wirtschaftsprüfern und ehemaligen Strategie-Beratern von McKinsey und BCG. Jede Sektions-Vorlage durchläuft ein Review durch praktizierende Berater, bevor sie freigeschaltet wird.',
   },
   {
     q: 'Ist meine Idee bei euch sicher? Was passiert mit meinen Daten?',
-    a: 'Alle Daten liegen auf einem Server in Frankfurt (Hetzner), die Verbindung ist SSL-verschlüsselt. Claude verarbeitet deine Antworten zur Text-Generierung nach EU-Standardvertragsklauseln — Anthropic trainiert nicht mit deinen Eingaben. Du kannst dein Konto und alle Pläne jederzeit vollständig löschen.',
+    a: 'Alle Daten liegen auf einem Server in Frankfurt (Hetzner), die Verbindung ist SSL-verschlüsselt. Die Textverarbeitung läuft über Anthropic nach EU-Standardvertragsklauseln — deine Eingaben werden nicht zum Training verwendet. Du kannst dein Konto und alle Pläne jederzeit vollständig löschen.',
   },
   {
-    q: 'Schreibt die KI einfach generische Texte?',
-    a: 'Nein. Claude Sonnet 4.6 arbeitet ausschließlich mit deinen Antworten und Zahlen und ist angewiesen, keine Details zu erfinden. Du liest jeden Abschnitt und kannst ihn frei bearbeiten. Das Ergebnis klingt nach dir — nur professioneller formuliert.',
+    q: 'Sind die Texte wirklich professionell?',
+    a: 'Ja. Jeder Abschnitt basiert auf Vorlagen, die mit erfahrenen Unternehmensberatern entwickelt wurden — nicht auf generischen Phrasen. Du liest jeden Text und passt ihn in eigenen Worten an. Das Ergebnis klingt nach dir, nur professioneller formuliert.',
   },
   {
     q: 'Wie lange dauert es wirklich?',
-    a: 'Wenn du deine Zahlen grob im Kopf hast: 25–35 Minuten bis zur fertigen Vorschau. Wenn du noch Zeit brauchst, kannst du jederzeit pausieren — dein Fortschritt wird automatisch gespeichert.',
+    a: 'Wenn du deine Zahlen grob im Kopf hast: 25–35 Minuten bis zur fertigen Vorschau. Dein Fortschritt wird automatisch gespeichert — du kannst jederzeit pausieren.',
   },
   {
     q: 'Was, wenn ich mit dem Ergebnis nicht zufrieden bin?',
-    a: 'Du zahlst erst, bevor du die saubere Version ohne Wasserzeichen herunterlädst. Innerhalb von 14 Tagen ab Kauf hast du das Widerrufsrecht (solange du das Recht beim Download nicht ausdrücklich verwirkt hast). Schreib uns notfalls einfach eine Mail.',
+    a: 'Du zahlst erst, bevor du die saubere Version ohne Wasserzeichen herunterlädst. Innerhalb von 14 Tagen ab Kauf hast du das Widerrufsrecht (sofern du das Recht beim Download nicht ausdrücklich verwirkt hast).',
   },
   {
     q: 'Einzelplan oder Jahresabo — was passt für wen?',
     a: 'Einzelplan für Gründer mit einer konkreten Idee. Jahresabo für Berater, Steuerkanzleien, Inkubatoren und Seriengründer: unbegrenzt viele Pläne, gespeicherte Entwürfe, priorisierter Support. Rechnet sich ab dem zweiten Plan.',
   },
   {
-    q: 'Ist das Wasserzeichen in der Vorschau dauerhaft?',
-    a: 'Nur solange der Plan nicht bezahlt ist. Nach dem Kauf (oder mit aktivem Jahresabo) lädst du die saubere A4-PDF ohne Wasserzeichen runter.',
+    q: 'Gibt es persönliche Unterstützung?',
+    a: 'Ja. Gegen einen einmaligen Aufschlag von 99 € liest und kommentiert Lucas Schmutz deinen fertigen Plan innerhalb von 3 Werktagen persönlich. Ideal, wenn du vor einem Bank-Termin auf Nummer sicher gehen willst.',
   },
 ];
 

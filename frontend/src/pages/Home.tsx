@@ -9,6 +9,7 @@ import TrustRow from '../components/TrustRow';
 import PriceAnchor from '../components/PriceAnchor';
 import Testimonials from '../components/Testimonials';
 import FaqHome from '../components/FaqHome';
+import ExpertsRow from '../components/ExpertsRow';
 import PlanCounter from '../components/PlanCounter';
 import ExitIntent from '../components/ExitIntent';
 import WizardToast from '../components/WizardToast';
@@ -112,7 +113,7 @@ export default function Home() {
       <section className="home-hero">
         <div className="home-hero-orbs" aria-hidden />
         <div className="home-hero-content">
-          <div className="home-hero-badge">✨ Claude Sonnet 4.6 · 30 Minuten · keine Abo-Falle</div>
+          <div className="home-hero-badge">⚖️ Entwickelt mit Steuerberatern, Wirtschaftsprüfern &amp; Ex-McKinsey/BCG-Beratern</div>
           <h1>{t('landing.hero_title')}</h1>
           <p>{t('landing.hero_sub')}</p>
           <PlanCounter />
@@ -213,6 +214,7 @@ export default function Home() {
       </section>
 
       <div className="home-shell">
+        <ExpertsRow />
         <PriceAnchor />
         <Testimonials />
         <FaqHome />

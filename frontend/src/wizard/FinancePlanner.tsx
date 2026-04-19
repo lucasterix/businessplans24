@@ -6,6 +6,7 @@ import { generateSectionStreamed } from '../api/client';
 import { toast } from '../store/useToasts';
 import { FlexChart, type ChartKind } from '../components/MiniCharts';
 import ChartTypePicker from '../components/ChartTypePicker';
+import { usePreviewTheme, CURRENCIES } from '../store/usePreviewTheme';
 
 interface Props {
   onNext: () => void;
@@ -41,6 +42,8 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
   const [textComplete, setTextComplete] = useState<boolean>(!!store.texts.finance);
   const abortRef = useRef<AbortController | null>(null);
   const [chartKinds, setChartKinds] = useState<ChartKinds>(loadChartKinds);
+  const { currency, setCurrency } = usePreviewTheme();
+  const currencyMeta = CURRENCIES.find((c) => c.code === currency) || CURRENCIES[0];
 
   const updateKind = (which: keyof ChartKinds, kind: ChartKind) => {
     const next = { ...chartKinds, [which]: kind };
@@ -104,7 +107,15 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
         <section className="finance-data-panel">
           <header className="finance-panel-head">
             <h3>Zahlen pro Periode</h3>
-            <div className="finance-starting">
+            <div className="finance-header-controls">
+              <label className="finance-currency-select">
+                <span className="muted tiny">Währung</span>
+                <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+                  {CURRENCIES.map((c) => (
+                    <option key={c.code} value={c.code}>{c.code} — {c.label}</option>
+                  ))}
+                </select>
+              </label>
               <label>
                 <span className="muted tiny">Startkapital</span>
                 <div className="finance-starting-input">
@@ -114,7 +125,7 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
                     value={startingCash}
                     onChange={(e) => setStartingCash(Number(e.target.value) || 0)}
                   />
-                  <span className="finance-currency">€</span>
+                  <span className="finance-currency">{currencyMeta.symbol}</span>
                 </div>
               </label>
             </div>

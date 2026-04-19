@@ -2433,3 +2433,288 @@ body {
   z-index: 1;
 }
 .preview-document > * { position: relative; z-index: 2; }
+
+/* ===== Wizard layout rebalance (fixes the squished columns) ===== */
+
+/* Under 980: single column stack (preview hidden behind FAB) */
+/* 980-1279: wizard dominant, preview as accompanying card */
+@media (min-width: 980px) and (max-width: 1279px) {
+  .home-split {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr) !important;
+    gap: 1.75rem !important;
+  }
+  .wizard-steplist { display: none; }
+  .home-wizard-pane { min-width: 0; }
+  .home-preview-pane {
+    position: sticky;
+    top: calc(60px + 1rem);
+    max-height: calc(100vh - 80px);
+    overflow: auto;
+  }
+}
+
+/* 1280+: three-column with narrow preview */
+@media (min-width: 1280px) {
+  .home-split {
+    grid-template-columns: 190px minmax(0, 1.6fr) minmax(0, 0.95fr) !important;
+    gap: 2rem !important;
+  }
+  .wizard-steplist { display: block !important; }
+}
+
+/* Extra-wide: more room for the preview */
+@media (min-width: 1500px) {
+  .home-split {
+    grid-template-columns: 200px minmax(0, 1.4fr) minmax(0, 1fr) !important;
+  }
+}
+
+/* Never let pane content overflow-break its parent grid */
+.home-wizard-pane,
+.home-preview-pane {
+  min-width: 0;
+}
+
+/* Tighter preview paper inside the narrower right column */
+@media (min-width: 980px) {
+  .live-preview .preview-paper {
+    padding: 1.5rem 1.25rem;
+    font-size: 14px;
+  }
+  .live-preview .preview-paper p {
+    font-size: 13.5px;
+    hyphens: auto;
+  }
+  .live-preview-toolbar h3 {
+    font-size: 11px;
+  }
+  .live-preview .preview-paper-section-head h2 {
+    font-size: 0.95rem;
+  }
+}
+
+/* Wizard pane breathing room on medium widths */
+.home-wizard-pane {
+  container-type: inline-size;
+}
+.wizard-step h2 { word-wrap: break-word; }
+.field-label { word-wrap: break-word; hyphens: auto; }
+
+/* Choice chips may have long labels — allow wrapping */
+.choice-chip { white-space: nowrap; }
+.choice-grid { line-height: 1.4; }
+
+/* Finance step: on narrow preview, stack vertically below 1200 */
+@media (max-width: 1279px) {
+  .finance-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== Experts / Social Proof section ===== */
+.experts-section {
+  max-width: var(--container);
+  margin: 3rem auto 0;
+  padding: 0 1.25rem;
+  text-align: center;
+}
+.experts-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 0.5rem;
+}
+.experts-section h2 {
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  max-width: 700px;
+  margin: 0 auto 0.75rem;
+  letter-spacing: -0.01em;
+}
+.experts-lead {
+  color: var(--text-dim);
+  max-width: 620px;
+  margin: 0 auto 2rem;
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.experts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.expert-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+  transition: border-color 150ms, transform 150ms, box-shadow 150ms;
+}
+.expert-chip:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.expert-chip-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.expert-chip > div { display: flex; flex-direction: column; }
+.expert-chip strong { font-size: 14px; color: var(--text); }
+.expert-chip span { font-size: 12.5px; color: var(--text-mute); line-height: 1.4; }
+
+/* ===== Preview customizer ===== */
+.preview-customizer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.preview-customizer summary {
+  list-style: none;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+.preview-customizer summary::-webkit-details-marker { display: none; }
+.preview-customizer summary::after {
+  content: '+';
+  margin-left: auto;
+  font-size: 18px;
+  color: var(--text-mute);
+  font-weight: 400;
+}
+.preview-customizer details[open] summary::after { content: '−'; }
+.preview-customizer-icon { font-size: 16px; }
+.preview-customizer-content {
+  padding: 0.5rem 1rem 1rem;
+  display: grid;
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+}
+.preview-custom-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 0.4rem;
+}
+.preview-accent-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.preview-accent-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  outline-offset: 2px;
+  transition: transform 120ms, border-color 120ms;
+}
+.preview-accent-swatch:hover { transform: scale(1.1); }
+.preview-accent-swatch.is-active {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px var(--text);
+}
+.preview-font-row {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.preview-font-chip {
+  padding: 0.45rem 0.7rem;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-dim);
+  transition: all 120ms;
+}
+.preview-font-chip.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.preview-font-chip:hover:not(.is-active) {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.preview-section-toggles {
+  display: grid;
+  gap: 0.25rem;
+}
+.preview-section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  font-size: 13.5px;
+  cursor: pointer;
+  color: var(--text);
+  transition: opacity 120ms;
+}
+.preview-section-toggle.is-hidden { opacity: 0.45; }
+.preview-section-toggle input {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* ===== Preview uses CSS variables for accent so customizer swaps live ===== */
+.preview-document-divider {
+  background: var(--doc-accent, var(--accent)) !important;
+}
+.toc-num {
+  color: var(--doc-accent, var(--accent)) !important;
+}
+.preview-section-num {
+  color: var(--doc-accent, var(--accent)) !important;
+  background: var(--doc-accent-soft, var(--accent-soft)) !important;
+}
+
+/* ===== Finance: currency select ===== */
+.finance-header-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.finance-header-controls label {
+  display: grid;
+  gap: 0.3rem;
+}
+.finance-currency-select select {
+  padding: 0.5rem 0.7rem !important;
+  min-height: 38px !important;
+  min-width: 140px;
+  font-size: 13.5px !important;
+  background: #fff !important;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* On narrow screens, stack the finance header controls */
+@media (max-width: 520px) {
+  .finance-panel-head { flex-direction: column; align-items: stretch; }
+  .finance-header-controls { width: 100%; }
+  .finance-currency-select select { width: 100%; }
+}
