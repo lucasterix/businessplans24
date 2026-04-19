@@ -1,8 +1,11 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes, Link, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, Link, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './store/useAuth';
 import CookieBanner from './components/CookieBanner';
+import LangLayout from './components/LangLayout';
+import RootRedirect from './components/RootRedirect';
+import { SUPPORTED_LANGUAGES, isSupportedLanguage } from './i18n/supportedLanguages';
 
 const Home = lazy(() => import('./pages/Home'));
 const Wizard = lazy(() => import('./pages/Wizard'));
@@ -30,19 +33,53 @@ const AdminAds = lazy(() => import('./admin/pages/AdminAds'));
 const AdminKeywords = lazy(() => import('./admin/pages/AdminKeywords'));
 const RequireAdmin = lazy(() => import('./admin/RequireAdmin'));
 
+function currentLangFromPath(pathname: string): string {
+  const seg = pathname.split('/')[1] || '';
+  return isSupportedLanguage(seg) ? seg : 'de';
+}
+
+function LangLink({ to, children, className }: { to: string; children: React.ReactNode; className?: string }) {
+  const location = useLocation();
+  const lang = currentLangFromPath(location.pathname);
+  const clean = to.replace(/^\/+/, '');
+  const href = clean ? `/${lang}/${clean}` : `/${lang}`;
+  return (
+    <Link to={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 function Header() {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const currentLang = currentLangFromPath(location.pathname);
+
+  const switchLanguage = (next: string) => {
+    if (!isSupportedLanguage(next)) return;
+    i18n.changeLanguage(next);
+    const parts = location.pathname.split('/');
+    if (isSupportedLanguage(parts[1])) {
+      parts[1] = next;
+      const rest = location.search + location.hash;
+      window.location.href = parts.join('/') + rest;
+    } else {
+      window.location.href = `/${next}` + location.pathname + location.search + location.hash;
+    }
+  };
 
   return (
     <header className="site-header">
-      <Link to="/" className="logo">
+      <LangLink to="" className="logo">
         <span className="logo-mark">B24</span>
         <span className="logo-name">{t('app.name')}</span>
-      </Link>
+      </LangLink>
       <nav className="site-nav">
-        <Link to="/beispiel" className="nav-hide-sm">Beispiel</Link>
-        <Link to="/pricing" className="nav-hide-sm">{t('nav.pricing')}</Link>
+        <LangLink to="example" className="nav-hide-sm">
+          {t('nav.example', { defaultValue: 'Beispiel' })}
+        </LangLink>
+        <LangLink to="pricing" className="nav-hide-sm">{t('nav.pricing')}</LangLink>
         {user ? (
           <>
             <Link to="/account" className="nav-hide-sm">{t('nav.account')}</Link>
@@ -54,11 +91,12 @@ function Header() {
         <select
           className="lang-select"
           aria-label="Language"
-          value={i18n.language.slice(0, 2)}
-          onChange={(e) => i18n.changeLanguage(e.target.value)}
+          value={currentLang}
+          onChange={(e) => switchLanguage(e.target.value)}
         >
-          <option value="de">DE</option>
-          <option value="en">EN</option>
+          {SUPPORTED_LANGUAGES.map((l) => (
+            <option key={l} value={l}>{l.toUpperCase()}</option>
+          ))}
         </select>
       </nav>
     </header>
@@ -70,14 +108,24 @@ function Footer() {
   return (
     <footer className="site-footer">
       <span>© {new Date().getFullYear()} Businessplan24</span>
-      <Link to="/founder">Gründer</Link>
-      <Link to="/partner">Partner</Link>
-      <Link to="/beispiel">Beispiel</Link>
-      <Link to="/imprint">{t('footer.imprint')}</Link>
-      <Link to="/privacy">{t('footer.privacy')}</Link>
-      <Link to="/terms">{t('footer.terms')}</Link>
+      <LangLink to="founder">{t('nav.founder', { defaultValue: 'Gründer' })}</LangLink>
+      <LangLink to="partner">{t('nav.partner', { defaultValue: 'Partner' })}</LangLink>
+      <LangLink to="example">{t('nav.example', { defaultValue: 'Beispiel' })}</LangLink>
+      <LangLink to="imprint">{t('footer.imprint')}</LangLink>
+      <LangLink to="privacy">{t('footer.privacy')}</LangLink>
+      <LangLink to="terms">{t('footer.terms')}</LangLink>
     </footer>
   );
+}
+
+function LegacyRedirect({ to }: { to: string }) {
+  return <Navigate to={`/de${to}`} replace />;
+}
+
+function LegacyExampleRedirect() {
+  const params = useParams();
+  void params;
+  return <Navigate to="/de/example" replace />;
 }
 
 function PublicShell() {
@@ -87,28 +135,52 @@ function PublicShell() {
       <main className="site-main">
         <Suspense fallback={<div className="loading-fallback" />}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            {/* Language-prefixed content routes */}
+            <Route path="/:lang" element={<LangLayout />}>
+              <Route index element={<Home />} />
+              <Route path="pricing" element={<Pricing />} />
+              <Route path="founder" element={<Founder />} />
+              <Route path="example" element={<Example />} />
+              <Route path="beispiel" element={<Example />} />
+              <Route path="partner" element={<Partner />} />
+              <Route path="imprint" element={<Imprint />} />
+              <Route path="privacy" element={<Privacy />} />
+              <Route path="terms" element={<Terms />} />
+              <Route path="businessplan-gastronomie" element={<SeoLanding variantKey="gastronomie" />} />
+              <Route path="businessplan-kfw" element={<SeoLanding variantKey="kfw" />} />
+              <Route path="businessplan-arbeitsagentur" element={<SeoLanding variantKey="arbeitsagentur" />} />
+              <Route path="businessplan-ecommerce" element={<SeoLanding variantKey="ecommerce" />} />
+              <Route path="businessplan-beratung" element={<SeoLanding variantKey="beratung" />} />
+            </Route>
+
+            {/* Application routes — language-agnostic (inherit user setting) */}
             <Route path="/wizard" element={<Wizard />} />
             <Route path="/wizard/:planId" element={<Wizard />} />
             <Route path="/preview/:planId" element={<Preview />} />
-            <Route path="/pricing" element={<Pricing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Account />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/imprint" element={<Imprint />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/founder" element={<Founder />} />
-            <Route path="/beispiel" element={<Example />} />
-            <Route path="/example" element={<Example />} />
-            <Route path="/partner" element={<Partner />} />
-            <Route path="/businessplan-gastronomie" element={<SeoLanding variantKey="gastronomie" />} />
-            <Route path="/businessplan-kfw" element={<SeoLanding variantKey="kfw" />} />
-            <Route path="/businessplan-arbeitsagentur" element={<SeoLanding variantKey="arbeitsagentur" />} />
-            <Route path="/businessplan-ecommerce" element={<SeoLanding variantKey="ecommerce" />} />
-            <Route path="/businessplan-beratung" element={<SeoLanding variantKey="beratung" />} />
             <Route path="/payment/:state" element={<PaymentReturn />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+
+            {/* Root → detected language */}
+            <Route path="/" element={<RootRedirect />} />
+
+            {/* Legacy unprefixed content routes → 301 to /de/... */}
+            <Route path="/pricing" element={<LegacyRedirect to="/pricing" />} />
+            <Route path="/founder" element={<LegacyRedirect to="/founder" />} />
+            <Route path="/beispiel" element={<LegacyExampleRedirect />} />
+            <Route path="/example" element={<LegacyRedirect to="/example" />} />
+            <Route path="/partner" element={<LegacyRedirect to="/partner" />} />
+            <Route path="/imprint" element={<LegacyRedirect to="/imprint" />} />
+            <Route path="/privacy" element={<LegacyRedirect to="/privacy" />} />
+            <Route path="/terms" element={<LegacyRedirect to="/terms" />} />
+            <Route path="/businessplan-gastronomie" element={<LegacyRedirect to="/businessplan-gastronomie" />} />
+            <Route path="/businessplan-kfw" element={<LegacyRedirect to="/businessplan-kfw" />} />
+            <Route path="/businessplan-arbeitsagentur" element={<LegacyRedirect to="/businessplan-arbeitsagentur" />} />
+            <Route path="/businessplan-ecommerce" element={<LegacyRedirect to="/businessplan-ecommerce" />} />
+            <Route path="/businessplan-beratung" element={<LegacyRedirect to="/businessplan-beratung" />} />
+
+            <Route path="*" element={<Navigate to="/de" replace />} />
           </Routes>
         </Suspense>
       </main>

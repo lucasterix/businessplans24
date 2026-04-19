@@ -1,6 +1,11 @@
 # Build stage
 FROM node:18-alpine as build
 
+ARG VITE_META_PIXEL_ID=""
+ARG VITE_GOOGLE_ADS_ID=""
+ENV VITE_META_PIXEL_ID=$VITE_META_PIXEL_ID
+ENV VITE_GOOGLE_ADS_ID=$VITE_GOOGLE_ADS_ID
+
 WORKDIR /app
 
 # Copy package files

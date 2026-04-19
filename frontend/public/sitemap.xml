@@ -2,100 +2,129 @@
 <urlset
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <!-- Bilingual surfaces (DE primary, EN via client-side i18n) -->
+
+  <!-- Bilingual pages (full hreflang cluster) -->
   <url>
-    <loc>https://businessplans24.com/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://businessplans24.com/" />
+    <loc>https://businessplans24.com/de</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://businessplans24.com/de" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/pricing</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/pricing" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/pricing" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://businessplans24.com/pricing" />
+    <loc>https://businessplans24.com/en</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://businessplans24.com/de" />
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://businessplans24.com/de/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://businessplans24.com/de/pricing" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/partner</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/partner" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/partner" />
+    <loc>https://businessplans24.com/en/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://businessplans24.com/de/pricing" />
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://businessplans24.com/de/partner</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/partner" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/en/partner" />
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://businessplans24.com/en/partner</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/partner" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://businessplans24.com/en/partner" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- German-market-only pages (KfW, Arbeitsagentur etc. don't exist in other markets) -->
+  <!-- Single-language (DE) — KfW, Arbeitsagentur and example are German-market only -->
   <url>
-    <loc>https://businessplans24.com/beispiel</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/beispiel" />
+    <loc>https://businessplans24.com/de/example</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/example" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/founder</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/founder" />
+    <loc>https://businessplans24.com/de/founder</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/founder" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/businessplan-gastronomie</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/businessplan-gastronomie" />
+    <loc>https://businessplans24.com/de/businessplan-gastronomie</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/businessplan-gastronomie" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/businessplan-kfw</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/businessplan-kfw" />
+    <loc>https://businessplans24.com/de/businessplan-kfw</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/businessplan-kfw" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/businessplan-arbeitsagentur</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/businessplan-arbeitsagentur" />
+    <loc>https://businessplans24.com/de/businessplan-arbeitsagentur</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/businessplan-arbeitsagentur" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/businessplan-ecommerce</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/businessplan-ecommerce" />
+    <loc>https://businessplans24.com/de/businessplan-ecommerce</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/businessplan-ecommerce" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/businessplan-beratung</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/businessplan-beratung" />
+    <loc>https://businessplans24.com/de/businessplan-beratung</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://businessplans24.com/de/businessplan-beratung" />
     <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Legal pages -->
+  <!-- Legal pages (required German jurisdiction) -->
   <url>
-    <loc>https://businessplans24.com/imprint</loc>
+    <loc>https://businessplans24.com/de/imprint</loc>
     <lastmod>2026-04-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/privacy</loc>
+    <loc>https://businessplans24.com/de/privacy</loc>
     <lastmod>2026-04-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://businessplans24.com/terms</loc>
+    <loc>https://businessplans24.com/de/terms</loc>
     <lastmod>2026-04-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>

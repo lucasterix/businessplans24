@@ -44,6 +44,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_META_PIXEL_ID: ${VITE_META_PIXEL_ID:-}
+        VITE_GOOGLE_ADS_ID: ${VITE_GOOGLE_ADS_ID:-}
     container_name: businessplans24-frontend
     restart: unless-stopped
     ports:

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 import { SECTIONS } from '../wizard/schema';
 import { StepView } from '../wizard/StepView';
 import LivePreview from '../components/LivePreview';
@@ -23,6 +24,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
   const [toast, setToast] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
+  const loc = useLocalizedPath();
 
   useEffect(() => {
     if (!store.planId) {
@@ -165,7 +167,7 @@ export default function Home() {
             <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="btn btn-primary btn-lg">
               Jetzt starten
             </a>
-            <Link to="/pricing" className="btn btn-ghost btn-lg">{t('landing.cta_pricing')}</Link>
+            <Link to={loc('pricing')} className="btn btn-ghost btn-lg">{t('landing.cta_pricing')}</Link>
           </div>
         </section>
       </div>

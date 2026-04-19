@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 const STORAGE_KEY = 'bp24-exit-shown';
 
 export default function ExitIntent() {
   const [show, setShow] = useState(false);
+  const loc = useLocalizedPath();
 
   useEffect(() => {
     if (sessionStorage.getItem(STORAGE_KEY)) return;
@@ -35,7 +37,7 @@ export default function ExitIntent() {
           Gültig für die nächste Zahlung.
         </p>
         <div className="exit-ctas">
-          <Link to="/pricing" className="btn btn-primary btn-lg" onClick={() => setShow(false)}>
+          <Link to={loc('pricing')} className="btn btn-primary btn-lg" onClick={() => setShow(false)}>
             Jetzt einlösen
           </Link>
           <button className="btn btn-link" onClick={() => setShow(false)}>

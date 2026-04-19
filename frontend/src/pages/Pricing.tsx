@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { fetchPricing, type PricingResponse } from '../api/client';
 import { Link } from 'react-router-dom';
 import DocHead from '../components/DocHead';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 export default function Pricing() {
   const { t } = useTranslation();
   const [pricing, setPricing] = useState<PricingResponse | null>(null);
+  const loc = useLocalizedPath();
 
   useEffect(() => {
     fetchPricing().then(setPricing).catch(() => {});
@@ -29,7 +31,7 @@ export default function Pricing() {
             {pricing ? `${pricing.oneTime} ${pricing.currency}` : '—'}
           </p>
           <p className="muted">{t('pricing.one_time_desc')}</p>
-          <Link to="/" className="btn btn-primary">{t('pricing.select_onetime')}</Link>
+          <Link to={loc('')} className="btn btn-primary">{t('pricing.select_onetime')}</Link>
         </article>
         <article className="price-card price-card--highlight">
           <h2>{t('pricing.subscription')}</h2>
@@ -43,7 +45,7 @@ export default function Pricing() {
               <li key={f}>{f}</li>
             ))}
           </ul>
-          <Link to="/login?next=/" className="btn btn-primary">{t('pricing.select_sub')}</Link>
+          <Link to={`/login?next=${encodeURIComponent(loc(''))}`} className="btn btn-primary">{t('pricing.select_sub')}</Link>
         </article>
       </div>
 

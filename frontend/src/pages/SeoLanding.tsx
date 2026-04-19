@@ -4,6 +4,7 @@ import TrustRow from '../components/TrustRow';
 import Testimonials from '../components/Testimonials';
 import FaqHome from '../components/FaqHome';
 import DocHead from '../components/DocHead';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 interface Variant {
   slug: string;
@@ -93,6 +94,7 @@ interface Props {
 
 export default function SeoLanding({ variantKey }: Props) {
   const v = VARIANTS[variantKey];
+  const loc = useLocalizedPath();
   if (!v) return null;
 
   return (
@@ -105,8 +107,8 @@ export default function SeoLanding({ variantKey }: Props) {
         <PlanCounter />
         <TrustRow />
         <div style={{ marginTop: '2rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <Link to="/" className="btn btn-primary btn-lg">Jetzt starten — kostenlos</Link>
-          <Link to="/beispiel" className="btn btn-ghost btn-lg">Beispiel ansehen</Link>
+          <Link to={loc('')} className="btn btn-primary btn-lg">Jetzt starten — kostenlos</Link>
+          <Link to={loc('example')} className="btn btn-ghost btn-lg">Beispiel ansehen</Link>
         </div>
       </section>
 
@@ -127,8 +129,8 @@ export default function SeoLanding({ variantKey }: Props) {
           <h2>Bereit anzufangen?</h2>
           <p className="muted">In 30 Minuten hast du den Plan. Keine Abo-Falle.</p>
           <div className="home-final-ctas">
-            <Link to="/" className="btn btn-primary btn-lg">Plan jetzt starten</Link>
-            <Link to="/pricing" className="btn btn-ghost btn-lg">Preise ansehen</Link>
+            <Link to={loc('')} className="btn btn-primary btn-lg">Plan jetzt starten</Link>
+            <Link to={loc('pricing')} className="btn btn-ghost btn-lg">Preise ansehen</Link>
           </div>
         </section>
       </div>

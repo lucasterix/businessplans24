@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import DocHead from '../components/DocHead';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 export default function Founder() {
+  const loc = useLocalizedPath();
   return (
     <div className="founder-page">
       <DocHead
@@ -65,7 +67,7 @@ export default function Founder() {
         </p>
 
         <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <Link to="/" className="btn btn-primary btn-lg">Jetzt kostenlos starten</Link>
+          <Link to={loc('')} className="btn btn-primary btn-lg">Jetzt kostenlos starten</Link>
         </p>
       </section>
     </div>

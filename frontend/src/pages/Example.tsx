@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import DocHead from '../components/DocHead';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 const SECTIONS = [
   {
@@ -47,6 +49,9 @@ Der Kapitalbedarf verteilt sich auf Einbau und Ausstattung (54 000 €), Warenla
 ];
 
 export default function Example() {
+  const { t } = useTranslation();
+  void t;
+  const loc = useLocalizedPath();
   return (
     <div className="example-layout">
       <DocHead
@@ -62,8 +67,8 @@ export default function Example() {
           Du kannst ihn scrollen, lesen, vergleichen. Keine Registrierung nötig.
         </p>
         <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/" className="btn btn-primary">Eigenen Plan starten</Link>
-          <Link to="/pricing" className="btn btn-ghost">Preise ansehen</Link>
+          <Link to={loc('')} className="btn btn-primary">Eigenen Plan starten</Link>
+          <Link to={loc('pricing')} className="btn btn-ghost">Preise ansehen</Link>
         </div>
       </section>
 
@@ -85,7 +90,7 @@ export default function Example() {
       <section className="example-cta">
         <h2>Bereit, deinen eigenen zu schreiben?</h2>
         <p className="muted">Dein Plan steht in 30 Minuten. 49 € einmalig.</p>
-        <Link to="/" className="btn btn-primary btn-lg" style={{ marginTop: '1rem' }}>Jetzt starten</Link>
+        <Link to={loc('')} className="btn btn-primary btn-lg" style={{ marginTop: '1rem' }}>Jetzt starten</Link>
       </section>
     </div>
   );

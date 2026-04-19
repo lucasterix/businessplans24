@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 const KEY = 'bp24-consent';
 
@@ -48,6 +49,7 @@ function loadPixels() {
 
 export default function CookieBanner() {
   const [consent, setConsent] = useState<Consent>(null);
+  const loc = useLocalizedPath();
 
   useEffect(() => {
     const stored = localStorage.getItem(KEY) as Consent;
@@ -71,7 +73,7 @@ export default function CookieBanner() {
         <p>
           Wir nutzen technisch notwendige Cookies für Login & Wizard-Speicherung. Mit deinem Einverständnis aktivieren wir zusätzlich Marketing-Cookies (Meta, Google Ads), damit wir dir hilfreiche Werbung zeigen können.
           {' '}
-          <Link to="/privacy">Mehr erfahren</Link>.
+          <Link to={loc('privacy')}>Mehr erfahren</Link>.
         </p>
         <div className="cookie-actions">
           <button className="btn btn-ghost" onClick={() => save('essential')}>Nur notwendige</button>

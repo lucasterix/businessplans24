@@ -2,8 +2,10 @@ import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import DocHead from '../components/DocHead';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 export default function Partner() {
+  const loc = useLocalizedPath();
   const [form, setForm] = useState({ name: '', email: '', company: '', country: 'DE', message: '' });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState<{ referralCode: string } | null>(null);
@@ -60,7 +62,7 @@ export default function Partner() {
           <p className="muted">
             Wir prüfen deine Bewerbung und melden uns innerhalb von 2 Werktagen bei dir. Bei Fragen erreichst du uns unter <a href="mailto:info@businessplans24.com">info@businessplans24.com</a>.
           </p>
-          <Link to="/" className="btn btn-primary" style={{ marginTop: '1rem' }}>Zur Startseite</Link>
+          <Link to={loc('')} className="btn btn-primary" style={{ marginTop: '1rem' }}>Zur Startseite</Link>
         </section>
       ) : (
         <section className="partner-form-wrap">
