@@ -125,6 +125,29 @@ export default function SeoLanding({ variantKey }: Props) {
         <Testimonials />
         <FaqHome />
 
+        <section className="seo-related">
+          <h2>Weitere Businessplan-Varianten</h2>
+          <p className="muted">Vielleicht passt ein anderer Anwendungsfall besser.</p>
+          <ul className="usecase-grid">
+            {Object.values(VARIANTS)
+              .filter((x) => x.slug !== v.slug)
+              .map((other) => (
+                <li key={other.slug}>
+                  <Link to={`/de/businessplan-${other.slug}`}>
+                    <strong>{other.h1.replace(' — in 30 Minuten', '')}</strong>
+                    <span>{other.lead.slice(0, 120)}…</span>
+                  </Link>
+                </li>
+              ))}
+            <li>
+              <Link to={loc('example')}>
+                <strong>Kompletter Beispielplan</strong>
+                <span>Nordlicht Café GmbH — realer Businessplan von Vorne bis Hinten durchlesbar.</span>
+              </Link>
+            </li>
+          </ul>
+        </section>
+
         <section className="home-final-cta">
           <h2>Bereit anzufangen?</h2>
           <p className="muted">In 30 Minuten hast du den Plan. Keine Abo-Falle.</p>

@@ -24,6 +24,7 @@ const Founder = lazy(() => import('./pages/Founder'));
 const Example = lazy(() => import('./pages/Example'));
 const Partner = lazy(() => import('./pages/Partner'));
 const SeoLanding = lazy(() => import('./pages/SeoLanding'));
+const Sitemap = lazy(() => import('./pages/Sitemap'));
 
 const AdminLayout = lazy(() => import('./admin/AdminLayout'));
 const AdminLogin = lazy(() => import('./admin/pages/AdminLogin'));
@@ -116,6 +117,7 @@ function Footer() {
       <LangLink to="imprint">{t('footer.imprint')}</LangLink>
       <LangLink to="privacy">{t('footer.privacy')}</LangLink>
       <LangLink to="terms">{t('footer.terms')}</LangLink>
+      <LangLink to="sitemap">Sitemap</LangLink>
     </footer>
   );
 }
@@ -155,7 +157,11 @@ function PublicShell() {
               <Route path="businessplan-arbeitsagentur" element={<SeoLanding variantKey="arbeitsagentur" />} />
               <Route path="businessplan-ecommerce" element={<SeoLanding variantKey="ecommerce" />} />
               <Route path="businessplan-beratung" element={<SeoLanding variantKey="beratung" />} />
+              <Route path="sitemap" element={<Sitemap />} />
             </Route>
+
+            {/* Sitemap without lang prefix also works (common SEO expectation) */}
+            <Route path="/sitemap" element={<Sitemap />} />
 
             {/* Application routes — language-agnostic (inherit user setting) */}
             <Route path="/wizard" element={<Wizard />} />

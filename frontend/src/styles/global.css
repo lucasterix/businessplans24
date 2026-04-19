@@ -1675,3 +1675,53 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--text-mute);
   letter-spacing: 0.05em;
 }
+
+/* ===== Usecase/related grids ===== */
+.home-usecase-links, .seo-related {
+  max-width: var(--container);
+  margin: 3rem auto 0;
+  padding: 0 1.25rem;
+}
+.home-usecase-links h2, .seo-related h2 {
+  text-align: center;
+  font-size: 1.55rem;
+  margin-bottom: 0.25rem;
+}
+.home-usecase-links > .muted, .seo-related > .muted {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.usecase-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.85rem;
+}
+.usecase-grid li a {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 120ms, transform 120ms, box-shadow 120ms;
+  box-shadow: var(--shadow-sm);
+}
+.usecase-grid li a:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.usecase-grid li strong {
+  font-size: 15.5px;
+  color: var(--text);
+}
+.usecase-grid li span {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}

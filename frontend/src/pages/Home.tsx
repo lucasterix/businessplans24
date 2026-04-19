@@ -187,6 +187,19 @@ export default function Home() {
         </ol>
       </section>
 
+      <section className="home-usecase-links">
+        <h2>Businessplan für deinen Anwendungsfall</h2>
+        <p className="muted">Spezifische Vorlagen und Anleitungen für die häufigsten Gründungswege.</p>
+        <ul className="usecase-grid">
+          <li><Link to="/de/businessplan-kfw"><strong>Businessplan für KfW-Startgeld</strong><span>Bank-tauglicher Plan für das KfW-Darlehen bis 125.000 €</span></Link></li>
+          <li><Link to="/de/businessplan-arbeitsagentur"><strong>Businessplan Gründungszuschuss</strong><span>Für die Arbeitsagentur (§ 93 SGB III) inkl. Tragfähigkeitsbescheinigung</span></Link></li>
+          <li><Link to="/de/businessplan-gastronomie"><strong>Businessplan Gastronomie</strong><span>Café, Restaurant, Bar — mit Wareneinsatz-Kalkulation</span></Link></li>
+          <li><Link to="/de/businessplan-ecommerce"><strong>Businessplan E-Commerce</strong><span>Online-Shops, D2C-Marken, Amazon FBA — mit CAC und LTV</span></Link></li>
+          <li><Link to="/de/businessplan-beratung"><strong>Businessplan Beratung</strong><span>Stundensatz, Akquise, Skalierung für Coach und Agentur</span></Link></li>
+          <li><Link to={loc('example')}><strong>Beispielplan ansehen</strong><span>Kompletter Businessplan eines Göttinger Cafés zum Durchlesen</span></Link></li>
+        </ul>
+      </section>
+
       <div className="home-shell">
         <PriceAnchor />
         <Testimonials />
