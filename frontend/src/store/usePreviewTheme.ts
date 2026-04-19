@@ -38,11 +38,31 @@ interface PreviewThemeState {
   accent: PreviewAccent;
   font: PreviewFont;
   hiddenSections: string[];
+  sectionOrder: string[];
   currency: string;
   setAccent: (a: PreviewAccent) => void;
   setFont: (f: PreviewFont) => void;
   toggleSection: (id: string) => void;
+  setSectionOrder: (order: string[]) => void;
+  moveSection: (id: string, direction: 'up' | 'down') => void;
   setCurrency: (code: string) => void;
+}
+
+export const DEFAULT_SECTION_ORDER = [
+  'executive_summary',
+  'business_idea',
+  'customers',
+  'company',
+  'finance',
+  'appendix',
+];
+
+/** Merge stored order with known sections: keep known ones from stored,
+ *  append any new sections from knownIds that weren't stored yet. */
+export function mergeSectionOrder(stored: string[] | undefined, knownIds: string[]): string[] {
+  const storedValid = (stored || []).filter((id) => knownIds.includes(id));
+  const missing = knownIds.filter((id) => !storedValid.includes(id));
+  return [...storedValid, ...missing];
 }
 
 export const usePreviewTheme = create<PreviewThemeState>()(
@@ -51,12 +71,23 @@ export const usePreviewTheme = create<PreviewThemeState>()(
       accent: 'blue',
       font: 'serif',
       hiddenSections: [],
+      sectionOrder: DEFAULT_SECTION_ORDER,
       currency: 'EUR',
       setAccent: (a) => set({ accent: a }),
       setFont: (f) => set({ font: f }),
       toggleSection: (id) => {
         const cur = get().hiddenSections;
         set({ hiddenSections: cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id] });
+      },
+      setSectionOrder: (order) => set({ sectionOrder: order }),
+      moveSection: (id, direction) => {
+        const order = [...get().sectionOrder];
+        const idx = order.indexOf(id);
+        if (idx < 0) return;
+        const target = direction === 'up' ? idx - 1 : idx + 1;
+        if (target < 0 || target >= order.length) return;
+        [order[idx], order[target]] = [order[target], order[idx]];
+        set({ sectionOrder: order });
       },
       setCurrency: (code) => set({ currency: code }),
     }),

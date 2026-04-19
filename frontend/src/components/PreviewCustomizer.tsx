@@ -1,11 +1,61 @@
-import { usePreviewTheme, ACCENT_COLORS, FONT_FAMILIES, type PreviewAccent, type PreviewFont } from '../store/usePreviewTheme';
+import { useState } from 'react';
+import {
+  usePreviewTheme,
+  ACCENT_COLORS,
+  FONT_FAMILIES,
+  mergeSectionOrder,
+  type PreviewAccent,
+  type PreviewFont,
+} from '../store/usePreviewTheme';
 
 interface Props {
   sections: Array<{ key: string; title: string }>;
 }
 
 export default function PreviewCustomizer({ sections }: Props) {
-  const { accent, font, hiddenSections, setAccent, setFont, toggleSection } = usePreviewTheme();
+  const {
+    accent,
+    font,
+    hiddenSections,
+    sectionOrder,
+    setAccent,
+    setFont,
+    toggleSection,
+    moveSection,
+    setSectionOrder,
+  } = usePreviewTheme();
+
+  const knownIds = sections.map((s) => s.key);
+  const orderedIds = mergeSectionOrder(sectionOrder, knownIds);
+  const sectionMap = Object.fromEntries(sections.map((s) => [s.key, s.title]));
+
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [hoverId, setHoverId] = useState<string | null>(null);
+
+  const onDragStart = (id: string) => (e: React.DragEvent) => {
+    setDragId(id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  const onDragOver = (id: string) => (e: React.DragEvent) => {
+    if (!dragId || dragId === id) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setHoverId(id);
+  };
+  const onDrop = (id: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    if (!dragId || dragId === id) return;
+    const next = [...orderedIds];
+    const fromIdx = next.indexOf(dragId);
+    const toIdx = next.indexOf(id);
+    if (fromIdx < 0 || toIdx < 0) return;
+    next.splice(fromIdx, 1);
+    next.splice(toIdx, 0, dragId);
+    setSectionOrder(next);
+    setDragId(null);
+    setHoverId(null);
+  };
+  const onDragEnd = () => { setDragId(null); setHoverId(null); };
 
   return (
     <div className="preview-customizer">
@@ -50,22 +100,56 @@ export default function PreviewCustomizer({ sections }: Props) {
           </div>
 
           <div className="preview-custom-section">
-            <div className="preview-custom-label">Sektionen</div>
-            <div className="preview-section-toggles">
-              {sections.map((s) => {
-                const hidden = hiddenSections.includes(s.key);
+            <div className="preview-custom-label-row">
+              <span className="preview-custom-label">Sektionen &amp; Reihenfolge</span>
+              <span className="preview-custom-hint">ziehen zum Umordnen</span>
+            </div>
+            <ul className="preview-section-list" role="list">
+              {orderedIds.map((id, idx) => {
+                const title = sectionMap[id];
+                const hidden = hiddenSections.includes(id);
+                const isDragging = dragId === id;
+                const isHoverTarget = hoverId === id && dragId !== id;
                 return (
-                  <label key={s.key} className={`preview-section-toggle ${hidden ? 'is-hidden' : ''}`}>
-                    <input
-                      type="checkbox"
-                      checked={!hidden}
-                      onChange={() => toggleSection(s.key)}
-                    />
-                    <span>{s.title}</span>
-                  </label>
+                  <li
+                    key={id}
+                    className={`preview-section-row ${hidden ? 'is-hidden' : ''} ${isDragging ? 'is-dragging' : ''} ${isHoverTarget ? 'is-drop-target' : ''}`}
+                    draggable
+                    onDragStart={onDragStart(id)}
+                    onDragOver={onDragOver(id)}
+                    onDrop={onDrop(id)}
+                    onDragEnd={onDragEnd}
+                  >
+                    <span className="preview-section-drag" aria-hidden>⋮⋮</span>
+                    <span className="preview-section-num-mini">{idx + 1}</span>
+                    <label className="preview-section-label">
+                      <input
+                        type="checkbox"
+                        checked={!hidden}
+                        onChange={() => toggleSection(id)}
+                      />
+                      <span>{title}</span>
+                    </label>
+                    <span className="preview-section-arrows">
+                      <button
+                        type="button"
+                        className="btn-icon btn-icon-sm"
+                        onClick={() => moveSection(id, 'up')}
+                        disabled={idx === 0}
+                        aria-label="Nach oben"
+                      >↑</button>
+                      <button
+                        type="button"
+                        className="btn-icon btn-icon-sm"
+                        onClick={() => moveSection(id, 'down')}
+                        disabled={idx === orderedIds.length - 1}
+                        aria-label="Nach unten"
+                      >↓</button>
+                    </span>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
         </div>
       </details>

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { fetchPricing, getPlan, startCheckout, type Plan, type PricingResponse } from '../api/client';
 import { usePlanStore } from '../store/usePlanStore';
-import { usePreviewTheme, ACCENT_COLORS, FONT_FAMILIES } from '../store/usePreviewTheme';
+import { usePreviewTheme, ACCENT_COLORS, FONT_FAMILIES, mergeSectionOrder } from '../store/usePreviewTheme';
 import { useLocalizedPath } from '../i18n/useLocalizedPath';
 import PreviewCustomizer from '../components/PreviewCustomizer';
 
@@ -70,7 +70,11 @@ export default function Preview() {
     { key: 'appendix', title: t('sections.appendix.title') },
   ];
 
-  const visibleSections = sections.filter((s) => !theme.hiddenSections.includes(s.key));
+  const orderedIds = mergeSectionOrder(theme.sectionOrder, sections.map((s) => s.key));
+  const orderedSections = orderedIds
+    .map((id) => sections.find((s) => s.key === id))
+    .filter((s): s is (typeof sections)[number] => !!s);
+  const visibleSections = orderedSections.filter((s) => !theme.hiddenSections.includes(s.key));
   const sectionsDone = visibleSections.filter((s) => plan.texts[s.key]).length;
   const accentCol = ACCENT_COLORS[theme.accent];
   const fontStack = FONT_FAMILIES[theme.font].stack;
