@@ -109,24 +109,30 @@ export default function AdminDashboard() {
           </p>
         ) : cf.error ? (
           <p className="muted">Fehler: {cf.error}</p>
-        ) : cf.analytics ? (
+        ) : (
           <>
-            <div className="stat-grid">
-              <StatCard label="Requests" value={cf.analytics.requests.all.toLocaleString()} />
-              <StatCard label="Cache-Hit-Rate" value={`${cf.analytics.requests.cachedPct} %`} />
-              <StatCard label="Bandbreite" value={fmtBytes(cf.analytics.bandwidth.allBytes)} />
-              <StatCard label="Bedrohungen blockiert" value={cf.analytics.threats.total.toLocaleString()} />
-            </div>
+            {cf.analytics ? (
+              <div className="stat-grid">
+                <StatCard label="Requests" value={cf.analytics.requests.all.toLocaleString()} />
+                <StatCard label="Cache-Hit-Rate" value={`${cf.analytics.requests.cachedPct} %`} />
+                <StatCard label="Bandbreite" value={fmtBytes(cf.analytics.bandwidth.allBytes)} />
+                <StatCard label="Bedrohungen blockiert" value={cf.analytics.threats.total.toLocaleString()} />
+              </div>
+            ) : (
+              <p className="muted tiny">
+                Analytics nicht verfügbar — Token hat vermutlich nicht den Scope <code>Zone:Analytics:Read</code>.
+              </p>
+            )}
             {cf.settings && (
               <p className="muted tiny" style={{ marginTop: '0.75rem' }}>
-                Einstellungen: Rocket Loader <strong>{cf.settings.rocketLoader}</strong> ·
+                Plan: <strong>{cf.planName}</strong> · Rocket Loader <strong>{cf.settings.rocketLoader}</strong> ·
                 Brotli <strong>{cf.settings.brotli}</strong> ·
                 HTTP/3 <strong>{cf.settings.http3}</strong> ·
                 Early Hints <strong>{cf.settings.earlyHints}</strong>
               </p>
             )}
           </>
-        ) : null}
+        )}
       </section>
 
       <section className="panel">

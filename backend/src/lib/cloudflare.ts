@@ -45,20 +45,9 @@ export async function getZoneSnapshot(hours = 24): Promise<CfZoneSnapshot> {
   try {
     const zone = await cfGet<{ id: string; plan: { name: string }; status: string }>(`/zones/${zoneId}`);
 
-    // Dashboard analytics (since=-<minutes>, until=0)
-    const since = -hours * 60;
-    const analytics = await cfGet<{
-      totals: {
-        requests: { all: number; cached: number; uncached: number };
-        bandwidth: { all: number; cached: number; uncached: number };
-        threats: { all: number };
-        uniques: { all: number };
-      };
-    }>(`/zones/${zoneId}/analytics/dashboard?since=${since}&until=0`);
-    const t = analytics.totals;
-    const reqAll = t.requests.all || 0;
-    const bwAll = t.bandwidth.all || 0;
-
+    // Settings are cheap + useful; analytics requires a wider-scoped token so
+    // we treat it as optional — missing permissions shouldn't take down the
+    // whole panel.
     const [rocketLoader, brotli, http3, earlyHints] = await Promise.all([
       cfGet<{ value: string }>(`/zones/${zoneId}/settings/rocket_loader`).then((r) => r.value).catch(() => 'unknown'),
       cfGet<{ value: string }>(`/zones/${zoneId}/settings/brotli`).then((r) => r.value).catch(() => 'unknown'),
@@ -66,12 +55,21 @@ export async function getZoneSnapshot(hours = 24): Promise<CfZoneSnapshot> {
       cfGet<{ value: string }>(`/zones/${zoneId}/settings/early_hints`).then((r) => r.value).catch(() => 'unknown'),
     ]);
 
-    return {
-      configured: true,
-      zoneId: zone.id,
-      planName: zone.plan.name,
-      status: zone.status,
-      analytics: {
+    let analytics: CfAnalyticsSummary | undefined;
+    try {
+      const since = -hours * 60;
+      const a = await cfGet<{
+        totals: {
+          requests: { all: number; cached: number; uncached: number };
+          bandwidth: { all: number; cached: number; uncached: number };
+          threats: { all: number };
+          uniques: { all: number };
+        };
+      }>(`/zones/${zoneId}/analytics/dashboard?since=${since}&until=0`);
+      const t = a.totals;
+      const reqAll = t.requests.all || 0;
+      const bwAll = t.bandwidth.all || 0;
+      analytics = {
         periodHours: hours,
         requests: {
           all: reqAll,
@@ -86,7 +84,17 @@ export async function getZoneSnapshot(hours = 24): Promise<CfZoneSnapshot> {
         },
         threats: { total: t.threats.all },
         uniques: t.uniques.all,
-      },
+      };
+    } catch (err) {
+      console.warn('[cf] analytics unavailable', (err as Error).message);
+    }
+
+    return {
+      configured: true,
+      zoneId: zone.id,
+      planName: zone.plan.name,
+      status: zone.status,
+      analytics,
       settings: { rocketLoader, brotli, http3, earlyHints },
     };
   } catch (err) {
