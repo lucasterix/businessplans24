@@ -1,4 +1,5 @@
 import puppeteer, { type Browser } from 'puppeteer';
+import { renderFinanceChartsBlock, type FinancePayload } from './pdfCharts.js';
 
 export interface PlanSettings {
   logoDataUrl?: string;
@@ -13,6 +14,9 @@ export interface PlanSettings {
   blankBetween?: boolean;
   appendixTwoCol?: boolean;
   sectionStripe?: boolean;
+  sectionDividers?: boolean;
+  financeCharts?: boolean;
+  currency?: string;
   sectionOrder?: string[];
   hiddenSections?: string[];
 }
@@ -122,6 +126,9 @@ function buildHtml(input: RenderInput): string {
   const blankBetween = settings.blankBetween === true;
   const appendixTwoCol = settings.appendixTwoCol === true;
   const sectionStripe = settings.sectionStripe !== false;
+  const sectionDividers = settings.sectionDividers === true;
+  const financeCharts = settings.financeCharts !== false;
+  const currency = (settings.currency || 'EUR').toUpperCase();
   const logoUrl = typeof settings.logoDataUrl === 'string' && settings.logoDataUrl.startsWith('data:') ? settings.logoDataUrl : '';
   const footerText = esc(settings.footerText || '');
 
@@ -133,7 +140,11 @@ function buildHtml(input: RenderInput): string {
     .filter((k) => input.texts[k as string]);
   const order = (requestedOrder.length ? requestedOrder : defaultOrder.filter((k) => input.texts[k])) as Array<keyof typeof titles>;
 
-  const totalPages = 1 + (showToc ? 1 : 0) + order.length + (blankBetween ? Math.max(0, order.length - 1) : 0);
+  // Each content section takes 1 page, optionally preceded by a divider (sectionDividers)
+  // or followed by a blank (blankBetween). Dividers + blank are mutually exclusive — dividers win.
+  const separatorsPerSection = sectionDividers ? 1 : 0;
+  const blanksBetween = !sectionDividers && blankBetween ? Math.max(0, order.length - 1) : 0;
+  const totalPages = 1 + (showToc ? 1 : 0) + order.length * (1 + separatorsPerSection) + blanksBetween;
 
   const headerHtml = (n: number) => {
     const parts: string[] = [];
@@ -169,11 +180,25 @@ function buildHtml(input: RenderInput): string {
       ${headerHtml(1)}
     </section>`;
 
+  // Walk the sequence once to assign page numbers for TOC entries + page refs.
+  // Pages after cover(1) + optional toc(2):
+  //   with dividers: [divider, content] per section
+  //   with blankBetween (no dividers): [content] + blank between
+  //   default: [content] per section
+  const contentPageRefs: number[] = [];
+  let cursor = 1 + (showToc ? 1 : 0); // last page so far
+  for (let i = 0; i < order.length; i++) {
+    if (sectionDividers) cursor++; // divider page
+    cursor++; // content page
+    contentPageRefs.push(cursor);
+    if (!sectionDividers && blankBetween && i < order.length - 1) cursor++; // blank page
+  }
+
   // --- Dedicated TOC page ---
   let tocPage = '';
   if (showToc) {
     const rows = order.map((k, i) => {
-      const pageRef = 1 + 1 + i * (blankBetween ? 2 : 1) + 1; // cover(1) + toc(1) + offset
+      const pageRef = contentPageRefs[i];
       return `
         <li>
           <span class="toc-num">${String(i + 1).padStart(2, '0')}</span>
@@ -192,10 +217,26 @@ function buildHtml(input: RenderInput): string {
   }
 
   // --- Content pages ---
-  const pageStart = 1 + (showToc ? 1 : 0); // first content page number
   let contentPages = '';
   order.forEach((k, i) => {
-    const pageN = pageStart + 1 + i * (blankBetween ? 2 : 1);
+    const pageN = contentPageRefs[i];
+
+    // Optional divider page before content
+    if (sectionDividers) {
+      const dividerPage = pageN - 1;
+      contentPages += `
+        <section class="page divider-page">
+          <div class="divider-inner">
+            <div class="divider-num">${String(i + 1).padStart(2, '0')}</div>
+            <div class="divider-rule"></div>
+            <h2 class="divider-title">${esc(titles[k])}</h2>
+            <p class="divider-eyebrow">${esc(lang === 'de' ? 'Kapitel' : 'Chapter')} ${i + 1} / ${order.length}</p>
+          </div>
+          ${footerText ? `<div class="running-footer">${footerText}</div>` : ''}
+          ${pageNumFormat !== 'hidden' ? `<div class="page-num">${esc(pageLabel(pageNumFormat, dividerPage, totalPages, lang))}</div>` : ''}
+        </section>`;
+    }
+
     const facts = (input.facts?.[String(k)] || [])
       .map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`)
       .join('');
@@ -207,6 +248,11 @@ function buildHtml(input: RenderInput): string {
     const bodyClass = k === 'appendix' && appendixTwoCol ? 'body body-twocol' : 'body';
     const stripeClass = sectionStripe ? 'has-stripe' : '';
 
+    // Inject finance charts into the Finance section when enabled + data exists
+    const chartsBlock = (k === 'finance' && financeCharts)
+      ? renderFinanceChartsBlock(input.finance as FinancePayload, accent, currency)
+      : '';
+
     contentPages += `
       <section class="page content-page ${stripeClass}">
         <div class="inner">
@@ -216,11 +262,12 @@ function buildHtml(input: RenderInput): string {
           </header>
           ${factsBlock}
           <div class="${bodyClass}">${body}</div>
+          ${chartsBlock}
         </div>
         ${headerHtml(pageN)}
       </section>`;
 
-    if (blankBetween && i < order.length - 1) {
+    if (!sectionDividers && blankBetween && i < order.length - 1) {
       contentPages += `
         <section class="page blank-page">
           <div class="blank-inner"><span class="blank-label">— ${lang === 'de' ? 'Trennseite' : 'Separator'} —</span></div>
@@ -322,6 +369,23 @@ function buildHtml(input: RenderInput): string {
   .blank-page { display: flex; align-items: center; justify-content: center; }
   .blank-inner { text-align: center; }
   .blank-label { color: #d1d5db; font-size: 9pt; letter-spacing: 0.2em; text-transform: uppercase; }
+
+  /* Section divider page (full-bleed numeral) */
+  .divider-page { display: flex; align-items: center; justify-content: center; background: #fafafa; }
+  .divider-inner { text-align: center; padding: 40mm 30mm; width: 100%; max-width: 160mm; }
+  .divider-num { font-size: 180pt; line-height: 1; font-weight: 800; color: ${accent}; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; opacity: 0.92; }
+  .divider-rule { width: 40mm; height: 2pt; background: ${accent}; margin: 8mm auto 10mm; }
+  .divider-title { font-size: 32pt; font-weight: 700; color: #0b1120; letter-spacing: -0.015em; margin: 0; }
+  .divider-eyebrow { font-size: 10pt; letter-spacing: 0.2em; text-transform: uppercase; color: #9ca3af; font-weight: 600; margin-top: 8mm; }
+
+  /* Finance charts + KPIs */
+  .finance-chart-block { margin-top: 6mm; display: flex; flex-direction: column; gap: 6mm; }
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; }
+  .kpi { background: #fafafb; border-radius: 2mm; padding: 4mm 5mm; border-left: 3pt solid ${accent}; }
+  .kpi-label { display: block; font-size: 8pt; color: #6b7280; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+  .kpi-value { display: block; font-size: 13pt; font-weight: 700; margin-top: 1mm; }
+  .chart-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 2mm; padding: 4mm 5mm; }
+  .chart-svg { width: 100%; height: auto; display: block; }
 
   ${watermarkCss}
 </style>

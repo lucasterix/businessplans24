@@ -30,6 +30,8 @@ interface Props {
   blankBetween?: boolean;
   appendixTwoCol?: boolean;
   sectionStripe?: boolean;
+  sectionDividers?: boolean;
+  financeCharts?: boolean;
 }
 
 const NUMS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'];
@@ -59,15 +61,20 @@ export default function A4Document({
   blankBetween = false,
   appendixTwoCol = false,
   sectionStripe = true,
+  sectionDividers = false,
+  financeCharts = true,
 }: Props) {
   const classes = ['a4-stack'];
   if (compact) classes.push('is-compact');
   classes.push(`cover-style-${coverStyle}`);
   if (sectionStripe) classes.push('has-stripe');
 
-  // 1 cover + (1 TOC if shown) + 1 per section + blank separators
+  // 1 cover + optional TOC + per section: [optional divider, content] + optional blank
   const tocPages = showToc ? 1 : 0;
-  const totalPages = 1 + tocPages + sections.length + (blankBetween ? Math.max(0, sections.length - 1) : 0);
+  const dividersActive = sectionDividers;
+  const dividerPages = dividersActive ? sections.length : 0;
+  const blanks = !dividersActive && blankBetween ? Math.max(0, sections.length - 1) : 0;
+  const totalPages = 1 + tocPages + dividerPages + sections.length + blanks;
 
   const Header = () =>
     showHeader ? (
@@ -176,11 +183,30 @@ export default function A4Document({
       {/* Content pages */}
       {sections.map((section, i) => {
         const isAppendix = section.key === 'appendix';
+        const isFinance = section.key === 'finance';
         const bodyClass = isAppendix && appendixTwoCol ? 'a4-body a4-body-twocol' : 'a4-body';
+
+        // Divider page sits before the content page when enabled
+        const dividerPage = dividersActive ? (
+          <section className="a4-page a4-divider">
+            <div className="a4-divider-inner">
+              <div className="a4-divider-num">{NUMS[i] || String(i + 1).padStart(2, '0')}</div>
+              <div className="a4-divider-rule" />
+              <h2 className="a4-divider-title">{section.title}</h2>
+              <p className="a4-divider-eyebrow">Kapitel {i + 1} / {sections.length}</p>
+            </div>
+            {footerText && <div className="a4-running-footer">{footerText}</div>}
+            {pageNumFormat !== 'hidden' && (
+              <div className="a4-page-num">{pageLabel(pageNumFormat, pageCursor, totalPages)}</div>
+            )}
+          </section>
+        ) : null;
+        if (dividerPage) pageCursor++;
+
         const pageN = pageCursor;
         pageCursor++;
 
-        const blankPage = blankBetween && i < sections.length - 1 ? (
+        const blankPage = !dividersActive && blankBetween && i < sections.length - 1 ? (
           <section className="a4-page a4-blank">
             <div className="a4-blank-inner">
               <span className="a4-blank-label">— Trennseite —</span>
@@ -194,6 +220,7 @@ export default function A4Document({
 
         return (
           <Fragment key={section.key}>
+            {dividerPage}
             <section className="a4-page a4-content">
               <Header />
               <div className="a4-inner">
@@ -223,6 +250,12 @@ export default function A4Document({
                   <p className="a4-placeholder">
                     {section.placeholder || 'Dieser Abschnitt wird im Wizard ausgefüllt.'}
                   </p>
+                )}
+
+                {isFinance && financeCharts && (
+                  <div className="a4-charts-hint">
+                    <span>📊 Finanz-Charts (Umsatz, Liquidität) erscheinen im PDF-Export</span>
+                  </div>
                 )}
               </div>
               {footerText && <div className="a4-running-footer">{footerText}</div>}

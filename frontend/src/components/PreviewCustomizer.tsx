@@ -48,11 +48,15 @@ export default function PreviewCustomizer({ sections }: Props) {
     blankBetween,
     appendixTwoCol,
     sectionStripe,
+    sectionDividers,
+    financeCharts,
     setShowHeader,
     setPageNumFormat,
     setBlankBetween,
     setAppendixTwoCol,
     setSectionStripe,
+    setSectionDividers,
+    setFinanceCharts,
   } = usePreviewTheme();
 
   const knownIds = sections.map((s) => s.key);
@@ -257,8 +261,28 @@ export default function PreviewCustomizer({ sections }: Props) {
               <span>Akzent-Streifen links am Rand</span>
             </label>
             <label className="preview-toggle-row">
-              <input type="checkbox" checked={blankBetween} onChange={(e) => setBlankBetween(e.target.checked)} />
-              <span>Trennseite zwischen Sektionen</span>
+              <input
+                type="checkbox"
+                checked={sectionDividers}
+                onChange={(e) => {
+                  setSectionDividers(e.target.checked);
+                  if (e.target.checked) setBlankBetween(false);
+                }}
+              />
+              <span>Kapitel-Trennseiten mit großer Nummer</span>
+            </label>
+            <label className="preview-toggle-row">
+              <input
+                type="checkbox"
+                checked={blankBetween}
+                disabled={sectionDividers}
+                onChange={(e) => setBlankBetween(e.target.checked)}
+              />
+              <span>Leere Trennseite zwischen Sektionen</span>
+            </label>
+            <label className="preview-toggle-row">
+              <input type="checkbox" checked={financeCharts} onChange={(e) => setFinanceCharts(e.target.checked)} />
+              <span>Finanz-Charts im PDF (Umsatz & Liquidität)</span>
             </label>
             <label className="preview-toggle-row">
               <input type="checkbox" checked={appendixTwoCol} onChange={(e) => setAppendixTwoCol(e.target.checked)} />

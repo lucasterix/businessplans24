@@ -1818,6 +1818,58 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   margin-top: 1px;
 }
 
+/* ===== A4 divider page + finance-charts hint ===== */
+.a4-page.a4-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+.a4-divider-inner {
+  text-align: center;
+  padding: 6cqw;
+  max-width: 80%;
+}
+.a4-divider-num {
+  font-size: 18cqw;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--doc-accent, #0b5cff);
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.92;
+}
+.a4-divider-rule {
+  width: 20%;
+  height: 0.25cqw;
+  background: var(--doc-accent, #0b5cff);
+  margin: 1.5cqw auto 2cqw;
+}
+.a4-divider-title {
+  font-size: 3.2cqw;
+  font-weight: 700;
+  color: #0b1120;
+  margin: 0;
+}
+.a4-divider-eyebrow {
+  font-size: 1cqw;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  font-weight: 600;
+  margin-top: 1.5cqw;
+}
+.a4-charts-hint {
+  margin-top: 2cqw;
+  padding: 1.2cqw 1.5cqw;
+  background: linear-gradient(135deg, rgba(11, 92, 255, 0.06), rgba(34, 197, 94, 0.06));
+  border: 1px dashed rgba(11, 92, 255, 0.3);
+  border-radius: 0.6cqw;
+  text-align: center;
+  font-size: 1.1cqw;
+  color: #4b5563;
+}
+
 /* ===== Searchable single-choice field (business model picker) ===== */
 .searchable-trigger {
   display: flex;

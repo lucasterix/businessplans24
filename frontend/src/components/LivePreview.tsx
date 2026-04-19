@@ -100,6 +100,8 @@ export default function LivePreview({ activeSectionId }: Props) {
       blankBetween={theme.blankBetween}
       appendixTwoCol={theme.appendixTwoCol}
       sectionStripe={theme.sectionStripe}
+      sectionDividers={theme.sectionDividers}
+      financeCharts={theme.financeCharts}
     />
   );
 }

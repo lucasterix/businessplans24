@@ -66,6 +66,8 @@ interface PreviewThemeState {
   showHeader: boolean;
   pageNumFormat: PageNumFormat;
   blankBetween: boolean;
+  sectionDividers: boolean;
+  financeCharts: boolean;
   appendixTwoCol: boolean;
   sectionStripe: boolean;
   hiddenSections: string[];
@@ -82,6 +84,8 @@ interface PreviewThemeState {
   setShowHeader: (v: boolean) => void;
   setPageNumFormat: (f: PageNumFormat) => void;
   setBlankBetween: (v: boolean) => void;
+  setSectionDividers: (v: boolean) => void;
+  setFinanceCharts: (v: boolean) => void;
   setAppendixTwoCol: (v: boolean) => void;
   setSectionStripe: (v: boolean) => void;
   toggleSection: (id: string) => void;
@@ -121,6 +125,8 @@ export const usePreviewTheme = create<PreviewThemeState>()(
       showHeader: false,
       pageNumFormat: 'xOfY',
       blankBetween: false,
+      sectionDividers: false,
+      financeCharts: true,
       appendixTwoCol: false,
       sectionStripe: true,
       hiddenSections: [],
@@ -137,6 +143,8 @@ export const usePreviewTheme = create<PreviewThemeState>()(
       setShowHeader: (v) => set({ showHeader: v }),
       setPageNumFormat: (f) => set({ pageNumFormat: f }),
       setBlankBetween: (v) => set({ blankBetween: v }),
+      setSectionDividers: (v) => set({ sectionDividers: v }),
+      setFinanceCharts: (v) => set({ financeCharts: v }),
       setAppendixTwoCol: (v) => set({ appendixTwoCol: v }),
       setSectionStripe: (v) => set({ sectionStripe: v }),
       toggleSection: (id) => {
@@ -169,6 +177,9 @@ export const usePreviewTheme = create<PreviewThemeState>()(
           blankBetween: s.blankBetween,
           appendixTwoCol: s.appendixTwoCol,
           sectionStripe: s.sectionStripe,
+          sectionDividers: s.sectionDividers,
+          financeCharts: s.financeCharts,
+          currency: s.currency,
           sectionOrder: s.sectionOrder,
           hiddenSections: s.hiddenSections,
         };
@@ -194,6 +205,8 @@ export const usePreviewTheme = create<PreviewThemeState>()(
         if (typeof s.blankBetween === 'boolean') next.blankBetween = s.blankBetween;
         if (typeof s.appendixTwoCol === 'boolean') next.appendixTwoCol = s.appendixTwoCol;
         if (typeof s.sectionStripe === 'boolean') next.sectionStripe = s.sectionStripe;
+        if (typeof s.sectionDividers === 'boolean') next.sectionDividers = s.sectionDividers;
+        if (typeof s.financeCharts === 'boolean') next.financeCharts = s.financeCharts;
         if (Array.isArray(s.sectionOrder)) next.sectionOrder = s.sectionOrder as string[];
         if (Array.isArray(s.hiddenSections)) next.hiddenSections = s.hiddenSections as string[];
         if (Object.keys(next).length > 0) set(next);

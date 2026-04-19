@@ -72,6 +72,8 @@ export default function Preview() {
     theme.blankBetween,
     theme.appendixTwoCol,
     theme.sectionStripe,
+    theme.sectionDividers,
+    theme.financeCharts,
     theme.sectionOrder,
     theme.hiddenSections,
   ]);
@@ -241,6 +243,8 @@ export default function Preview() {
           blankBetween={theme.blankBetween}
           appendixTwoCol={theme.appendixTwoCol}
           sectionStripe={theme.sectionStripe}
+          sectionDividers={theme.sectionDividers}
+          financeCharts={theme.financeCharts}
         />
       </div>
     </div>
