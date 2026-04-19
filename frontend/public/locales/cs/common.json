@@ -1,0 +1,104 @@
+{
+  "app": {
+    "name": "Businessplan24",
+    "tagline": "Podnikatelský plán za 30 minut — certifikovaný daňovými poradci a auditory"
+  },
+  "nav": {
+    "pricing": "Ceník",
+    "login": "Přihlásit",
+    "account": "Můj účet",
+    "logout": "Odhlásit",
+    "start": "Začít"
+  },
+  "landing": {
+    "hero_title": "Podnikatelský plán ověřený experty — za 30 minut.",
+    "hero_sub": "Každá formulace pochází ze šablon schválených daňovými poradci, auditory a bývalými konzultanty McKinsey/BCG — není to surový text AI. Struktura podle doporučení IHK a KfW. Připraveno pro banku. Od 49 € jednorázově — bez pasti na předplatné.",
+    "cta_start": "Vytvořit plán",
+    "cta_pricing": "Zobrazit ceny",
+    "features_title": "Vše, co potřebujete",
+    "f1_title": "Řízený průvodce",
+    "f1_desc": "Struktura odpovídající formátu, který banky a agentury očekávají. Žádná prázdná stránka.",
+    "f2_title": "Certifikované formulace",
+    "f2_desc": "Každá šablona byla vytvořena a schválena daňovými poradci a bývalými strategickými konzultanty. AI pouze doplní vaše údaje — žádné halucinace.",
+    "f3_title": "Finanční grafy",
+    "f3_desc": "Rentabilita, likvidita, cash flow — ve standardu, který očekává bankéř.",
+    "f4_title": "Export PDF",
+    "f4_desc": "Kvalitní A4 dokument, připravený k předložení.",
+    "how_title": "Jak to funguje",
+    "how1": "Popište svůj nápad",
+    "how2": "Odpovězte na otázky — ověřené šablony text napíšou",
+    "how3": "Plánujte finance s živými grafy",
+    "how4": "Zaplaťte a exportujte čistý PDF"
+  },
+  "wizard": {
+    "back": "Zpět",
+    "next": "Další",
+    "generate": "Vygenerovat text",
+    "regenerate": "Znovu vygenerovat",
+    "edit": "Upravit",
+    "save": "Uložit",
+    "progress": "Krok {{step}} z {{total}}",
+    "generating": "Vytváříme vaši sekci…",
+    "generated_hint": "Tento odstavec vychází ze šablony schválené poradci — vaše údaje byly vloženy, nic nebylo vymyšleno. Můžete volně upravovat.",
+    "required_missing": "Vyplňte prosím pole označená *.",
+    "add_custom": "Přidat vlastní možnost",
+    "finish": "Zobrazit náhled",
+    "review_intro": "Vaše executive summary bude vygenerováno z vašich vstupů pomocí naší expertní šablony."
+  },
+  "preview": {
+    "title": "Náhled vašeho podnikatelského plánu",
+    "watermark_note": "Náhled obsahuje vodoznak. Po platbě získáte čistou verzi.",
+    "unlock_onetime": "Odemknout za {{price}} {{currency}}",
+    "unlock_subscription": "Roční předplatné za {{price}} {{currency}}",
+    "download_pdf": "Stáhnout PDF"
+  },
+  "pricing": {
+    "title": "Férová cena. Bez závazků.",
+    "one_time": "Jednotlivý plán",
+    "subscription": "Roční předplatné",
+    "one_time_desc": "Kompletní podnikatelský plán, jednorázová platba.",
+    "sub_desc": "Neomezené plány po dobu jednoho roku. Účet a verze.",
+    "sub_features": ["Neomezené plány", "Uložené koncepty", "Prioritní podpora", "Všechny šablony"],
+    "select_onetime": "Vybrat jednotlivý plán",
+    "select_sub": "Vybrat předplatné",
+    "detected": "Cena pro {{country}}"
+  },
+  "auth": {
+    "login_title": "Přihlášení",
+    "register_title": "Vytvořit účet",
+    "email": "E-mail",
+    "password": "Heslo",
+    "submit_login": "Přihlásit",
+    "submit_register": "Registrovat",
+    "switch_to_register": "Nemáte účet? Zaregistrujte se",
+    "switch_to_login": "Máte účet? Přihlaste se",
+    "invalid": "Neplatný e-mail nebo heslo.",
+    "email_taken": "Tento e-mail je již zaregistrovaný."
+  },
+  "account": {
+    "title": "Můj účet",
+    "plans_title": "Moje plány",
+    "subscription_active": "Předplatné aktivní do {{date}}",
+    "no_subscription": "Žádné aktivní předplatné.",
+    "new_plan": "Začít nový plán"
+  },
+  "sections": {
+    "business_idea": { "title": "Podnikatelský nápad", "desc": "Produkty, hodnota pro zákazníka, trh a konkurence" },
+    "customers": { "title": "Zákazníci", "desc": "Cílová skupina, kanály, retence" },
+    "company": { "title": "Firma", "desc": "Zakladatelé, tým, sídlo, právní forma, rizika" },
+    "finance": { "title": "Finance", "desc": "Výnosy, náklady, kapitálové potřeby, rentabilita, likvidita" },
+    "appendix": { "title": "Příloha", "desc": "Doplňující informace" },
+    "executive_summary": { "title": "Shrnutí", "desc": "Generováno na konci z vašich údajů." }
+  },
+  "common": {
+    "loading": "Načítání…",
+    "error": "Něco se pokazilo.",
+    "try_again": "Zkusit znovu",
+    "currency_amount": "{{amount}} {{currency}}"
+  },
+  "footer": {
+    "imprint": "Impressum",
+    "privacy": "Ochrana osobních údajů",
+    "terms": "Podmínky"
+  }
+}

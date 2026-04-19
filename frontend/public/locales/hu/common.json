@@ -1,0 +1,104 @@
+{
+  "app": {
+    "name": "Businessplan24",
+    "tagline": "Üzleti terv 30 perc alatt — adótanácsadók és könyvvizsgálók által hitelesítve"
+  },
+  "nav": {
+    "pricing": "Árak",
+    "login": "Bejelentkezés",
+    "account": "Fiókom",
+    "logout": "Kijelentkezés",
+    "start": "Kezdés"
+  },
+  "landing": {
+    "hero_title": "Szakértők által hitelesített üzleti terv — 30 perc alatt.",
+    "hero_sub": "Minden megfogalmazás adótanácsadók, könyvvizsgálók és volt McKinsey/BCG tanácsadók által jóváhagyott sablonokból származik — nem nyers AI-szöveg. Struktúra az IHK és KfW ajánlásai szerint. Bankokra kész. 49 €-tól egyszeri díjjal — nincs előfizetési csapda.",
+    "cta_start": "Üzleti terv készítése",
+    "cta_pricing": "Árak megtekintése",
+    "features_title": "Minden, amire szükséged van",
+    "f1_title": "Vezetett varázsló",
+    "f1_desc": "A bankok és ügynökségek által elvárt formátum. Nincs üres oldal.",
+    "f2_title": "Hitelesített megfogalmazások",
+    "f2_desc": "Minden sablont adótanácsadók és volt stratégiai tanácsadók készítettek és hagytak jóvá. Az AI csak a te adataidat illeszti be — hallucinációk nélkül.",
+    "f3_title": "Pénzügyi grafikonok",
+    "f3_desc": "Jövedelmezőség, likviditás, cash flow — banki szabványokban.",
+    "f4_title": "PDF export",
+    "f4_desc": "Csiszolt A4 dokumentum, benyújtásra kész.",
+    "how_title": "Hogyan működik",
+    "how1": "Írd le az ötleted",
+    "how2": "Válaszolj a kérdésekre — a bevált sablonok megírják",
+    "how3": "Tervezd meg a pénzügyeket élő grafikonokkal",
+    "how4": "Fizetés után tölt le a tiszta PDF-et"
+  },
+  "wizard": {
+    "back": "Vissza",
+    "next": "Tovább",
+    "generate": "Szöveg generálása",
+    "regenerate": "Újragenerálás",
+    "edit": "Szerkesztés",
+    "save": "Mentés",
+    "progress": "{{step}} / {{total}} lépés",
+    "generating": "A szekció készül…",
+    "generated_hint": "Ez a szakasz tanácsadók által jóváhagyott sablont követ — az adataid be lettek illesztve, semmit sem találtunk ki. Szabadon szerkesztheted.",
+    "required_missing": "Kérjük, töltsd ki a *-gal jelölt mezőket.",
+    "add_custom": "Saját opció hozzáadása",
+    "finish": "Előnézet mutatása",
+    "review_intro": "Az összefoglalót az adataidból és szakértői sablonunkból generáljuk."
+  },
+  "preview": {
+    "title": "Üzleti terved előnézete",
+    "watermark_note": "Ez az előnézet vízjelet tartalmaz. Fizetés után tiszta verziót kapsz.",
+    "unlock_onetime": "Feloldás {{price}} {{currency}} áron",
+    "unlock_subscription": "Éves előfizetés {{price}} {{currency}}",
+    "download_pdf": "PDF letöltése"
+  },
+  "pricing": {
+    "title": "Tisztességes ár. Nincs kötelezettség.",
+    "one_time": "Egy terv",
+    "subscription": "Éves előfizetés",
+    "one_time_desc": "Egy teljes üzleti terv, egyszeri fizetés.",
+    "sub_desc": "Korlátlan üzleti terv egy évig. Fiók és verziók.",
+    "sub_features": ["Korlátlan tervek", "Mentett vázlatok", "Elsőbbségi támogatás", "Minden sablon"],
+    "select_onetime": "Egy tervet választok",
+    "select_sub": "Előfizetést választok",
+    "detected": "Ár {{country}} számára"
+  },
+  "auth": {
+    "login_title": "Bejelentkezés",
+    "register_title": "Fiók létrehozása",
+    "email": "E-mail",
+    "password": "Jelszó",
+    "submit_login": "Bejelentkezés",
+    "submit_register": "Regisztráció",
+    "switch_to_register": "Nincs fiókod? Regisztrálj",
+    "switch_to_login": "Már regisztráltál? Jelentkezz be",
+    "invalid": "Hibás e-mail vagy jelszó.",
+    "email_taken": "Ez az e-mail már regisztrálva van."
+  },
+  "account": {
+    "title": "Fiókom",
+    "plans_title": "Üzleti terveim",
+    "subscription_active": "Előfizetés aktív eddig: {{date}}",
+    "no_subscription": "Nincs aktív előfizetés.",
+    "new_plan": "Új terv indítása"
+  },
+  "sections": {
+    "business_idea": { "title": "Üzleti ötlet", "desc": "Termékek, ügyfélérték, piac és verseny" },
+    "customers": { "title": "Ügyfelek", "desc": "Célcsoport, csatornák, megtartás" },
+    "company": { "title": "Cég", "desc": "Alapítók, csapat, telephely, jogi forma, kockázatok" },
+    "finance": { "title": "Pénzügyek", "desc": "Bevételek, költségek, tőkeszükséglet, jövedelmezőség" },
+    "appendix": { "title": "Melléklet", "desc": "További információk" },
+    "executive_summary": { "title": "Összefoglaló", "desc": "A végén az adataidból készül." }
+  },
+  "common": {
+    "loading": "Betöltés…",
+    "error": "Valami hiba történt.",
+    "try_again": "Újra",
+    "currency_amount": "{{amount}} {{currency}}"
+  },
+  "footer": {
+    "imprint": "Impresszum",
+    "privacy": "Adatvédelem",
+    "terms": "Feltételek"
+  }
+}

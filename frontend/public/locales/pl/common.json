@@ -1,0 +1,104 @@
+{
+  "app": {
+    "name": "Businessplan24",
+    "tagline": "Biznesplan w 30 minut — certyfikowany przez doradców podatkowych i biegłych rewidentów"
+  },
+  "nav": {
+    "pricing": "Cennik",
+    "login": "Zaloguj się",
+    "account": "Moje konto",
+    "logout": "Wyloguj",
+    "start": "Rozpocznij"
+  },
+  "landing": {
+    "hero_title": "Biznesplan zweryfikowany przez ekspertów — w 30 minut.",
+    "hero_sub": "Każde sformułowanie pochodzi z szablonów przygotowanych przez doradców podatkowych, biegłych rewidentów i byłych konsultantów McKinsey/BCG — to nie jest surowy tekst AI. Struktura zgodna z IHK i KfW. Gotowe dla banku. Od 49 € jednorazowo — bez pułapki subskrypcji.",
+    "cta_start": "Stwórz biznesplan",
+    "cta_pricing": "Zobacz cennik",
+    "features_title": "Wszystko, czego potrzebujesz",
+    "f1_title": "Prowadzony kreator",
+    "f1_desc": "Struktura zgodna ze standardem wymaganym przez banki i agencje. Bez pustej strony.",
+    "f2_title": "Certyfikowane sformułowania",
+    "f2_desc": "Każdy szablon został przygotowany i zatwierdzony przez doradców podatkowych i byłych konsultantów strategicznych. AI wypełnia tylko Twoje dane — bez halucynacji.",
+    "f3_title": "Wykresy finansowe",
+    "f3_desc": "Rentowność, płynność, przepływy pieniężne — w standardzie, którego oczekują banki.",
+    "f4_title": "Eksport PDF",
+    "f4_desc": "Dopracowany dokument A4, gotowy do złożenia.",
+    "how_title": "Jak to działa",
+    "how1": "Opisz swój pomysł",
+    "how2": "Odpowiedz na pytania — sprawdzone szablony zrobią resztę",
+    "how3": "Zaplanuj finanse z wykresami na żywo",
+    "how4": "Zapłać i eksportuj czysty PDF"
+  },
+  "wizard": {
+    "back": "Wstecz",
+    "next": "Dalej",
+    "generate": "Wygeneruj tekst",
+    "regenerate": "Generuj ponownie",
+    "edit": "Edytuj",
+    "save": "Zapisz",
+    "progress": "Krok {{step}} z {{total}}",
+    "generating": "Tworzymy Twoją sekcję…",
+    "generated_hint": "Ten fragment oparty jest na szablonie zatwierdzonym przez doradców — Twoje dane zostały wstawione, nic nie zostało zmyślone. Możesz swobodnie edytować.",
+    "required_missing": "Uzupełnij pola oznaczone *.",
+    "add_custom": "Dodaj własną opcję",
+    "finish": "Pokaż podgląd",
+    "review_intro": "Twoje streszczenie zostanie wygenerowane na podstawie Twoich danych i naszego szablonu eksperckiego."
+  },
+  "preview": {
+    "title": "Podgląd Twojego biznesplanu",
+    "watermark_note": "Ten podgląd zawiera znak wodny. Po zapłacie otrzymasz czystą wersję.",
+    "unlock_onetime": "Odblokuj za {{price}} {{currency}}",
+    "unlock_subscription": "Subskrypcja roczna za {{price}} {{currency}}",
+    "download_pdf": "Pobierz PDF"
+  },
+  "pricing": {
+    "title": "Uczciwa cena. Bez zobowiązań.",
+    "one_time": "Jeden plan",
+    "subscription": "Subskrypcja roczna",
+    "one_time_desc": "Kompletny biznesplan, jednorazowa płatność.",
+    "sub_desc": "Nieograniczone biznesplany przez rok. Konto i wersje.",
+    "sub_features": ["Nieograniczone plany", "Zapisane wersje robocze", "Priorytetowe wsparcie", "Wszystkie szablony"],
+    "select_onetime": "Wybierz jeden plan",
+    "select_sub": "Wybierz subskrypcję",
+    "detected": "Cena dla {{country}}"
+  },
+  "auth": {
+    "login_title": "Zaloguj się",
+    "register_title": "Załóż konto",
+    "email": "E-mail",
+    "password": "Hasło",
+    "submit_login": "Zaloguj",
+    "submit_register": "Zarejestruj",
+    "switch_to_register": "Nie masz konta? Zarejestruj się",
+    "switch_to_login": "Masz już konto? Zaloguj się",
+    "invalid": "Nieprawidłowy e-mail lub hasło.",
+    "email_taken": "Ten e-mail jest już zarejestrowany."
+  },
+  "account": {
+    "title": "Moje konto",
+    "plans_title": "Moje biznesplany",
+    "subscription_active": "Subskrypcja aktywna do {{date}}",
+    "no_subscription": "Brak aktywnej subskrypcji.",
+    "new_plan": "Rozpocznij nowy plan"
+  },
+  "sections": {
+    "business_idea": { "title": "Pomysł na biznes", "desc": "Produkty, wartość dla klienta, rynek i konkurencja" },
+    "customers": { "title": "Klienci", "desc": "Grupa docelowa, kanały, utrzymanie" },
+    "company": { "title": "Firma", "desc": "Założyciele, zespół, lokalizacja, forma prawna, ryzyka" },
+    "finance": { "title": "Finanse", "desc": "Przychody, koszty, zapotrzebowanie kapitałowe, rentowność, płynność" },
+    "appendix": { "title": "Załącznik", "desc": "Dodatkowe informacje" },
+    "executive_summary": { "title": "Streszczenie", "desc": "Generowane na końcu z Twoich danych." }
+  },
+  "common": {
+    "loading": "Ładowanie…",
+    "error": "Coś poszło nie tak.",
+    "try_again": "Spróbuj ponownie",
+    "currency_amount": "{{amount}} {{currency}}"
+  },
+  "footer": {
+    "imprint": "Impressum",
+    "privacy": "Prywatność",
+    "terms": "Regulamin"
+  }
+}

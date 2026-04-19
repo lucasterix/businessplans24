@@ -83,8 +83,23 @@ export interface KeywordIdea {
   };
 }
 
+export interface EconomicsCountry {
+  country: string;
+  orders: number;
+  revenueByCurrency: Record<string, number>;
+  adsDailyBudgetEur: number;
+  adsCampaigns: number;
+  price: { oneTime: number; currency: string };
+}
+
+export interface EconomicsResponse {
+  periodDays: number;
+  countries: EconomicsCountry[];
+}
+
 export const admin = {
   stats: () => api.get<AdminStats>('/admin/stats').then((r) => r.data),
+  economics: () => api.get<EconomicsResponse>('/admin/economics').then((r) => r.data),
   users: () => api.get<{ users: AdminUser[] }>('/admin/users').then((r) => r.data.users),
   payments: () => api.get<{ payments: AdminPayment[] }>('/admin/payments').then((r) => r.data.payments),
   plans: () => api.get<{ plans: AdminPlan[] }>('/admin/plans').then((r) => r.data.plans),

@@ -753,6 +753,8 @@ p { margin: 0.5em 0; }
   color: #e9eefb;
 }
 .data-table tr:hover { background: rgba(255, 255, 255, 0.02); }
+.data-table tr.row-warning td { background: rgba(234, 179, 8, 0.08); }
+.data-table tr.row-warning:hover td { background: rgba(234, 179, 8, 0.14); }
 
 .badge {
   display: inline-block;

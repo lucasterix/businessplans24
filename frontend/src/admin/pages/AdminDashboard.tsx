@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
-import { admin, type AdminStats } from '../api';
+import { admin, type AdminStats, type EconomicsResponse } from '../api';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
-  useEffect(() => { admin.stats().then(setStats); }, []);
+  const [econ, setEcon] = useState<EconomicsResponse | null>(null);
+  useEffect(() => {
+    admin.stats().then(setStats);
+    admin.economics().then(setEcon).catch(() => {});
+  }, []);
   if (!stats) return <div className="admin-loading">Lade…</div>;
   return (
     <div className="admin-page">
@@ -32,6 +36,57 @@ export default function AdminDashboard() {
             ))}
           </ul>
         )}
+      </section>
+
+      {/* Per-country economics: revenue vs. ads budget commitment */}
+      <section className="panel">
+        <h2>Wirtschaftlichkeit je Land (30 Tage)</h2>
+        {!econ || econ.countries.length === 0 ? (
+          <p className="muted">Noch keine Daten. Sobald Zahlungen oder Ads-Kampagnen laufen, erscheint hier eine Übersicht.</p>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Land</th>
+                <th>Preis (Einzelplan)</th>
+                <th>Bestellungen</th>
+                <th>Umsatz 30T</th>
+                <th>Ads-Tagesbudget</th>
+                <th>Monatsbudget hochgerechnet</th>
+                <th>Break-Even*</th>
+              </tr>
+            </thead>
+            <tbody>
+              {econ.countries.map((c) => {
+                const revenueEur = c.revenueByCurrency['EUR'] || 0; // naïve display: EUR-only sum. Other currencies below.
+                const revenueDisplay = Object.entries(c.revenueByCurrency)
+                  .map(([cur, v]) => `${v.toFixed(2)} ${cur}`)
+                  .join(' · ') || '—';
+                const monthBudget = c.adsDailyBudgetEur * 30;
+                const breakEvenOrders = c.price.oneTime > 0 ? monthBudget / c.price.oneTime : 0;
+                const isUnderwater = monthBudget > revenueEur && revenueEur > 0;
+                return (
+                  <tr key={c.country} className={isUnderwater ? 'row-warning' : ''}>
+                    <td><strong>{c.country}</strong></td>
+                    <td>{c.price.oneTime} {c.price.currency}</td>
+                    <td>{c.orders}</td>
+                    <td>{revenueDisplay}</td>
+                    <td>
+                      {c.adsDailyBudgetEur > 0
+                        ? `${c.adsDailyBudgetEur.toFixed(2)} € · ${c.adsCampaigns} Kamp.`
+                        : '—'}
+                    </td>
+                    <td>{monthBudget > 0 ? `${monthBudget.toFixed(0)} €` : '—'}</td>
+                    <td>{breakEvenOrders > 0 ? `≥ ${breakEvenOrders.toFixed(1)} Pläne/Monat` : '—'}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+        <p className="muted tiny" style={{ marginTop: '0.5rem' }}>
+          * Break-Even = wie viele Einzelplan-Verkäufe pro Monat nötig wären, um das aktuelle Ads-Tagesbudget zu decken (ohne Marge/Abo).
+        </p>
       </section>
 
       <section className="panel">

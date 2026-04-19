@@ -1,0 +1,104 @@
+{
+  "app": {
+    "name": "Businessplan24",
+    "tagline": "Plan de afaceri în 30 de minute — certificat de consultanți fiscali și auditori"
+  },
+  "nav": {
+    "pricing": "Prețuri",
+    "login": "Autentificare",
+    "account": "Contul meu",
+    "logout": "Deconectare",
+    "start": "Începe"
+  },
+  "landing": {
+    "hero_title": "Plan de afaceri certificat de experți — în 30 de minute.",
+    "hero_sub": "Fiecare formulare provine din șabloane validate de consultanți fiscali, auditori și foști consultanți McKinsey/BCG — nu este text brut de AI. Structură conform recomandărilor IHK și KfW. Pregătit pentru bancă. De la 49 € o singură dată — fără capcana abonamentului.",
+    "cta_start": "Creează plan de afaceri",
+    "cta_pricing": "Vezi prețurile",
+    "features_title": "Tot ce ai nevoie",
+    "f1_title": "Wizard ghidat",
+    "f1_desc": "Structură conform formatului așteptat de bănci și agenții. Fără pagină goală.",
+    "f2_title": "Formulări certificate",
+    "f2_desc": "Fiecare șablon a fost elaborat și validat de consultanți fiscali și foști consultanți strategici. AI-ul completează doar datele tale — fără halucinații.",
+    "f3_title": "Grafice financiare",
+    "f3_desc": "Rentabilitate, lichiditate, cash-flow — la standardele pe care le cere o bancă.",
+    "f4_title": "Export PDF",
+    "f4_desc": "Document A4 finisat, pregătit de depus.",
+    "how_title": "Cum funcționează",
+    "how1": "Descrie-ți ideea",
+    "how2": "Răspunde la întrebări — șabloanele scriu textul",
+    "how3": "Planifică finanțele cu grafice live",
+    "how4": "Plătește și exportă PDF-ul curat"
+  },
+  "wizard": {
+    "back": "Înapoi",
+    "next": "Următor",
+    "generate": "Generează text",
+    "regenerate": "Regenerează",
+    "edit": "Editează",
+    "save": "Salvează",
+    "progress": "Pasul {{step}} din {{total}}",
+    "generating": "Generăm secțiunea ta…",
+    "generated_hint": "Această secțiune urmează un șablon aprobat de consultanți — datele tale au fost inserate, nimic nu a fost inventat. Poți edita liber.",
+    "required_missing": "Te rugăm să completezi câmpurile marcate cu *.",
+    "add_custom": "Adaugă opțiune personalizată",
+    "finish": "Afișează previzualizarea",
+    "review_intro": "Rezumatul se generează din datele tale folosind șablonul nostru expert."
+  },
+  "preview": {
+    "title": "Previzualizarea planului tău",
+    "watermark_note": "Această previzualizare are filigran. După plată primești versiunea curată.",
+    "unlock_onetime": "Deblochează cu {{price}} {{currency}}",
+    "unlock_subscription": "Abonament anual {{price}} {{currency}}",
+    "download_pdf": "Descarcă PDF"
+  },
+  "pricing": {
+    "title": "Preț corect. Fără angajament.",
+    "one_time": "Un plan",
+    "subscription": "Abonament anual",
+    "one_time_desc": "Un plan de afaceri complet, plată unică.",
+    "sub_desc": "Planuri nelimitate pentru un an. Cont și versiuni.",
+    "sub_features": ["Planuri nelimitate", "Schițe salvate", "Suport prioritar", "Toate șabloanele"],
+    "select_onetime": "Alege un plan",
+    "select_sub": "Alege abonamentul",
+    "detected": "Preț pentru {{country}}"
+  },
+  "auth": {
+    "login_title": "Autentificare",
+    "register_title": "Creează cont",
+    "email": "E-mail",
+    "password": "Parolă",
+    "submit_login": "Autentificare",
+    "submit_register": "Înregistrare",
+    "switch_to_register": "Nu ai cont? Înregistrează-te",
+    "switch_to_login": "Ai deja cont? Autentifică-te",
+    "invalid": "E-mail sau parolă incorectă.",
+    "email_taken": "Acest e-mail este deja înregistrat."
+  },
+  "account": {
+    "title": "Contul meu",
+    "plans_title": "Planurile mele",
+    "subscription_active": "Abonament activ până la {{date}}",
+    "no_subscription": "Niciun abonament activ.",
+    "new_plan": "Începe un plan nou"
+  },
+  "sections": {
+    "business_idea": { "title": "Ideea de afaceri", "desc": "Produse, valoare pentru client, piață și concurență" },
+    "customers": { "title": "Clienți", "desc": "Grup țintă, canale, retenție" },
+    "company": { "title": "Firmă", "desc": "Fondatori, echipă, locație, formă juridică, riscuri" },
+    "finance": { "title": "Finanțe", "desc": "Venituri, costuri, nevoie de capital, rentabilitate" },
+    "appendix": { "title": "Anexă", "desc": "Informații suplimentare" },
+    "executive_summary": { "title": "Rezumat executiv", "desc": "Generat la final din datele tale." }
+  },
+  "common": {
+    "loading": "Se încarcă…",
+    "error": "Ceva nu a mers bine.",
+    "try_again": "Încearcă din nou",
+    "currency_amount": "{{amount}} {{currency}}"
+  },
+  "footer": {
+    "imprint": "Impressum",
+    "privacy": "Confidențialitate",
+    "terms": "Termeni"
+  }
+}

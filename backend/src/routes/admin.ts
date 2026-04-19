@@ -218,6 +218,87 @@ router.post('/ads/keywords/ideas', async (req, res) => {
   }
 });
 
+// Per-country economics: ties revenue to ads budget for ROI analysis.
+// Country attribution follows the chain: payment → plan.country → user.country.
+router.get('/economics', (_req, res) => {
+  const period = Date.now() - 30 * 24 * 3600 * 1000;
+
+  // Revenue by country (use plan country if present, else user country)
+  const revenueRows = db
+    .prepare(
+      `SELECT COALESCE(pl.country, u.country, 'unknown') AS country,
+              p.currency AS currency,
+              COUNT(*) AS orders,
+              SUM(p.amount) AS revenue_minor
+       FROM payments p
+       LEFT JOIN plans pl ON pl.id = p.plan_id
+       LEFT JOIN users u ON u.id = p.user_id
+       WHERE p.status = 'paid' AND p.created_at > ?
+       GROUP BY country, currency
+       ORDER BY revenue_minor DESC`
+    )
+    .all(period) as Array<{ country: string; currency: string; orders: number; revenue_minor: number }>;
+
+  // Ads daily budget commitment per country (sum of enabled campaigns).
+  const budgetRows = db
+    .prepare(
+      `SELECT country,
+              SUM(daily_budget_micros) AS daily_micros,
+              COUNT(*) AS campaigns
+       FROM ads_campaigns
+       WHERE status = 'enabled'
+       GROUP BY country`
+    )
+    .all() as Array<{ country: string; daily_micros: number; campaigns: number }>;
+
+  // Merge into one per-country row
+  const map = new Map<string, {
+    country: string;
+    orders: number;
+    revenueByCurrency: Record<string, number>;
+    adsDailyBudgetEur: number;
+    adsCampaigns: number;
+    price: { oneTime: number; currency: string };
+  }>();
+
+  for (const r of revenueRows) {
+    const c = r.country.toUpperCase();
+    const tier = priceForCountry(c);
+    if (!map.has(c)) {
+      map.set(c, {
+        country: c,
+        orders: 0,
+        revenueByCurrency: {},
+        adsDailyBudgetEur: 0,
+        adsCampaigns: 0,
+        price: { oneTime: tier.oneTime, currency: tier.currency },
+      });
+    }
+    const entry = map.get(c)!;
+    entry.orders += r.orders;
+    entry.revenueByCurrency[r.currency] = (entry.revenueByCurrency[r.currency] || 0) + r.revenue_minor / 100;
+  }
+  for (const b of budgetRows) {
+    const c = b.country.toUpperCase();
+    const tier = priceForCountry(c);
+    if (!map.has(c)) {
+      map.set(c, {
+        country: c,
+        orders: 0,
+        revenueByCurrency: {},
+        adsDailyBudgetEur: 0,
+        adsCampaigns: 0,
+        price: { oneTime: tier.oneTime, currency: tier.currency },
+      });
+    }
+    const entry = map.get(c)!;
+    entry.adsDailyBudgetEur = b.daily_micros / 1_000_000;
+    entry.adsCampaigns = b.campaigns;
+  }
+
+  res.json({ periodDays: 30, countries: Array.from(map.values()) });
+});
+
 router.post('/grant-admin', (req, res) => {
   const schema = z.object({ email: z.string().email() });
   const parsed = schema.safeParse(req.body);
