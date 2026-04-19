@@ -22,12 +22,12 @@ const items = [
   {
     svg: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="2" y="6" width="20" height="13" rx="2" />
-        <line x1="2" y1="10" x2="22" y2="10" />
+        <path d="M3 20h18" strokeLinecap="round" />
+        <path d="M6 20V12m5 8V8m5 12v-6m5 6V4" strokeLinecap="round" />
       </svg>
     ),
-    label: 'Stripe-gesichert',
-    desc: 'PCI-DSS Level 1',
+    label: 'Zertifizierte Finanzcharts',
+    desc: 'Nach Standards, die Banken sehen wollen',
   },
   {
     svg: (
