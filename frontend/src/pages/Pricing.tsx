@@ -1,18 +1,71 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchPricing, type PricingResponse } from '../api/client';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { fetchPricing, createPlan, startCheckout, type PricingResponse } from '../api/client';
 import DocHead from '../components/DocHead';
 import { useLocalizedPath } from '../i18n/useLocalizedPath';
+import { usePlanStore } from '../store/usePlanStore';
+import { toast } from '../store/useToasts';
 
 export default function Pricing() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [pricing, setPricing] = useState<PricingResponse | null>(null);
+  const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const loc = useLocalizedPath();
+  const navigate = useNavigate();
+  const store = usePlanStore();
 
   useEffect(() => {
     fetchPricing().then(setPricing).catch(() => {});
   }, []);
+
+  const buyOneTime = async (promoCode?: string) => {
+    const key = promoCode ? 'one_time_promo' : 'one_time';
+    setLoadingKey(key);
+    try {
+      // Ensure we have a plan id so the payment maps to a plan. Create one if
+      // the current session doesn't have one yet.
+      let planId = store.planId;
+      if (!planId) {
+        planId = await createPlan({ language: i18n.language.slice(0, 2), country: store.country || undefined });
+        store.setPlanId(planId);
+      }
+      const { sessionUrl } = await startCheckout({
+        planId,
+        type: 'one_time',
+        country: store.country || pricing?.country,
+        promoCode,
+      });
+      window.location.href = sessionUrl;
+    } catch {
+      toast.error('Bezahlung konnte nicht gestartet werden.');
+      setLoadingKey(null);
+    }
+  };
+
+  const buySubscription = async () => {
+    setLoadingKey('subscription');
+    try {
+      let planId = store.planId;
+      if (!planId) {
+        planId = await createPlan({ language: i18n.language.slice(0, 2), country: store.country || undefined });
+        store.setPlanId(planId);
+      }
+      const { sessionUrl } = await startCheckout({
+        planId,
+        type: 'subscription',
+        country: store.country || pricing?.country,
+      });
+      window.location.href = sessionUrl;
+    } catch {
+      toast.error('Bezahlung konnte nicht gestartet werden.');
+      setLoadingKey(null);
+    }
+  };
+
+  const oneTimePrice = pricing ? pricing.oneTime : 49;
+  const oneTimeDiscounted = Math.round(oneTimePrice * 0.9 * 100) / 100;
+  const cur = pricing?.currency || 'EUR';
 
   return (
     <div className="pricing-layout">
@@ -24,6 +77,26 @@ export default function Pricing() {
       {pricing && (
         <p className="muted">{t('pricing.detected', { country: pricing.country })}</p>
       )}
+
+      {/* 10% Rabatt Callout */}
+      <div className="pricing-promo-banner">
+        <div className="pricing-promo-text">
+          <span className="pricing-promo-tag">🎁 -10%</span>
+          <div>
+            <strong>Heute {oneTimeDiscounted.toFixed(2)} {cur} statt {oneTimePrice} {cur}</strong>
+            <span className="muted"> · Code FIRST10 wird automatisch eingelöst</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={loadingKey !== null}
+          onClick={() => buyOneTime('FIRST10')}
+        >
+          {loadingKey === 'one_time_promo' ? 'Einen Moment…' : 'Jetzt mit 10% Rabatt sichern'}
+        </button>
+      </div>
+
       <div className="pricing-grid">
         <article className="price-card">
           <h2>{t('pricing.one_time')}</h2>
@@ -31,7 +104,17 @@ export default function Pricing() {
             {pricing ? `${pricing.oneTime} ${pricing.currency}` : '—'}
           </p>
           <p className="muted">{t('pricing.one_time_desc')}</p>
-          <Link to={loc('')} className="btn btn-primary">{t('pricing.select_onetime')}</Link>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={loadingKey !== null}
+            onClick={() => buyOneTime()}
+          >
+            {loadingKey === 'one_time' ? 'Einen Moment…' : t('pricing.select_onetime')}
+          </button>
+          <p className="muted tiny" style={{ marginTop: '0.5rem' }}>
+            Nach Zahlung geht's direkt weiter zu deinem Businessplan — kein zweiter Bezahlvorgang.
+          </p>
         </article>
         <article className="price-card price-card--highlight">
           <span className="price-badge">Beliebt</span>
@@ -46,7 +129,14 @@ export default function Pricing() {
               <li key={f}>{f}</li>
             ))}
           </ul>
-          <Link to={`/login?next=${encodeURIComponent(loc(''))}`} className="btn btn-primary">{t('pricing.select_sub')}</Link>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={loadingKey !== null}
+            onClick={buySubscription}
+          >
+            {loadingKey === 'subscription' ? 'Einen Moment…' : t('pricing.select_sub')}
+          </button>
         </article>
       </div>
 
@@ -63,7 +153,9 @@ export default function Pricing() {
           </div>
           <div className="pricing-upsell-price">
             <span className="price-amount">+99 €</span>
-            <Link to="/account" className="btn btn-ghost">Plan erstellen & dann buchen</Link>
+            <button type="button" className="btn btn-ghost" onClick={() => navigate(loc(''))}>
+              Erst Plan erstellen →
+            </button>
           </div>
         </div>
       </section>

@@ -143,7 +143,7 @@ export default function Preview() {
           </div>
         </div>
 
-        {pricing && (
+        {pricing && !plan.paid && (
           <div className="preview-cta-card">
             <span className="preview-cta-eyebrow">Plan freischalten</span>
             <button
@@ -163,6 +163,26 @@ export default function Preview() {
               {t('preview.unlock_subscription', { price: pricing.yearly, currency: pricing.currency })}
             </button>
             <p className="preview-cta-note muted">Unbegrenzte Pläne für 1 Jahr</p>
+          </div>
+        )}
+
+        {plan.paid && (
+          <div className="preview-cta-card preview-cta-card--paid">
+            <span className="preview-cta-eyebrow">✓ Plan freigeschaltet</span>
+            <a
+              href={`/api/export/${plan.id}/pdf`}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-primary btn-lg btn-block"
+            >
+              📄 {t('preview.download_pdf')}
+            </a>
+            <p className="preview-cta-note">Saubere Version ohne Wasserzeichen</p>
+            <div className="preview-cta-divider"><span>oder</span></div>
+            <Link to={loc('founder')} className="btn btn-ghost btn-block">
+              Plan-Review buchen (+99 €)
+            </Link>
+            <p className="preview-cta-note muted">Persönliche Durchsicht in 3 Werktagen</p>
           </div>
         )}
 

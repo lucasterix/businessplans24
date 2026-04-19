@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { api } from '../api/client';
+import { api, getPlan, type Plan } from '../api/client';
+import { usePlanStore } from '../store/usePlanStore';
+import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 interface VerifyResult {
   ok: boolean;
@@ -65,9 +67,12 @@ export default function PaymentReturn() {
   const [params] = useSearchParams();
   const planId = params.get('plan');
   const sessionId = params.get('session_id');
+  const loc = useLocalizedPath();
+  const setStorePlanId = usePlanStore((s) => s.setPlanId);
 
   const [verified, setVerified] = useState<VerifyResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [plan, setPlan] = useState<Plan | null>(null);
   const firedRef = useRef(false);
 
   useEffect(() => {
@@ -79,6 +84,20 @@ export default function PaymentReturn() {
       .catch(() => setVerified({ ok: false }))
       .finally(() => setLoading(false));
   }, [state, sessionId]);
+
+  // Once we know the purchase is verified, fetch the plan to decide which CTA
+  // to show: "fill out now" (empty plan) vs. "download PDF" (plan has content).
+  useEffect(() => {
+    if (!verified?.ok || !planId) return;
+    getPlan(planId)
+      .then((p) => {
+        setPlan(p);
+        setStorePlanId(planId);
+      })
+      .catch(() => {
+        /* ignore — we still render the success state without plan info */
+      });
+  }, [verified, planId, setStorePlanId]);
 
   // Fire ad-platform conversion events exactly once per verified purchase
   useEffect(() => {
@@ -123,21 +142,65 @@ export default function PaymentReturn() {
     );
   }
 
+  // A plan is "empty" if no section texts have been generated yet — i.e. the
+  // user paid up-front from Pricing and hasn't run the wizard.
+  const planIsEmpty = plan ? Object.keys(plan.texts || {}).length === 0 : false;
+
   return (
     <div className="payment-return">
-      <h1>Danke für deinen Kauf 🎉</h1>
+      <h1>Zahlung erfolgreich 🎉</h1>
       {verified?.amount && verified?.currency && (
         <p className="muted">
-          {(verified.amount / 100).toFixed(2)} {verified.currency.toUpperCase()} wurden erfolgreich abgebucht.
+          {(verified.amount / 100).toFixed(2)} {verified.currency.toUpperCase()} wurden erfolgreich abgebucht. Dein Businessplan ist jetzt freigeschaltet — kein weiterer Bezahlvorgang.
         </p>
       )}
-      <p>Die saubere PDF-Version ist ab sofort freigeschaltet.</p>
-      {planId && (
-        <a href={`/api/export/${planId}/pdf`} className="btn btn-primary btn-lg" target="_blank" rel="noreferrer">
-          {t('preview.download_pdf')}
-        </a>
-      )}
-      {planId && <Link to={`/preview/${planId}`} className="btn btn-ghost">Zurück zur Vorschau</Link>}
+
+      <div className="payment-return-actions">
+        {planId && planIsEmpty ? (
+          <>
+            <Link to={loc('')} className="btn btn-primary btn-lg">
+              Businessplan jetzt ausfüllen →
+            </Link>
+            <p className="muted tiny">
+              Der Wizard führt dich in ~30 Minuten durch alle Sektionen. Am Ende steht dein fertiges PDF zum Download bereit.
+            </p>
+          </>
+        ) : (
+          <>
+            {planId && (
+              <a href={`/api/export/${planId}/pdf`} className="btn btn-primary btn-lg" target="_blank" rel="noreferrer">
+                📄 {t('preview.download_pdf')}
+              </a>
+            )}
+            {planId && (
+              <Link to={`/preview/${planId}`} className="btn btn-ghost">Zur Vorschau</Link>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Upsells: subscription + plan review. No more “pay for the plan”. */}
+      <section className="payment-return-upsells">
+        <h2>Noch mehr aus deinem Plan herausholen</h2>
+        <div className="payment-return-upsell-grid">
+          <article className="payment-return-upsell-card">
+            <span className="badge">Jahresabo</span>
+            <h3>Unbegrenzt weitere Pläne</h3>
+            <p className="muted">
+              Falls du mehrere Gründungen, Standorte oder Szenarien durchspielen willst: Für 99 €/Jahr unbegrenzt Pläne und Versionen.
+            </p>
+            <Link to={loc('pricing')} className="btn btn-ghost">Abo ansehen</Link>
+          </article>
+          <article className="payment-return-upsell-card">
+            <span className="badge badge-premium">Premium</span>
+            <h3>Plan-Review vom Gründer</h3>
+            <p className="muted">
+              Ich lese deinen fertigen Plan Seite für Seite, prüfe Zahlen und Logik, und schicke dir in 3 Werktagen einen konkreten Verbesserungs-Kommentar. +99 €.
+            </p>
+            <Link to={loc('founder')} className="btn btn-ghost">Review buchen</Link>
+          </article>
+        </div>
+      </section>
     </div>
   );
 }

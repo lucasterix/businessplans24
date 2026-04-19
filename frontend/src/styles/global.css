@@ -1816,6 +1816,84 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   margin-top: 1px;
 }
 
+/* 10% discount banner on Pricing page */
+.pricing-promo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(11, 92, 255, 0.1));
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0 2rem;
+}
+.pricing-promo-text {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 1 1 280px;
+}
+.pricing-promo-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #22c55e;
+  color: #fff;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* Paid card variant in Preview rail */
+.preview-cta-card--paid {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.05), transparent 60%);
+}
+.preview-cta-card--paid .preview-cta-eyebrow { color: #1f9254; font-weight: 700; }
+
+/* PaymentReturn upsell cards */
+.payment-return-actions { margin: 1.5rem 0; display: flex; flex-direction: column; gap: 0.6rem; max-width: 540px; }
+.payment-return-upsells { margin-top: 3rem; }
+.payment-return-upsells h2 { font-size: 1.3rem; margin-bottom: 1rem; }
+.payment-return-upsell-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 760px) {
+  .payment-return-upsell-grid { grid-template-columns: 1fr 1fr; }
+}
+.payment-return-upsell-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.payment-return-upsell-card .badge {
+  align-self: flex-start;
+  background: rgba(11, 92, 255, 0.1);
+  color: var(--accent);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.payment-return-upsell-card .badge-premium {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #fff;
+}
+.payment-return-upsell-card h3 { margin: 0; font-size: 1.1rem; }
+
 /* Partner self-serve styles */
 .partner-form--minimal { max-width: 440px; }
 .partner-code-box {

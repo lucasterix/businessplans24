@@ -128,9 +128,10 @@ export async function listPlans(): Promise<Array<{ id: string; title: string | n
 
 export async function startCheckout(input: {
   planId?: string;
-  type: 'one_time' | 'subscription';
+  type: 'one_time' | 'subscription' | 'plan_review';
   country?: string;
   email?: string;
+  promoCode?: string;
 }): Promise<{ sessionUrl: string; mock?: boolean }> {
   const { data } = await api.post('/checkout/session', input);
   return data;

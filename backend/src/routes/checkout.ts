@@ -18,6 +18,10 @@ const schema = z.object({
   type: z.enum(['one_time', 'subscription', 'plan_review']),
   country: z.string().optional(),
   email: z.string().email().optional(),
+  // Customer-facing Stripe promotion code (e.g. FIRST10). When provided, we
+  // look it up server-side and attach as a pre-applied discount so the user
+  // sees the final price directly on Stripe Checkout.
+  promoCode: z.string().max(40).optional(),
 });
 
 router.get('/verify/:sessionId', async (req, res) => {
@@ -78,10 +82,25 @@ router.post('/session', optionalAuth, async (req, res) => {
     plan_review: 'Persönliches Plan-Review durch den Gründer',
   };
 
+  // Resolve customer-facing promo code → Stripe promotion_code id (if any).
+  let prefilledDiscount: Stripe.Checkout.SessionCreateParams.Discount[] | undefined;
+  if (parsed.data.promoCode) {
+    try {
+      const promos = await stripe.promotionCodes.list({ code: parsed.data.promoCode, active: true, limit: 1 });
+      if (promos.data.length > 0) {
+        prefilledDiscount = [{ promotion_code: promos.data[0].id }];
+      }
+    } catch (err) {
+      console.warn('[checkout] promo lookup failed', err);
+    }
+  }
+
   const session = await stripe.checkout.sessions.create({
     mode: parsed.data.type === 'subscription' ? 'subscription' : 'payment',
     customer_email: parsed.data.email || req.user?.email,
-    allow_promotion_codes: true,
+    // If we pre-applied a discount, Stripe disallows the promo-code field to
+    // keep things unambiguous. Otherwise keep it enabled.
+    ...(prefilledDiscount ? { discounts: prefilledDiscount } : { allow_promotion_codes: true }),
     line_items: [
       {
         price_data: {
