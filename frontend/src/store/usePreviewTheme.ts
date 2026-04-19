@@ -35,6 +35,74 @@ export const COVER_DECORS: Record<CoverDecor, { name: string; desc: string }> = 
   geometric: { name: 'Geometrisch', desc: 'Kreise & Linien, abstrakt' },
 };
 
+// Curated preset bundles that set cover/accent/font/layout in one click.
+// User can still tweak anything afterwards — presets are a starting point.
+export interface DesignTheme {
+  id: string;
+  name: string;
+  desc: string;
+  accent: PreviewAccent;
+  font: PreviewFont;
+  coverStyle: CoverStyle;
+  coverDecor: CoverDecor;
+  sectionStripe: boolean;
+  sectionDividers: boolean;
+  appendixTwoCol: boolean;
+  pageNumFormat: PageNumFormat;
+  showHeader: boolean;
+}
+
+export const DESIGN_THEMES: DesignTheme[] = [
+  {
+    id: 'bank',
+    name: 'Klassisch Bank',
+    desc: 'Für Hausbank, KfW, Steuerberater — reduziert, seriös',
+    accent: 'graphite', font: 'serif', coverStyle: 'classic', coverDecor: 'none',
+    sectionStripe: false, sectionDividers: false, appendixTwoCol: false,
+    pageNumFormat: 'xOfY', showHeader: false,
+  },
+  {
+    id: 'modern',
+    name: 'Modern Pitch',
+    desc: 'Für Investoren-Pitches — kräftig, dynamisch',
+    accent: 'blue', font: 'sans', coverStyle: 'modern', coverDecor: 'chart',
+    sectionStripe: true, sectionDividers: true, appendixTwoCol: false,
+    pageNumFormat: 'xOfY', showHeader: true,
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal Editorial',
+    desc: 'Viel Weißraum, zurückhaltende Typografie',
+    accent: 'aubergine', font: 'modern', coverStyle: 'minimal', coverDecor: 'none',
+    sectionStripe: false, sectionDividers: false, appendixTwoCol: false,
+    pageNumFormat: 'simple', showHeader: false,
+  },
+  {
+    id: 'editorial',
+    name: 'Magazin',
+    desc: 'Top-Band, Serif-Titel — wie ein Businessmagazin',
+    accent: 'aubergine', font: 'serif', coverStyle: 'editorial', coverDecor: 'wave',
+    sectionStripe: false, sectionDividers: true, appendixTwoCol: true,
+    pageNumFormat: 'xOfY', showHeader: false,
+  },
+  {
+    id: 'bold',
+    name: 'Bold Startup',
+    desc: 'Farbfeld + geometrisch — für Gründer:innen mit Selbstbewusstsein',
+    accent: 'terracotta', font: 'sans', coverStyle: 'bold', coverDecor: 'geometric',
+    sectionStripe: true, sectionDividers: true, appendixTwoCol: true,
+    pageNumFormat: 'xOfY', showHeader: true,
+  },
+  {
+    id: 'green',
+    name: 'Nachhaltig',
+    desc: 'Grün + Welle — für Nachhaltigkeits- & Sozialunternehmen',
+    accent: 'green', font: 'sans', coverStyle: 'modern', coverDecor: 'wave',
+    sectionStripe: true, sectionDividers: false, appendixTwoCol: false,
+    pageNumFormat: 'xOfY', showHeader: false,
+  },
+];
+
 export interface Currency {
   code: string;
   symbol: string;
@@ -92,6 +160,7 @@ interface PreviewThemeState {
   setSectionOrder: (order: string[]) => void;
   moveSection: (id: string, direction: 'up' | 'down') => void;
   setCurrency: (code: string) => void;
+  applyDesignTheme: (id: string) => void;
   exportSettings: () => Record<string, unknown>;
   loadFromPlan: (s: Record<string, unknown>) => void;
 }
@@ -162,6 +231,23 @@ export const usePreviewTheme = create<PreviewThemeState>()(
         set({ sectionOrder: order });
       },
       setCurrency: (code) => set({ currency: code }),
+      applyDesignTheme: (id) => {
+        const theme = DESIGN_THEMES.find((t) => t.id === id);
+        if (!theme) return;
+        set({
+          accent: theme.accent,
+          font: theme.font,
+          coverStyle: theme.coverStyle,
+          coverDecor: theme.coverDecor,
+          sectionStripe: theme.sectionStripe,
+          sectionDividers: theme.sectionDividers,
+          appendixTwoCol: theme.appendixTwoCol,
+          pageNumFormat: theme.pageNumFormat,
+          showHeader: theme.showHeader,
+          // Dividers and blankBetween are mutually exclusive; keep invariant.
+          blankBetween: theme.sectionDividers ? false : get().blankBetween,
+        });
+      },
       exportSettings: () => {
         const s = get();
         return {

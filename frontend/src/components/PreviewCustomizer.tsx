@@ -5,6 +5,7 @@ import {
   FONT_FAMILIES,
   COVER_STYLES,
   COVER_DECORS,
+  DESIGN_THEMES,
   mergeSectionOrder,
   type PreviewAccent,
   type PreviewFont,
@@ -58,6 +59,7 @@ export default function PreviewCustomizer({ sections, defaultOpen = true }: Prop
     setSectionStripe,
     setSectionDividers,
     setFinanceCharts,
+    applyDesignTheme,
   } = usePreviewTheme();
 
   const knownIds = sections.map((s) => s.key);
@@ -119,6 +121,36 @@ export default function PreviewCustomizer({ sections, defaultOpen = true }: Prop
           Dokument anpassen
         </summary>
         <div className="preview-customizer-content">
+
+          <div className="preview-custom-section">
+            <div className="preview-custom-label">Design-Preset</div>
+            <p className="preview-custom-hint" style={{ marginBottom: '0.5rem' }}>
+              Ein Klick setzt Cover, Farbe, Schrift und Layout. Danach frei anpassbar.
+            </p>
+            <div className="preview-theme-grid">
+              {DESIGN_THEMES.map((t) => {
+                const accentHex = ACCENT_COLORS[t.accent].hex;
+                const isActive = t.accent === accent && t.coverStyle === coverStyle && t.font === font && t.coverDecor === coverDecor;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    className={`preview-theme-card ${isActive ? 'is-active' : ''}`}
+                    onClick={() => applyDesignTheme(t.id)}
+                  >
+                    <span className="preview-theme-swatch" aria-hidden>
+                      <span className="preview-theme-swatch-cover" style={{ background: accentHex }} />
+                      <span className="preview-theme-swatch-stripe" style={{ background: accentHex }} />
+                    </span>
+                    <span className="preview-theme-body">
+                      <strong>{t.name}</strong>
+                      <span>{t.desc}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="preview-custom-section">
             <div className="preview-custom-label">Logo</div>
