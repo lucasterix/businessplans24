@@ -27,6 +27,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
   const stepAnswers = store.answers[step.id] || {};
   const [generating, setGenerating] = useState(false);
   const [localText, setLocalText] = useState<string | undefined>(store.texts[section.id]);
+  const [textComplete, setTextComplete] = useState<boolean>(!!store.texts[section.id]);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [triedSubmit, setTriedSubmit] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
@@ -40,6 +41,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
       return;
     }
     setGenerating(true);
+    setTextComplete(false);
     abortRef.current = new AbortController();
     setLocalText('');
     try {
@@ -64,6 +66,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
       );
       store.setText(section.id, streamed.trim());
       store.persistToServer().catch(() => {});
+      setTextComplete(true);
     } catch (err: unknown) {
       const msg = (err as Error).message || '';
       if (msg.includes('429') || msg.includes('rate_limited')) {
@@ -83,6 +86,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
 
   const handleTextEdit = (v: string) => {
     setLocalText(v);
+    setTextComplete(v.trim().length > 0);
     store.setText(section.id, v);
   };
 
@@ -186,7 +190,14 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
         <button
           className="btn btn-primary"
           onClick={handleNext}
-          disabled={isLastStepOfSection && !localText}
+          disabled={generating || (isLastStepOfSection && !textComplete)}
+          title={
+            generating
+              ? 'Warten bis Claude fertig geschrieben hat'
+              : isLastStepOfSection && !textComplete
+                ? 'Bitte erst den Text generieren oder ausfüllen'
+                : undefined
+          }
         >
           {isLastSection && isLastStepOfSection ? t('wizard.finish') : t('wizard.next')}
         </button>

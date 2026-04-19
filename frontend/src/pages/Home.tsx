@@ -15,6 +15,8 @@ import WizardToast from '../components/WizardToast';
 import DocHead from '../components/DocHead';
 import DraftRecovery from '../components/DraftRecovery';
 import AutosaveIndicator, { type SaveState } from '../components/AutosaveIndicator';
+import WizardStepList from '../components/WizardStepList';
+import ScrollToTop from '../components/ScrollToTop';
 import { usePlanStore } from '../store/usePlanStore';
 import { createPlan } from '../api/client';
 
@@ -108,11 +110,14 @@ export default function Home() {
         description={t('landing.hero_sub')}
       />
       <section className="home-hero">
-        <div className="home-hero-badge">✨ Claude Sonnet 4.6 · 30 Minuten · keine Abo-Falle</div>
-        <h1>{t('landing.hero_title')}</h1>
-        <p>{t('landing.hero_sub')}</p>
-        <PlanCounter />
-        <TrustRow />
+        <div className="home-hero-orbs" aria-hidden />
+        <div className="home-hero-content">
+          <div className="home-hero-badge">✨ Claude Sonnet 4.6 · 30 Minuten · keine Abo-Falle</div>
+          <h1>{t('landing.hero_title')}</h1>
+          <p>{t('landing.hero_sub')}</p>
+          <PlanCounter />
+          <TrustRow />
+        </div>
       </section>
 
       <div className="home-shell">
@@ -140,6 +145,7 @@ export default function Home() {
         </div>
 
         <div className="home-split">
+          <WizardStepList currentSectionIndex={store.currentSectionIndex} />
           <div className="home-wizard-pane">
             {isFinancePlanStep ? (
               <Suspense fallback={<div className="loading-fallback" />}>
@@ -168,10 +174,16 @@ export default function Home() {
       <section className="features">
         <h2>{t('landing.features_title')}</h2>
         <div className="feature-grid">
-          {(['f1', 'f2', 'f3', 'f4'] as const).map((k) => (
-            <article key={k} className="feature-card">
-              <h3>{t(`landing.${k}_title`)}</h3>
-              <p>{t(`landing.${k}_desc`)}</p>
+          {[
+            { k: 'f1', icon: '🧭' },
+            { k: 'f2', icon: '🤖' },
+            { k: 'f3', icon: '📊' },
+            { k: 'f4', icon: '📄' },
+          ].map((f) => (
+            <article key={f.k} className="feature-card">
+              <span className="feature-icon" aria-hidden>{f.icon}</span>
+              <h3>{t(`landing.${f.k}_title`)}</h3>
+              <p>{t(`landing.${f.k}_desc`)}</p>
             </article>
           ))}
         </div>
@@ -250,6 +262,7 @@ export default function Home() {
         onDone={() => setToast({ show: false, message: '' })}
       />
       <ExitIntent />
+      <ScrollToTop />
     </>
   );
 }

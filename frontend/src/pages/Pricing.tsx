@@ -34,6 +34,7 @@ export default function Pricing() {
           <Link to={loc('')} className="btn btn-primary">{t('pricing.select_onetime')}</Link>
         </article>
         <article className="price-card price-card--highlight">
+          <span className="price-badge">Beliebt</span>
           <h2>{t('pricing.subscription')}</h2>
           <p className="price-amount">
             {pricing ? `${pricing.yearly} ${pricing.currency}` : '—'}
