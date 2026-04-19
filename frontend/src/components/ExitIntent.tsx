@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocalizedPath } from '../i18n/useLocalizedPath';
+import { useExitIntent } from '../store/useExitIntent';
 
 const STORAGE_KEY = 'bp24-exit-shown';
 
 export default function ExitIntent() {
   const [show, setShow] = useState(false);
   const loc = useLocalizedPath();
+  const armed = useExitIntent((s) => s.armed);
 
   useEffect(() => {
+    if (!armed) return;
     if (sessionStorage.getItem(STORAGE_KEY)) return;
     const onLeave = (e: MouseEvent) => {
       if (e.clientY <= 0 && !sessionStorage.getItem(STORAGE_KEY)) {
@@ -22,7 +25,7 @@ export default function ExitIntent() {
       document.removeEventListener('mouseout', onLeave);
       clearTimeout(timer);
     };
-  }, []);
+  }, [armed]);
 
   if (!show) return null;
 
