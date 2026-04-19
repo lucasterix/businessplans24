@@ -14,8 +14,12 @@ export default function Imprint() {
 
       <h2>Kontakt</h2>
       <p>
-        E-Mail: <a href="mailto:info@businessplans24.com">info@businessplans24.com</a>
+        E-Mail: <a href="mailto:info@businessplans24.com">info@businessplans24.com</a><br />
+        Telefon: nach Vereinbarung per E-Mail
       </p>
+
+      <h2>Berufsbezeichnung</h2>
+      <p>Einzelunternehmer, Tätigkeit: IT-Dienstleistungen und Softwareentwicklung (Deutschland).</p>
 
       <h2>Umsatzsteuer</h2>
       <p>

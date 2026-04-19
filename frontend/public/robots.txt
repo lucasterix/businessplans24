@@ -1,12 +1,8 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /account
-Disallow: /profile
-Disallow: /payment
-Disallow: /login
+Disallow: /api/
+Disallow: /payment/
 Disallow: /wizard/
 Disallow: /preview/
-Disallow: /api/
 
 Sitemap: https://businessplans24.com/sitemap.xml
