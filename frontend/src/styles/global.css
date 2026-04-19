@@ -3013,3 +3013,149 @@ body {
   padding: 4rem 1.25rem;
   text-align: center;
 }
+
+/* ===== Wider layout (bigger screens get more room) ===== */
+:root {
+  --container: 1320px;          /* was 1200 */
+  --container-wide: 1600px;     /* wizard shell on wide screens */
+  --container-content: 1200px;  /* narrow for pure reading sections */
+}
+
+/* Bigger text columns on wide screens */
+.site-main { max-width: none; }  /* per-section max-width instead */
+.site-header { padding: 0.9rem 1.5rem; }
+@media (min-width: 1200px) { .site-header { padding: 1rem 2.5rem; } }
+
+/* Hero — keep narrow for readability but more viewport on sides */
+.home-hero {
+  max-width: var(--container);
+  padding: 2.5rem 1.25rem 1.5rem;
+}
+@media (min-width: 900px) { .home-hero { padding: 3.5rem 2rem 1.5rem; } }
+@media (min-width: 1280px) { .home-hero { padding: 4rem 2.5rem 2rem; } }
+
+/* Wizard shell: use MORE horizontal space on wide screens */
+.home-shell {
+  max-width: var(--container);
+  padding: 0 1.25rem 2rem;
+}
+@media (min-width: 1280px) {
+  .home-shell {
+    max-width: var(--container-wide);
+    padding: 0 2.5rem 3rem;
+  }
+}
+
+/* Wizard split: more generous ratios */
+@media (min-width: 980px) and (max-width: 1279px) {
+  .home-split {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.7fr) !important;
+    gap: 2rem !important;
+  }
+}
+@media (min-width: 1280px) {
+  .home-split {
+    grid-template-columns: 220px minmax(0, 1.8fr) minmax(0, 1fr) !important;
+    gap: 2.25rem !important;
+  }
+}
+@media (min-width: 1600px) {
+  .home-split {
+    grid-template-columns: 240px minmax(0, 1.6fr) minmax(0, 1.05fr) !important;
+    gap: 2.5rem !important;
+  }
+}
+
+/* Wizard pane: more internal padding on wide screens */
+@media (min-width: 1280px) {
+  .home-wizard-pane, .home-preview-pane {
+    padding: 2.25rem !important;
+  }
+}
+
+/* Live preview paper expands with its pane (no forced tight padding) */
+@media (min-width: 1280px) {
+  .live-preview .preview-paper {
+    padding: 2rem 1.75rem !important;
+    font-size: 14.5px !important;
+  }
+  .live-preview .preview-paper p {
+    font-size: 14px !important;
+  }
+}
+
+/* Features / testimonials / other sections: use wide container */
+.features,
+.how,
+.experts-section,
+.tm-section,
+.anchor-section,
+.faq-section,
+.home-final-cta,
+.home-usecase-links,
+.seo-related,
+.templates-section,
+.newsletter-form {
+  max-width: var(--container) !important;
+}
+
+/* Landing helper sections on wider screens get a bit more room */
+@media (min-width: 1280px) {
+  .feature-grid, .usecase-grid, .tm-grid, .experts-grid, .templates-grid {
+    gap: 1.25rem;
+  }
+}
+
+/* Finance: on really wide screens, let charts sit bigger */
+@media (min-width: 1440px) {
+  .finance-layout {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr) !important;
+    gap: 2rem !important;
+  }
+  .mini-chart-canvas { height: 240px; }
+}
+
+/* Preview page: use wider canvas for the document */
+.preview-layout {
+  max-width: var(--container);
+}
+@media (min-width: 1280px) {
+  .preview-layout {
+    max-width: var(--container-wide);
+    grid-template-columns: 340px 1fr !important;
+    padding: 2.5rem 2.5rem;
+    gap: 2.5rem !important;
+  }
+}
+@media (min-width: 1600px) {
+  .preview-layout {
+    grid-template-columns: 360px 1fr !important;
+  }
+}
+
+/* Preview document: make it wider when there's room */
+@media (min-width: 1280px) {
+  .preview-document {
+    padding: 4.5rem 5rem !important;
+  }
+  .preview-document-title { font-size: clamp(2.25rem, 3.5vw, 3.4rem) !important; }
+  .preview-section p { font-size: 15px !important; line-height: 1.8; }
+}
+
+/* Admin shell: use full width on wide screens (operator tool) */
+@media (min-width: 1400px) {
+  .admin-main { padding: 2.25rem 2.75rem; }
+  .admin-page { max-width: 1400px; }
+}
+
+/* Legal / Founder / Partner pages: a touch wider */
+.legal-page, .founder-page { max-width: 820px; }
+
+/* Site footer remains centered but with more side space */
+.site-footer { padding: 2rem 1.5rem; }
+
+/* Wizard header: tighter on desktop so wizard content uses more vertical */
+@media (min-width: 1280px) {
+  .home-hero h1 { font-size: clamp(2rem, 3.6vw, 3.2rem); }
+  .home-hero p { font-size: 1.1rem; max-width: 700px; }
+}
