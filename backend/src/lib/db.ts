@@ -149,3 +149,8 @@ const cols = db.prepare("PRAGMA table_info(users)").all() as Array<{ name: strin
 if (!cols.some((c) => c.name === 'role')) {
   db.exec(`ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user'`);
 }
+
+const planCols = db.prepare("PRAGMA table_info(plans)").all() as Array<{ name: string }>;
+if (!planCols.some((c) => c.name === 'settings_json')) {
+  db.exec(`ALTER TABLE plans ADD COLUMN settings_json TEXT NOT NULL DEFAULT '{}'`);
+}

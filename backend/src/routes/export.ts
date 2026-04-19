@@ -16,6 +16,7 @@ interface PlanRow {
   answers_json: string;
   texts_json: string;
   finance_json: string;
+  settings_json: string;
   paid: number;
 }
 
@@ -47,13 +48,19 @@ router.get('/:id/pdf', burstLimiter, optionalAuth, dailyQuotaLimiter('export'), 
   if (!auth.ok) return res.status(auth.status!).json({ error: auth.status === 404 ? 'not_found' : 'forbidden' });
 
   const watermarked = !row!.paid && !userHasActiveSub(req.user?.sub);
+  const settings = JSON.parse(row!.settings_json || '{}');
+  const answers = JSON.parse(row!.answers_json) as Record<string, Record<string, unknown>>;
+  const flat: Record<string, unknown> = {};
+  Object.values(answers).forEach((a) => Object.assign(flat, a));
   try {
     const pdf = await renderPlanPdf({
-      title: row!.title || 'Businessplan',
+      title: row!.title || (flat.company_name as string) || 'Businessplan',
+      subtitle: (flat.one_liner as string) || undefined,
       language: row!.language,
       texts: JSON.parse(row!.texts_json),
       finance: JSON.parse(row!.finance_json),
       watermarked,
+      settings,
     });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `inline; filename="businessplan${watermarked ? '-preview' : ''}.pdf"`);

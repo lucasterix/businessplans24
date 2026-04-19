@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { fetchPricing, getPlan, startCheckout, api, type Plan, type PricingResponse } from '../api/client';
+import { fetchPricing, getPlan, startCheckout, updatePlan, api, type Plan, type PricingResponse } from '../api/client';
 import { usePlanStore } from '../store/usePlanStore';
 import { usePreviewTheme, ACCENT_COLORS, FONT_FAMILIES, mergeSectionOrder } from '../store/usePreviewTheme';
 import { useLocalizedPath } from '../i18n/useLocalizedPath';
@@ -19,26 +19,56 @@ export default function Preview() {
   const store = usePlanStore();
   const loc = useLocalizedPath();
   const theme = usePreviewTheme();
+  const loadedPlanRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!planId) return;
-    getPlan(planId).then(setPlan).catch((err) => {
-      console.warn('[preview] falling back to local store', err);
-      const fake: Plan = {
-        id: planId,
-        title: null,
-        language: store.language,
-        country: store.country,
-        answers: store.answers as unknown as Record<string, unknown>,
-        texts: store.texts,
-        finance: store.finance,
-        status: 'draft',
-        paid: false,
-      };
-      setPlan(fake);
-    });
+    getPlan(planId)
+      .then((p) => {
+        setPlan(p);
+        const settings = (p as Plan & { settings?: Record<string, unknown> }).settings;
+        if (settings && loadedPlanRef.current !== planId) {
+          theme.loadFromPlan(settings);
+          loadedPlanRef.current = planId;
+        }
+      })
+      .catch((err) => {
+        console.warn('[preview] falling back to local store', err);
+        const fake: Plan = {
+          id: planId,
+          title: null,
+          language: store.language,
+          country: store.country,
+          answers: store.answers as unknown as Record<string, unknown>,
+          texts: store.texts,
+          finance: store.finance,
+          status: 'draft',
+          paid: false,
+        };
+        setPlan(fake);
+      });
     fetchPricing(store.country || undefined).then(setPricing).catch(() => {});
-  }, [planId, store]);
+  }, [planId, store, theme]);
+
+  // Persist customizer settings to the plan so the PDF export sees them.
+  useEffect(() => {
+    if (!planId) return;
+    const t = setTimeout(() => {
+      updatePlan(planId, { settings: theme.exportSettings() as Record<string, unknown> }).catch(() => {});
+    }, 800);
+    return () => clearTimeout(t);
+  }, [
+    planId,
+    theme,
+    theme.accent,
+    theme.coverStyle,
+    theme.logoDataUrl,
+    theme.footerText,
+    theme.showCoverDate,
+    theme.showToc,
+    theme.sectionOrder,
+    theme.hiddenSections,
+  ]);
 
   const unlock = async (type: 'one_time' | 'subscription') => {
     if (!planId) return;
@@ -174,6 +204,11 @@ export default function Preview() {
           date={today}
           sections={sections}
           watermark={!plan.paid}
+          logoDataUrl={theme.logoDataUrl}
+          coverStyle={theme.coverStyle}
+          footerText={theme.footerText}
+          showCoverDate={theme.showCoverDate}
+          showToc={theme.showToc}
         />
       </div>
     </div>

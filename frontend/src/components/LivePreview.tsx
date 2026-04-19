@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { usePlanStore } from '../store/usePlanStore';
+import { usePreviewTheme } from '../store/usePreviewTheme';
 import { SECTIONS } from '../wizard/schema';
 import A4Document, { type A4Section } from './A4Document';
 
@@ -21,6 +22,7 @@ export default function LivePreview({ activeSectionId }: Props) {
   const { t } = useTranslation();
   const answers = usePlanStore((s) => s.answers);
   const texts = usePlanStore((s) => s.texts);
+  const theme = usePreviewTheme();
 
   const flat: Record<string, unknown> = {};
   Object.values(answers).forEach((a) => Object.assign(flat, a));
@@ -87,6 +89,11 @@ export default function LivePreview({ activeSectionId }: Props) {
       watermark
       toolbar={toolbar}
       compact
+      logoDataUrl={theme.logoDataUrl}
+      coverStyle={theme.coverStyle}
+      footerText={theme.footerText}
+      showCoverDate={theme.showCoverDate}
+      showToc={theme.showToc}
     />
   );
 }

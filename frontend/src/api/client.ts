@@ -96,6 +96,7 @@ export async function updatePlan(
     answers: Record<string, unknown>;
     texts: Record<string, string>;
     finance: Record<string, unknown>;
+    settings: Record<string, unknown>;
     status: 'draft' | 'preview' | 'paid';
   }>
 ): Promise<void> {
@@ -110,6 +111,7 @@ export interface Plan {
   answers: Record<string, unknown>;
   texts: Record<string, string>;
   finance: Record<string, unknown>;
+  settings?: Record<string, unknown>;
   status: string;
   paid: boolean;
 }

@@ -1,5 +1,14 @@
 import puppeteer from 'puppeteer';
 
+export interface PlanSettings {
+  logoDataUrl?: string;
+  coverStyle?: 'classic' | 'modern' | 'minimal';
+  footerText?: string;
+  showCoverDate?: boolean;
+  showToc?: boolean;
+  accentHex?: string;
+}
+
 interface RenderInput {
   title: string;
   subtitle?: string;
@@ -9,6 +18,8 @@ interface RenderInput {
   watermarked: boolean;
   /** Optional extra cover facts (Gründer, Standort, …). */
   facts?: Record<string, Array<[string, string]>>;
+  /** User-controlled visuals (logo, colours, footer) */
+  settings?: PlanSettings;
 }
 
 const SECTION_TITLES: Record<string, Record<string, string>> = {
@@ -50,16 +61,26 @@ function buildHtml(input: RenderInput): string {
 
   const today = new Date().toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const coverToc = order
-    .filter((k) => input.texts[k])
-    .map(
-      (k, i) => `
+  const settings = input.settings || {};
+  const accent = settings.accentHex && /^#[0-9a-f]{6}$/i.test(settings.accentHex) ? settings.accentHex : '#0b5cff';
+  const coverStyle = settings.coverStyle || 'classic';
+  const showCoverDate = settings.showCoverDate !== false;
+  const showToc = settings.showToc !== false;
+  const logoUrl = typeof settings.logoDataUrl === 'string' && settings.logoDataUrl.startsWith('data:') ? settings.logoDataUrl : '';
+  const footerText = esc(settings.footerText || '');
+
+  const coverToc = showToc
+    ? order
+        .filter((k) => input.texts[k])
+        .map(
+          (k, i) => `
       <li>
         <span class="toc-num">${String(i + 1).padStart(2, '0')}</span>
         <span>${esc(titles[k])}</span>
       </li>`
-    )
-    .join('');
+        )
+        .join('')
+    : '';
 
   const contentPages = order
     .filter((k) => input.texts[k])
@@ -82,6 +103,7 @@ function buildHtml(input: RenderInput): string {
           ${factsBlock}
           <div class="body">${body}</div>
         </div>
+        ${footerText ? `<div class="running-footer">${footerText}</div>` : ''}
       </section>`;
     })
     .join('');
@@ -107,6 +129,14 @@ function buildHtml(input: RenderInput): string {
 
   const subtitleHtml = input.subtitle
     ? `<p class="cover-subtitle">${esc(input.subtitle)}</p>`
+    : '';
+
+  const logoHtml = logoUrl
+    ? `<div class="cover-logo"><img src="${logoUrl}" alt="" /></div>`
+    : '';
+
+  const coverDateHtml = showCoverDate
+    ? `<p class="cover-date">${esc(today)}</p>`
     : '';
 
   return `<!doctype html>
@@ -154,8 +184,31 @@ function buildHtml(input: RenderInput): string {
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.02em;
-    color: #0b5cff;
+    color: ${accent};
     margin: 10mm 0 5mm;
+  }
+  .cover-logo {
+    margin: 0 auto 8mm;
+    max-width: 50mm;
+  }
+  .cover-logo img { max-width: 100%; max-height: 35mm; object-fit: contain; display: block; margin: 0 auto; }
+  .cover-style-modern .cover .inner { text-align: left; }
+  .cover-style-modern .cover-title { font-size: 48pt; margin-top: 8mm; }
+  .cover-style-modern .cover-toc { max-width: 100%; }
+  .cover-style-minimal .cover-title { font-size: 30pt; color: #0b1120; }
+  .cover-style-minimal .cover-eyebrow { color: ${accent}; }
+  .running-footer {
+    position: absolute;
+    bottom: 8mm;
+    left: 20mm;
+    right: 20mm;
+    text-align: center;
+    font-size: 8pt;
+    color: #9ca3af;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 3mm;
   }
   .cover-subtitle {
     font-size: 14pt;
@@ -196,7 +249,7 @@ function buildHtml(input: RenderInput): string {
     margin-bottom: 3mm;
     border-bottom: 1px dotted #d1d5db;
   }
-  .toc-num { font-weight: 700; color: #0b5cff; }
+  .toc-num { font-weight: 700; color: ${accent}; }
 
   /* Content */
   .content-page .inner {
@@ -216,7 +269,7 @@ function buildHtml(input: RenderInput): string {
     font-weight: 700;
     letter-spacing: 0.1em;
     color: #fff;
-    background: #0b5cff;
+    background: ${accent};
     padding: 2mm 4mm;
     border-radius: 2mm;
   }
@@ -254,20 +307,19 @@ function buildHtml(input: RenderInput): string {
   ${watermarkCss}
 </style>
 </head>
-<body>
+<body class="cover-style-${coverStyle}">
   <section class="page cover">
     <div class="inner">
       <div>
+        ${logoHtml}
         <p class="cover-eyebrow">Businessplan</p>
         <h1 class="cover-title">${esc(input.title)}</h1>
         ${subtitleHtml}
-        <p class="cover-date">${esc(today)}</p>
+        ${coverDateHtml}
       </div>
-      <div class="cover-toc">
-        <p class="toc-label">Inhalt</p>
-        <ol>${coverToc}</ol>
-      </div>
+      ${coverToc ? `<div class="cover-toc"><p class="toc-label">Inhalt</p><ol>${coverToc}</ol></div>` : ''}
     </div>
+    ${footerText ? `<div class="running-footer">${footerText}</div>` : ''}
   </section>
   ${contentPages}
 </body>

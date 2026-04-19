@@ -1,25 +1,40 @@
-import { useState } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import {
   usePreviewTheme,
   ACCENT_COLORS,
   FONT_FAMILIES,
+  COVER_STYLES,
   mergeSectionOrder,
   type PreviewAccent,
   type PreviewFont,
+  type CoverStyle,
 } from '../store/usePreviewTheme';
+import { toast } from '../store/useToasts';
 
 interface Props {
   sections: Array<{ key: string; title: string }>;
 }
 
+const MAX_LOGO_BYTES = 500 * 1024;
+
 export default function PreviewCustomizer({ sections }: Props) {
   const {
     accent,
     font,
+    coverStyle,
+    logoDataUrl,
+    footerText,
+    showCoverDate,
+    showToc,
     hiddenSections,
     sectionOrder,
     setAccent,
     setFont,
+    setCoverStyle,
+    setLogo,
+    setFooterText,
+    setShowCoverDate,
+    setShowToc,
     toggleSection,
     moveSection,
     setSectionOrder,
@@ -31,6 +46,25 @@ export default function PreviewCustomizer({ sections }: Props) {
 
   const [dragId, setDragId] = useState<string | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const onLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > MAX_LOGO_BYTES) {
+      toast.error('Logo zu groß — max. 500 KB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === 'string') {
+        setLogo(result);
+        toast.success('Logo übernommen.');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const onDragStart = (id: string) => (e: React.DragEvent) => {
     setDragId(id);
@@ -59,12 +93,66 @@ export default function PreviewCustomizer({ sections }: Props) {
 
   return (
     <div className="preview-customizer">
-      <details>
+      <details open>
         <summary>
           <span className="preview-customizer-icon" aria-hidden>🎨</span>
           Dokument anpassen
         </summary>
         <div className="preview-customizer-content">
+
+          <div className="preview-custom-section">
+            <div className="preview-custom-label">Logo</div>
+            {logoDataUrl ? (
+              <div className="preview-logo-preview">
+                <img src={logoDataUrl} alt="Logo" />
+                <div className="preview-logo-actions">
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => fileInputRef.current?.click()}>
+                    Ersetzen
+                  </button>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => setLogo(null)}>
+                    Entfernen
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="preview-logo-upload"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <span className="preview-logo-upload-icon" aria-hidden>⬆</span>
+                <span>Logo hochladen (PNG, JPG, SVG · max. 500 KB)</span>
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/svg+xml"
+              style={{ display: 'none' }}
+              onChange={onLogoUpload}
+            />
+          </div>
+
+          <div className="preview-custom-section">
+            <div className="preview-custom-label">Deckblatt-Stil</div>
+            <div className="preview-cover-styles">
+              {(Object.keys(COVER_STYLES) as CoverStyle[]).map((key) => {
+                const s = COVER_STYLES[key];
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`preview-cover-style-card ${key === coverStyle ? 'is-active' : ''}`}
+                    onClick={() => setCoverStyle(key)}
+                  >
+                    <strong>{s.name}</strong>
+                    <span>{s.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="preview-custom-section">
             <div className="preview-custom-label">Akzentfarbe</div>
             <div className="preview-accent-row">
@@ -83,7 +171,7 @@ export default function PreviewCustomizer({ sections }: Props) {
           </div>
 
           <div className="preview-custom-section">
-            <div className="preview-custom-label">Schriftart</div>
+            <div className="preview-custom-label">Schriftart (Preview)</div>
             <div className="preview-font-row">
               {(Object.keys(FONT_FAMILIES) as PreviewFont[]).map((key) => (
                 <button
@@ -97,6 +185,30 @@ export default function PreviewCustomizer({ sections }: Props) {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="preview-custom-section">
+            <div className="preview-custom-label">Fußzeile (auf jeder Seite)</div>
+            <input
+              type="text"
+              className="preview-footer-input"
+              placeholder="z.B. Vertraulich · Entwurf · Ihr Name"
+              maxLength={80}
+              value={footerText}
+              onChange={(e) => setFooterText(e.target.value)}
+            />
+          </div>
+
+          <div className="preview-custom-section">
+            <div className="preview-custom-label">Deckblatt-Optionen</div>
+            <label className="preview-toggle-row">
+              <input type="checkbox" checked={showCoverDate} onChange={(e) => setShowCoverDate(e.target.checked)} />
+              <span>Datum auf dem Deckblatt anzeigen</span>
+            </label>
+            <label className="preview-toggle-row">
+              <input type="checkbox" checked={showToc} onChange={(e) => setShowToc(e.target.checked)} />
+              <span>Inhaltsverzeichnis auf dem Deckblatt</span>
+            </label>
           </div>
 
           <div className="preview-custom-section">
@@ -123,28 +235,12 @@ export default function PreviewCustomizer({ sections }: Props) {
                     <span className="preview-section-drag" aria-hidden>⋮⋮</span>
                     <span className="preview-section-num-mini">{idx + 1}</span>
                     <label className="preview-section-label">
-                      <input
-                        type="checkbox"
-                        checked={!hidden}
-                        onChange={() => toggleSection(id)}
-                      />
+                      <input type="checkbox" checked={!hidden} onChange={() => toggleSection(id)} />
                       <span>{title}</span>
                     </label>
                     <span className="preview-section-arrows">
-                      <button
-                        type="button"
-                        className="btn-icon btn-icon-sm"
-                        onClick={() => moveSection(id, 'up')}
-                        disabled={idx === 0}
-                        aria-label="Nach oben"
-                      >↑</button>
-                      <button
-                        type="button"
-                        className="btn-icon btn-icon-sm"
-                        onClick={() => moveSection(id, 'down')}
-                        disabled={idx === orderedIds.length - 1}
-                        aria-label="Nach unten"
-                      >↓</button>
+                      <button type="button" className="btn-icon btn-icon-sm" onClick={() => moveSection(id, 'up')} disabled={idx === 0} aria-label="Nach oben">↑</button>
+                      <button type="button" className="btn-icon btn-icon-sm" onClick={() => moveSection(id, 'down')} disabled={idx === orderedIds.length - 1} aria-label="Nach unten">↓</button>
                     </span>
                   </li>
                 );

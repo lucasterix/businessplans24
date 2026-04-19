@@ -36,6 +36,7 @@ const updateSchema = z.object({
   answers: z.record(z.unknown()).optional(),
   texts: z.record(z.string()).optional(),
   finance: z.record(z.unknown()).optional(),
+  settings: z.record(z.unknown()).optional(),
   title: z.string().optional(),
   status: z.enum(['draft', 'preview', 'paid']).optional(),
 });
@@ -66,6 +67,10 @@ router.patch('/:id', optionalAuth, (req, res) => {
     updates.push('finance_json = ?');
     values.push(JSON.stringify(parsed.data.finance));
   }
+  if (parsed.data.settings !== undefined) {
+    updates.push('settings_json = ?');
+    values.push(JSON.stringify(parsed.data.settings));
+  }
   if (parsed.data.title !== undefined) {
     updates.push('title = ?');
     values.push(parsed.data.title);
@@ -93,6 +98,7 @@ router.get('/:id', optionalAuth, (req, res) => {
         answers_json: string;
         texts_json: string;
         finance_json: string;
+        settings_json: string;
         status: string;
         paid: number;
       }
@@ -109,6 +115,7 @@ router.get('/:id', optionalAuth, (req, res) => {
     answers: JSON.parse(row.answers_json),
     texts: JSON.parse(row.texts_json),
     finance: JSON.parse(row.finance_json),
+    settings: JSON.parse(row.settings_json || '{}'),
     status: row.status,
     paid: !!row.paid,
   });

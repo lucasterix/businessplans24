@@ -3607,3 +3607,163 @@ body {
     position: static !important;
   }
 }
+
+/* ===== Customizations: logo, cover styles, footer, toggles ===== */
+
+/* Logo upload */
+.preview-logo-upload {
+  width: 100%;
+  padding: 1rem;
+  border: 2px dashed var(--border-hi);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  color: var(--text-mute);
+  cursor: pointer;
+  font-size: 13px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: inherit;
+  transition: all 150ms;
+}
+.preview-logo-upload:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.preview-logo-upload-icon { font-size: 18px; }
+.preview-logo-preview {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.preview-logo-preview img {
+  max-width: 100%;
+  max-height: 80px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+.preview-logo-actions { display: flex; gap: 0.4rem; justify-content: center; }
+
+/* Cover style cards */
+.preview-cover-styles {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 420px) { .preview-cover-styles { grid-template-columns: 1fr; } }
+.preview-cover-style-card {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.65rem 0.6rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: all 120ms;
+}
+.preview-cover-style-card:hover { border-color: var(--border-hi); }
+.preview-cover-style-card strong { font-size: 12.5px; color: var(--text); }
+.preview-cover-style-card span { font-size: 11px; color: var(--text-mute); line-height: 1.3; }
+.preview-cover-style-card.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.preview-cover-style-card.is-active strong { color: var(--accent); }
+
+/* Footer text input */
+.preview-footer-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: inherit;
+  background: #fff;
+}
+.preview-footer-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* Toggle rows */
+.preview-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+.preview-toggle-row input { accent-color: var(--accent); cursor: pointer; }
+
+/* ===== A4 enhancements ===== */
+.a4-cover-head { display: contents; }
+.a4-cover-logo {
+  margin: 0 auto 1cqw;
+  max-width: 25%;
+}
+.a4-cover-logo img {
+  max-width: 100%;
+  max-height: 15cqw;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Cover style variants */
+.a4-stack.cover-style-modern .a4-cover .a4-inner {
+  text-align: left;
+  padding-left: 1cqw;
+}
+.a4-stack.cover-style-modern .a4-cover-title {
+  font-size: 6.5cqw;
+  margin-top: 2cqw;
+}
+.a4-stack.cover-style-modern .a4-cover-toc {
+  max-width: 100%;
+  text-align: left;
+}
+.a4-stack.cover-style-modern .a4-cover-logo {
+  margin: 0 0 1cqw 0;
+  max-width: 25%;
+}
+
+.a4-stack.cover-style-minimal .a4-cover-title {
+  font-size: 4cqw;
+  color: #0b1120 !important;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+.a4-stack.cover-style-minimal .a4-eyebrow {
+  color: var(--doc-accent, var(--accent)) !important;
+  font-weight: 700;
+}
+.a4-stack.cover-style-minimal .a4-cover-toc { border-top: 0; padding-top: 3cqw; }
+.a4-stack.cover-style-minimal .a4-cover-subtitle {
+  color: #6b7280;
+  font-weight: 300;
+  font-size: 2cqw;
+}
+
+/* Running footer */
+.a4-running-footer {
+  position: absolute;
+  bottom: 4%;
+  left: 9.5%;
+  right: 9.5%;
+  text-align: center;
+  font-size: 1cqw;
+  color: #9ca3af;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.2cqw;
+  z-index: 2;
+}
+.a4-stack.is-compact .a4-running-footer { font-size: 0.9cqw; }
