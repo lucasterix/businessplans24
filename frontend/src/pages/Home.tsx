@@ -11,6 +11,7 @@ import FaqHome from '../components/FaqHome';
 import PlanCounter from '../components/PlanCounter';
 import ExitIntent from '../components/ExitIntent';
 import WizardToast from '../components/WizardToast';
+import DocHead from '../components/DocHead';
 import { usePlanStore } from '../store/usePlanStore';
 import { createPlan } from '../api/client';
 
@@ -75,6 +76,10 @@ export default function Home() {
 
   return (
     <>
+      <DocHead
+        title={t('landing.hero_title') + ' | Businessplan24'}
+        description={t('landing.hero_sub')}
+      />
       <section className="home-hero">
         <div className="home-hero-badge">✨ Claude Sonnet 4.6 · 30 Minuten · keine Abo-Falle</div>
         <h1>{t('landing.hero_title')}</h1>

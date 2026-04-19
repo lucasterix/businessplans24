@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
+import DocHead from '../components/DocHead';
 
 export default function Founder() {
   return (
     <div className="founder-page">
+      <DocHead
+        title="Gründer — Lucas Schmutz von Businessplan24"
+        description="Warum ich Businessplan24 gebaut habe: von UNICEF über soziale Projekte bis zur Selbstständigkeit im Health-Science-Bereich."
+        singleLanguage="de"
+      />
       <section className="founder-hero">
         <span className="founder-tag">Gründer</span>
         <h1>Warum ich Businessplan24 baue</h1>

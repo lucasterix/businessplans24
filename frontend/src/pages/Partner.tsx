@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
+import DocHead from '../components/DocHead';
 
 export default function Partner() {
   const [form, setForm] = useState({ name: '', email: '', company: '', country: 'DE', message: '' });
@@ -24,6 +25,10 @@ export default function Partner() {
 
   return (
     <div className="partner-page">
+      <DocHead
+        title="Partnerprogramm — 20 % Provision | Businessplan24"
+        description="Für Steuerberater, IHK, Gründungsberater, Inkubatoren. 20 % Provision auf jeden vermittelten Verkauf, dauerhaft."
+      />
       <section className="partner-hero">
         <h1>Partnerprogramm</h1>
         <p className="partner-lead">

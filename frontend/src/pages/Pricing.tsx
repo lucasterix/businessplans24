@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchPricing, type PricingResponse } from '../api/client';
 import { Link } from 'react-router-dom';
+import DocHead from '../components/DocHead';
 
 export default function Pricing() {
   const { t } = useTranslation();
@@ -13,6 +14,10 @@ export default function Pricing() {
 
   return (
     <div className="pricing-layout">
+      <DocHead
+        title="Preise — Businessplan24"
+        description="Fairer Preis für deinen Businessplan: 49 € einmalig oder 99 €/Jahr unbegrenzt. Länderspezifisch, keine Abo-Falle."
+      />
       <h1>{t('pricing.title')}</h1>
       {pricing && (
         <p className="muted">{t('pricing.detected', { country: pricing.country })}</p>

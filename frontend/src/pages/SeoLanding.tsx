@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PlanCounter from '../components/PlanCounter';
 import TrustRow from '../components/TrustRow';
 import Testimonials from '../components/Testimonials';
 import FaqHome from '../components/FaqHome';
+import DocHead from '../components/DocHead';
 
 interface Variant {
   slug: string;
@@ -93,23 +93,11 @@ interface Props {
 
 export default function SeoLanding({ variantKey }: Props) {
   const v = VARIANTS[variantKey];
-
-  useEffect(() => {
-    if (!v) return;
-    document.title = v.metaTitle;
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) {
-      meta = document.createElement('meta');
-      meta.setAttribute('name', 'description');
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute('content', v.metaDescription);
-  }, [v]);
-
   if (!v) return null;
 
   return (
     <div>
+      <DocHead title={v.metaTitle} description={v.metaDescription} singleLanguage="de" />
       <section className="home-hero">
         <div className="home-hero-badge">Speziell für {v.h1.split('—')[0].trim()}</div>
         <h1>{v.h1}</h1>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import DocHead from '../components/DocHead';
 
 const SECTIONS = [
   {
@@ -48,6 +49,11 @@ Der Kapitalbedarf verteilt sich auf Einbau und Ausstattung (54 000 €), Warenla
 export default function Example() {
   return (
     <div className="example-layout">
+      <DocHead
+        title="Beispiel: Nordlicht Café — So sieht ein fertiger Plan aus | Businessplan24"
+        description="Realistischer Businessplan-Beispielplan, wie du ihn in 30 Minuten mit Businessplan24 erstellen kannst. Geschäftsidee, Kunden, Finanzen — alles drin."
+        singleLanguage="de"
+      />
       <section className="example-hero">
         <span className="example-badge">So sieht ein fertiger Plan aus</span>
         <h1>Beispiel: Nordlicht Café GmbH</h1>
