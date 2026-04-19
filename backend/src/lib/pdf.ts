@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { type Browser } from 'puppeteer';
 
 export interface PlanSettings {
   logoDataUrl?: string;
@@ -334,22 +334,76 @@ function buildHtml(input: RenderInput): string {
 </html>`;
 }
 
+// Keep a single long-lived Chromium instance and reuse it across requests.
+// Launching puppeteer costs ~2s + ~180MB per render; the shared browser cuts
+// render latency to sub-second and keeps memory flat under concurrent load.
+// New page per render isolates state; browser relaunches on crash.
+let browserSingleton: Browser | null = null;
+let browserLaunchInFlight: Promise<Browser> | null = null;
+let rendersSinceLaunch = 0;
+const RELAUNCH_AFTER = 200; // recycle the browser every N renders to fence leaks
+
+async function getBrowser(): Promise<Browser> {
+  if (browserSingleton && browserSingleton.connected && rendersSinceLaunch < RELAUNCH_AFTER) {
+    return browserSingleton;
+  }
+  if (browserSingleton) {
+    // Recycle: close old instance in the background, don't await
+    const old = browserSingleton;
+    browserSingleton = null;
+    old.close().catch((err) => console.warn('[pdf] close old browser', err));
+  }
+  if (!browserLaunchInFlight) {
+    browserLaunchInFlight = puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+    }).then((b) => {
+      browserSingleton = b;
+      rendersSinceLaunch = 0;
+      b.on('disconnected', () => {
+        if (browserSingleton === b) browserSingleton = null;
+      });
+      return b;
+    }).finally(() => {
+      browserLaunchInFlight = null;
+    });
+  }
+  return browserLaunchInFlight;
+}
+
 export async function renderPlanPdf(input: RenderInput): Promise<Buffer> {
   const html = buildHtml(input);
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
+  let browser = await getBrowser();
+  let page;
   try {
-    const page = await browser.newPage();
+    page = await browser.newPage();
+  } catch (err) {
+    // Browser died between getBrowser() and newPage(); force relaunch once.
+    console.warn('[pdf] newPage failed, relaunching', err);
+    browserSingleton = null;
+    browser = await getBrowser();
+    page = await browser.newPage();
+  }
+  try {
     await page.setContent(html, { waitUntil: 'networkidle0' });
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: { top: '0', right: '0', bottom: '0', left: '0' },
     });
+    rendersSinceLaunch++;
     return Buffer.from(pdf);
   } finally {
-    await browser.close();
+    await page.close().catch(() => { /* ignore */ });
   }
 }
+
+// Graceful shutdown: close browser on SIGTERM/SIGINT so Docker stops cleanly.
+const shutdown = async () => {
+  if (browserSingleton) {
+    await browserSingleton.close().catch(() => { /* ignore */ });
+    browserSingleton = null;
+  }
+};
+process.once('SIGTERM', shutdown);
+process.once('SIGINT', shutdown);
