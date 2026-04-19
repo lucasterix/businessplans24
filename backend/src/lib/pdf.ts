@@ -1,5 +1,6 @@
 import puppeteer, { type Browser } from 'puppeteer';
 import { renderFinanceChartsBlock, type FinancePayload } from './pdfCharts.js';
+import { renderMarkdown } from './markdown.js';
 
 export interface PlanSettings {
   logoDataUrl?: string;
@@ -241,14 +242,15 @@ function buildHtml(input: RenderInput): string {
       .map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`)
       .join('');
     const factsBlock = facts ? `<dl class="facts">${facts}</dl>` : '';
-    const body = (input.texts[k] || '')
-      .split(/\n{2,}/)
-      .map((p) => `<p>${esc(p.trim())}</p>`)
-      .join('');
+    // Claude emits markdown (## subheads, **bold**, --- hrs). Render it so
+    // the PDF shows formatted text instead of literal asterisks and hashes.
+    const body = renderMarkdown(input.texts[k] || '');
     const bodyClass = k === 'appendix' && appendixTwoCol ? 'body body-twocol' : 'body';
     const stripeClass = sectionStripe ? 'has-stripe' : '';
 
-    // Inject finance charts into the Finance section when enabled + data exists
+    // Finance charts rendered BEFORE the narrative so they always fit on the
+    // first section page — long text that pushes them past the fold used to
+    // get clipped by overflow: hidden.
     const chartsBlock = (k === 'finance' && financeCharts)
       ? renderFinanceChartsBlock(input.finance as FinancePayload, accent, currency)
       : '';
@@ -261,8 +263,8 @@ function buildHtml(input: RenderInput): string {
             <h2>${esc(titles[k])}</h2>
           </header>
           ${factsBlock}
-          <div class="${bodyClass}">${body}</div>
           ${chartsBlock}
+          <div class="${bodyClass}">${body}</div>
         </div>
         ${headerHtml(pageN)}
       </section>`;
@@ -277,7 +279,22 @@ function buildHtml(input: RenderInput): string {
   });
 
   const watermarkCss = input.watermarked
-    ? `.watermark { position: absolute; top: 45%; left: 0; right: 0; text-align: center; font-size: 120pt; color: rgba(210, 63, 63, 0.08); font-weight: 900; transform: rotate(-30deg); z-index: 10; pointer-events: none; letter-spacing: 0.1em; }`
+    ? `.watermark {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80pt;
+        color: rgba(210, 63, 63, 0.1);
+        font-weight: 900;
+        transform: rotate(-28deg);
+        transform-origin: center center;
+        z-index: 10;
+        pointer-events: none;
+        letter-spacing: 0.08em;
+        overflow: hidden;
+      }`
     : `.watermark { display: none; }`;
 
   return `<!doctype html>
@@ -290,9 +307,23 @@ function buildHtml(input: RenderInput): string {
   html, body { margin: 0; padding: 0; }
   body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #0b1120; line-height: 1.55; font-size: 11pt; }
   * { box-sizing: border-box; }
-  .page { position: relative; width: 210mm; height: 297mm; page-break-after: always; overflow: hidden; }
+  /* Fixed-size pages for cover / toc / divider / blank — those are always
+     exactly one printed page by design. */
+  .page.cover, .page.toc-page, .page.divider-page, .page.blank-page {
+    position: relative; width: 210mm; height: 297mm; overflow: hidden; page-break-after: always;
+  }
+  /* Content pages flow naturally: force a new printed page at each section
+     start, but let long text spill over into a second printed page instead
+     of being clipped mid-sentence. Decorations (stripe, watermark, page-num)
+     are positioned absolutely and only render on the first printed page of
+     a section — that's acceptable for v1. */
+  .page.content-page {
+    position: relative; width: 210mm; min-height: 297mm;
+    page-break-before: always; page-break-after: auto;
+  }
   .page:last-child { page-break-after: auto; }
-  .inner { padding: 20mm; height: 100%; position: relative; z-index: 2; }
+  .inner { padding: 20mm; position: relative; z-index: 2; }
+  .cover .inner, .toc-page .inner, .divider-page .inner, .blank-page .inner { height: 100%; }
 
   /* Cover */
   .cover .inner { display: flex; flex-direction: column; justify-content: flex-start; text-align: center; }
@@ -353,6 +384,15 @@ function buildHtml(input: RenderInput): string {
   .facts dt { font-weight: 600; color: #4b5563; margin: 0; }
   .facts dd { margin: 0; color: #0b1120; }
   .body p { font-size: 11pt; line-height: 1.7; text-align: justify; hyphens: auto; margin: 0 0 3mm; }
+  .body h3 { font-size: 13pt; font-weight: 700; color: ${accent}; margin: 6mm 0 2mm; letter-spacing: -0.005em; }
+  .body h4 { font-size: 11.5pt; font-weight: 700; color: #0b1120; margin: 4mm 0 2mm; }
+  .body h5 { font-size: 11pt; font-weight: 700; color: #374151; margin: 3mm 0 1.5mm; }
+  .body strong { font-weight: 700; color: #0b1120; }
+  .body em { font-style: italic; color: #374151; }
+  .body code { font-family: 'SFMono-Regular', Menlo, monospace; font-size: 10pt; background: #fafafb; padding: 0.5mm 1mm; border-radius: 0.5mm; }
+  .body ul { margin: 2mm 0 3mm; padding-left: 6mm; }
+  .body ul li { margin-bottom: 1.2mm; line-height: 1.55; }
+  .md-hr { border: 0; border-top: 1px solid #e5e7eb; margin: 5mm 0; }
   .body-twocol { columns: 2; column-gap: 8mm; }
 
   /* Left accent stripe */

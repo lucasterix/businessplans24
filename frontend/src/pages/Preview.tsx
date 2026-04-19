@@ -190,11 +190,17 @@ export default function Preview() {
 
         <div className="preview-cta-secondary">
           <a className="btn btn-ghost btn-block" href={`/api/export/${plan.id}/pdf`} target="_blank" rel="noreferrer">
-            📄 PDF-Vorschau
+            {plan.paid ? '📄 PDF herunterladen' : '📄 PDF-Vorschau (mit Wasserzeichen)'}
           </a>
-          <a className="btn btn-ghost btn-block" href={`/api/export/${plan.id}/docx`} target="_blank" rel="noreferrer">
-            📝 Word (.docx) herunterladen
-          </a>
+          {plan.paid ? (
+            <a className="btn btn-ghost btn-block" href={`/api/export/${plan.id}/docx`} target="_blank" rel="noreferrer">
+              📝 Word (.docx) herunterladen
+            </a>
+          ) : (
+            <button type="button" className="btn btn-ghost btn-block" disabled title="Word-Download wird nach dem Kauf freigeschaltet">
+              🔒 Word (.docx) — nach Kauf
+            </button>
+          )}
           <button
             type="button"
             className="btn btn-ghost btn-block"

@@ -18,7 +18,7 @@ export default function Privacy() {
           <strong>Registrierung/Konto:</strong> E-Mail-Adresse, verschlüsseltes Passwort, ggf. Land und Sprache.
         </li>
         <li>
-          <strong>Businessplan-Inhalte:</strong> die von dir eingegebenen Antworten und Zahlen sowie die von Plani (unserem Schreibassistenten, technisch betrieben mit Claude von Anthropic, PBC) erzeugten Texte. Wir speichern diese, um deinen Plan über Sitzungen hinweg verfügbar zu machen.
+          <strong>Businessplan-Inhalte:</strong> die von dir eingegebenen Antworten und Zahlen sowie die von BP24 (unserem Schreibassistenten, technisch betrieben mit Claude von Anthropic, PBC) erzeugten Texte. Wir speichern diese, um deinen Plan über Sitzungen hinweg verfügbar zu machen.
         </li>
         <li>
           <strong>Zahlungen:</strong> Abwicklung über Stripe; wir speichern lediglich Transaktions-ID, Betrag, Währung und Status. Kartendaten sehen wir nicht.

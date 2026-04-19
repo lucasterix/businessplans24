@@ -11,7 +11,7 @@ export default function Terms() {
 
       <h2>§ 2 Vertragsgegenstand</h2>
       <p>
-        Wir stellen dir eine webbasierte Software zur Erstellung von Businessplänen zur Verfügung. Die Software erzeugt mit unserem Schreibassistenten „Plani" (technisch auf Basis von Claude der Firma Anthropic, PBC) Texte basierend auf deinen Eingaben. Die erzeugten Texte stellen keine Rechts-, Steuer- oder Unternehmensberatung dar.
+        Wir stellen dir eine webbasierte Software zur Erstellung von Businessplänen zur Verfügung. Die Software erzeugt mit unserem Schreibassistenten „BP24" (technisch auf Basis von Claude der Firma Anthropic, PBC) Texte basierend auf deinen Eingaben. Die erzeugten Texte stellen keine Rechts-, Steuer- oder Unternehmensberatung dar.
       </p>
 
       <h2>§ 3 Preise und Zahlung</h2>
@@ -31,7 +31,7 @@ export default function Terms() {
 
       <h2>§ 6 Haftung</h2>
       <p>
-        Wir haften nur für Schäden, die auf Vorsatz oder grober Fahrlässigkeit beruhen. Die Haftung für leicht fahrlässig verursachte Schäden beschränkt sich auf den vorhersehbaren, typischerweise eintretenden Schaden. Für die Richtigkeit und Vollständigkeit der von Plani generierten Inhalte übernehmen wir keine Gewähr — du bist verantwortlich für die Prüfung und Anpassung.
+        Wir haften nur für Schäden, die auf Vorsatz oder grober Fahrlässigkeit beruhen. Die Haftung für leicht fahrlässig verursachte Schäden beschränkt sich auf den vorhersehbaren, typischerweise eintretenden Schaden. Für die Richtigkeit und Vollständigkeit der von BP24 generierten Inhalte übernehmen wir keine Gewähr — du bist verantwortlich für die Prüfung und Anpassung.
       </p>
 
       <h2>§ 7 Kündigung</h2>

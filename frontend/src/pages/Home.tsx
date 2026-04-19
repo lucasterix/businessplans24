@@ -70,6 +70,17 @@ export default function Home() {
   const isLastStepOfSection = section && store.currentStepIndex === section.steps.length - 1;
   const isLastSection = store.currentSectionIndex === SECTIONS.length - 1;
 
+  // After any wizard navigation, bring the user back to the top of the
+  // wizard pane so the new questions (or generated section) are in view.
+  // Using the wizard-pane element avoids jerking when the hero is long.
+  const scrollToWizard = () => {
+    requestAnimationFrame(() => {
+      const el = document.querySelector('.home-wizard-pane');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
   const onNext = async () => {
     setSaveState('saving');
     try {
@@ -91,6 +102,7 @@ export default function Home() {
     } else {
       store.setPosition(store.currentSectionIndex, store.currentStepIndex + 1);
     }
+    scrollToWizard();
   };
 
   const onBack = () => {
@@ -101,6 +113,15 @@ export default function Home() {
     } else {
       store.setPosition(store.currentSectionIndex, store.currentStepIndex - 1);
     }
+    scrollToWizard();
+  };
+
+  const onJumpToSection = (index: number) => {
+    if (index === store.currentSectionIndex) return;
+    // Persist quietly, then jump.
+    store.persistToServer().catch(() => {});
+    store.setPosition(index, 0);
+    scrollToWizard();
   };
 
   if (!section || !step) return null;
@@ -198,7 +219,10 @@ export default function Home() {
         </div>
 
         <div className="home-split">
-          <WizardStepList currentSectionIndex={store.currentSectionIndex} />
+          <WizardStepList
+            currentSectionIndex={store.currentSectionIndex}
+            onJump={onJumpToSection}
+          />
           <div className="home-wizard-pane">
             {isFinancePlanStep ? (
               <Suspense fallback={<div className="loading-fallback" />}>
@@ -220,13 +244,15 @@ export default function Home() {
 
           <aside className="home-preview-pane">
             <LivePreview activeSectionId={section.id} />
-            <div className="home-preview-customize">
-              <PreviewCustomizer
-                sections={SECTIONS.map((s) => ({ key: s.id, title: t(s.titleKey) }))}
-                defaultOpen={false}
-              />
-            </div>
           </aside>
+        </div>
+
+        {/* Full-width customizer below the wizard — more room than the sidebar. */}
+        <div className="home-customizer-wide">
+          <PreviewCustomizer
+            sections={SECTIONS.map((s) => ({ key: s.id, title: t(s.titleKey) }))}
+            defaultOpen={false}
+          />
         </div>
       </div>
 

@@ -1883,6 +1883,70 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .preview-theme-body span { display: none; } /* desc only in tooltip */
 
+/* ===== 3x regeneration counter + regen button group ===== */
+.wizard-regen-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+.wizard-regen-counter {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 5px;
+  background: rgba(11, 92, 255, 0.1);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.wizard-regen-counter.is-exhausted {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+/* ===== WizardStepList — clickable buttons ===== */
+.wizard-steplist-button {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  transition: background 0.12s;
+}
+.wizard-steplist-button:hover { background: rgba(11, 92, 255, 0.06); }
+.wizard-steplist-item.is-active .wizard-steplist-button { background: rgba(11, 92, 255, 0.08); font-weight: 600; }
+
+/* ===== Home customizer below wizard, full-width ===== */
+.home-customizer-wide {
+  margin-top: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.25rem 1rem;
+}
+.home-customizer-wide .preview-customizer summary {
+  padding: 0.75rem 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Protect the generated plan text from being copied/selected in the
+   preview — the clean PDF is the paid deliverable. Selection is disabled
+   on the wizard LivePreview (.is-compact) and on the Preview-page rail. */
+.a4-stack {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
 /* ===== Wizard generate status (replaces the editable textarea) ===== */
 .wizard-generate-status {
   display: flex;

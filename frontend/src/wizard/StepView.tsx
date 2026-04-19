@@ -47,6 +47,17 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
   const missingRequired = invalidFields.length > 0;
   const hasPrefilledInStep = visibleFields.some((f) => store.prefilled?.[`${step.id}.${f.id}`]);
 
+  const MAX_REGENS = 3;
+  const regenUsed = store.regenCounts?.[section.id] || 0;
+  const regenLeft = Math.max(0, MAX_REGENS - regenUsed);
+  const canRegenerate = regenLeft > 0;
+
+  const handleRegenerate = () => {
+    if (!canRegenerate) return;
+    store.bumpRegenCount(section.id);
+    void handleGenerate();
+  };
+
   const handleGenerate = async () => {
     if (missingRequired) {
       setTriedSubmit(true);
@@ -166,7 +177,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
                 <span /><span /><span />
               </div>
               <p>
-                Plani schreibt <strong>{t(section.titleKey)}</strong> — erscheint live rechts in der Vorschau.
+                BP24 schreibt <strong>{t(section.titleKey)}</strong> — erscheint live rechts in der Vorschau.
               </p>
               <button
                 type="button"
@@ -182,13 +193,24 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
               <p>
                 <strong>{t(section.titleKey)}</strong> ist in der Vorschau eingefügt.
               </p>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                onClick={handleGenerate}
-              >
-                {t('wizard.regenerate')}
-              </button>
+              <div className="wizard-regen-group">
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={handleRegenerate}
+                  disabled={!canRegenerate}
+                  title={canRegenerate
+                    ? `Noch ${regenLeft} von ${MAX_REGENS} Neugenerierungen übrig`
+                    : 'Limit erreicht — weitere Neugenerierungen verfügbar nach Kauf'}
+                >
+                  {t('wizard.regenerate')}
+                </button>
+                <span className={`wizard-regen-counter ${canRegenerate ? '' : 'is-exhausted'}`}>
+                  {canRegenerate
+                    ? `${regenLeft}/${MAX_REGENS}`
+                    : 'Limit erreicht'}
+                </span>
+              </div>
             </div>
           ) : (
             <div className="wizard-generate-cta">
@@ -220,7 +242,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
           disabled={generating || (isLastStepOfSection && !textComplete)}
           title={
             generating
-              ? 'Warten bis Plani fertig geschrieben hat'
+              ? 'Warten bis BP24 fertig geschrieben hat'
               : isLastStepOfSection && !textComplete
                 ? 'Bitte erst den Text generieren oder ausfüllen'
                 : undefined

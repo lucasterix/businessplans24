@@ -19,6 +19,8 @@ interface PlanState {
   /** Fields whose value was supplied by applyModelDefaults (not typed by user).
    *  Keyed as "stepId.fieldId". Used to visually mark prefills as "Vorschlag". */
   prefilled: Record<string, boolean>;
+  /** How many times the user has hit "Neu generieren" for each section. Hard-capped at 3. */
+  regenCounts: Record<string, number>;
   setPlanId: (id: string) => void;
   setLanguage: (lang: string) => void;
   setCountry: (c: string | null) => void;
@@ -28,6 +30,7 @@ interface PlanState {
   setPosition: (section: number, step: number) => void;
   /** Fill empty wizard fields + finance sample with realistic defaults for this model. */
   applyModelDefaults: (modelId: string) => void;
+  bumpRegenCount: (sectionId: string) => void;
   reset: () => void;
   persistToServer: () => Promise<void>;
 }
@@ -42,6 +45,7 @@ const initial = {
   texts: {} as Texts,
   finance: {} as Record<string, unknown>,
   prefilled: {} as Record<string, boolean>,
+  regenCounts: {} as Record<string, number>,
 };
 
 export const usePlanStore = create<PlanState>()(
@@ -105,6 +109,10 @@ export const usePlanStore = create<PlanState>()(
           ds.setStartingCash(d.finance.startingCash);
         }
       },
+      bumpRegenCount: (sectionId) =>
+        set((s) => ({
+          regenCounts: { ...s.regenCounts, [sectionId]: (s.regenCounts[sectionId] || 0) + 1 },
+        })),
       reset: () => set(initial),
       persistToServer: async () => {
         const { planId, answers, texts, finance } = get();

@@ -76,20 +76,24 @@ router.get('/:id/docx', burstLimiter, optionalAuth, dailyQuotaLimiter('export'),
   const auth = authorize(row, req.user?.sub);
   if (!auth.ok) return res.status(auth.status!).json({ error: auth.status === 404 ? 'not_found' : 'forbidden' });
 
-  const watermarked = !row!.paid && !userHasActiveSub(req.user?.sub);
+  // DOCX is a fully-editable file with no watermark ink in it; once someone
+  // has the file they own it forever. So we hard-gate the download behind
+  // payment instead of serving a "preview" version like we do for PDF.
+  const isPaid = !!row!.paid || userHasActiveSub(req.user?.sub);
+  if (!isPaid) return res.status(402).json({ error: 'payment_required' });
+
   try {
     const buf = await renderPlanDocx({
       title: row!.title || 'Businessplan',
       language: row!.language,
       texts: JSON.parse(row!.texts_json),
-      watermarked,
+      watermarked: false,
     });
-    const filename = `businessplan${watermarked ? '-vorschau' : ''}.docx`;
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     );
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Disposition', 'attachment; filename="businessplan.docx"');
     res.send(buf);
   } catch (err) {
     console.error('[export.docx]', err);
