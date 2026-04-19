@@ -8,32 +8,69 @@ import { authLimiter } from '../middleware/rateLimit.js';
 const router = Router();
 
 const schema = z.object({
-  name: z.string().min(1).max(120),
   email: z.string().email(),
+  name: z.string().max(120).optional(),
   company: z.string().max(200).optional(),
   country: z.string().length(2).optional(),
-  message: z.string().max(2000).optional(),
 });
 
-router.post('/apply', authLimiter, (req, res) => {
+// Self-serve signup: any email address instantly gets a referral code.
+// If the same email comes back, return the existing code (idempotent).
+router.post('/signup', authLimiter, (req, res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: 'invalid_input' });
+
+  const existing = db
+    .prepare('SELECT id, referral_code FROM partners WHERE email = ?')
+    .get(parsed.data.email) as { id: string; referral_code: string } | undefined;
+  if (existing) return res.json({ ok: true, referralCode: existing.referral_code, existing: true });
+
   const id = randomUUID();
   const code = 'P' + id.slice(0, 7).toUpperCase();
   db.prepare(
-    `INSERT INTO partners (id, email, name, company, country, message, referral_code, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO partners (id, email, name, company, country, message, referral_code, status, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     id,
     parsed.data.email,
-    parsed.data.name,
+    parsed.data.name || '',
     parsed.data.company || null,
     parsed.data.country || null,
-    parsed.data.message || null,
+    null,
     code,
+    'active',
     Date.now()
   );
-  res.json({ ok: true, referralCode: code });
+  res.json({ ok: true, referralCode: code, existing: false });
+});
+
+// Back-compat: the old /apply endpoint is now an alias for instant self-serve.
+router.post('/apply', authLimiter, (req, res) => {
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: 'invalid_input' });
+
+  const existing = db
+    .prepare('SELECT id, referral_code FROM partners WHERE email = ?')
+    .get(parsed.data.email) as { id: string; referral_code: string } | undefined;
+  if (existing) return res.json({ ok: true, referralCode: existing.referral_code, existing: true });
+
+  const id = randomUUID();
+  const code = 'P' + id.slice(0, 7).toUpperCase();
+  db.prepare(
+    `INSERT INTO partners (id, email, name, company, country, message, referral_code, status, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(
+    id,
+    parsed.data.email,
+    parsed.data.name || '',
+    parsed.data.company || null,
+    parsed.data.country || null,
+    null,
+    code,
+    'active',
+    Date.now()
+  );
+  res.json({ ok: true, referralCode: code, existing: false });
 });
 
 router.get('/', requireAdmin, (_req, res) => {

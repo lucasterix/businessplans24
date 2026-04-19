@@ -113,10 +113,58 @@ export default function Home() {
       />
       <section className="home-hero">
         <div className="home-hero-orbs" aria-hidden />
+        <div className="home-hero-mark" aria-hidden>
+          <svg viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bpMarkGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#0b5cff" />
+                <stop offset="100%" stopColor="#22c55e" />
+              </linearGradient>
+            </defs>
+            {/* Stylised A4 document with fold + chart */}
+            <g fill="none" stroke="url(#bpMarkGrad)" strokeWidth="2.4" opacity="0.38">
+              <path d="M40 30 H240 L280 70 V370 H40 Z" />
+              <path d="M240 30 V70 H280" />
+              <line x1="70" y1="110" x2="240" y2="110" />
+              <line x1="70" y1="130" x2="220" y2="130" />
+              <line x1="70" y1="150" x2="240" y2="150" />
+              <line x1="70" y1="170" x2="200" y2="170" />
+              {/* bar chart inside document */}
+              <rect x="70" y="260" width="22" height="70" />
+              <rect x="102" y="240" width="22" height="90" />
+              <rect x="134" y="210" width="22" height="120" />
+              <rect x="166" y="180" width="22" height="150" />
+              <rect x="198" y="150" width="22" height="180" />
+              <line x1="70" y1="335" x2="240" y2="335" />
+              {/* upward arrow */}
+              <path d="M80 330 L130 280 L170 310 L220 240" strokeWidth="3" />
+              <path d="M220 240 L210 260 M220 240 L202 248" strokeWidth="3" strokeLinecap="round" />
+            </g>
+            {/* Big decorative B letter */}
+            <text
+              x="155"
+              y="225"
+              fontFamily="Inter, sans-serif"
+              fontSize="260"
+              fontWeight="800"
+              fill="url(#bpMarkGrad)"
+              opacity="0.1"
+              textAnchor="middle"
+            >
+              B
+            </text>
+          </svg>
+        </div>
         <div className="home-hero-content">
-          <div className="home-hero-badge">⚖️ Entwickelt mit Steuerberatern, Wirtschaftsprüfern &amp; Ex-McKinsey/BCG-Beratern</div>
+          <div className="home-hero-badge">⚖️ Entwickelt &amp; zertifiziert von Steuerberatern, Wirtschaftsprüfern &amp; Ex-McKinsey/BCG-Beratern</div>
           <h1>{t('landing.hero_title')}</h1>
           <p>{t('landing.hero_sub')}</p>
+          <div className="home-hero-certmark">
+            <span className="home-hero-certmark-icon" aria-hidden>✓</span>
+            <span>
+              <strong>Kein KI-Rohtext.</strong> Jede Formulierung entstammt einer von Experten zertifizierten Vorlage — die KI setzt nur deine Fakten ein.
+            </span>
+          </div>
           <PlanCounter />
           <TrustRow />
         </div>

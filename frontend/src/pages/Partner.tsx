@@ -6,22 +6,36 @@ import { useLocalizedPath } from '../i18n/useLocalizedPath';
 
 export default function Partner() {
   const loc = useLocalizedPath();
-  const [form, setForm] = useState({ name: '', email: '', company: '', country: 'DE', message: '' });
+  const [email, setEmail] = useState('');
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState<{ referralCode: string } | null>(null);
+  const [result, setResult] = useState<{ referralCode: string; existing: boolean } | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setErr(null);
     setSaving(true);
     try {
-      const { data } = await api.post('/partner/apply', form);
-      setSuccess({ referralCode: data.referralCode });
+      const { data } = await api.post('/partner/signup', { email });
+      setResult({ referralCode: data.referralCode, existing: !!data.existing });
     } catch {
-      setErr('Bewerbung konnte nicht übermittelt werden.');
+      setErr('Code konnte nicht erstellt werden — bitte in einer Minute erneut.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const refLink = result ? `https://businessplans24.com/?ref=${result.referralCode}` : '';
+
+  const copy = async () => {
+    if (!refLink) return;
+    try {
+      await navigator.clipboard.writeText(refLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* ignore */
     }
   };
 
@@ -29,82 +43,66 @@ export default function Partner() {
     <div className="partner-page">
       <DocHead
         title="Partnerprogramm — 20 % Provision | Businessplan24"
-        description="Für Steuerberater, IHK, Gründungsberater, Inkubatoren. 20 % Provision auf jeden vermittelten Verkauf, dauerhaft."
+        description="Für Steuerberater, IHK, Gründungsberater, Inkubatoren. 20 % Provision auf jeden vermittelten Verkauf, sofort Code generieren ohne Wartezeit."
       />
       <section className="partner-hero">
         <h1>Partnerprogramm</h1>
         <p className="partner-lead">
-          20 % Provision auf jeden Verkauf, den du vermittelst — dauerhaft.
+          20 % Provision auf jeden vermittelten Verkauf — sofort loslegen, ohne Bewerbung.
         </p>
       </section>
 
       <section className="partner-grid">
         <article className="partner-card">
           <h3>Für wen</h3>
-          <p>Steuerberater:innen, IHK, Gründungsberater:innen, Inkubatoren, Unternehmens-Coaches, Wirtschaftsförderungen.</p>
+          <p>Steuerberater:innen, IHK, Gründungsberater:innen, Inkubatoren, Unternehmens-Coaches, Wirtschaftsförderungen, Content-Creator.</p>
         </article>
         <article className="partner-card">
           <h3>Wie es funktioniert</h3>
-          <p>Du bekommst einen eigenen Referral-Code. Jeder Nutzer, der darüber kauft, zahlt den normalen Preis — du bekommst 20 % Provision, automatisch via SEPA.</p>
+          <p>E-Mail eintragen, sofort eigenen Ref-Link bekommen, teilen, Provision kassieren. Kein Antrag, kein Warten.</p>
         </article>
         <article className="partner-card">
           <h3>Abrechnung</h3>
-          <p>Monatlich, rückwirkend. Mindestauszahlung 50 €. Keine Mindestlaufzeit, keine versteckten Kosten.</p>
+          <p>Monatlich via SEPA. Mindestauszahlung 50 €. Keine Mindestlaufzeit, keine versteckten Kosten.</p>
         </article>
       </section>
 
-      {success ? (
+      {result ? (
         <section className="partner-success">
-          <h2>Danke, wir melden uns 🎉</h2>
-          <p>
-            Dein Referral-Code: <code>{success.referralCode}</code>
-          </p>
+          <h2>Dein Ref-Link ist bereit 🎉</h2>
+          {result.existing && <p className="muted">Diese E-Mail ist bereits registriert — hier ist dein bestehender Link.</p>}
+          <div className="partner-code-box">
+            <code className="partner-code">{refLink}</code>
+            <button type="button" className="btn btn-primary" onClick={copy}>
+              {copied ? 'Kopiert ✓' : 'Link kopieren'}
+            </button>
+          </div>
           <p className="muted">
-            Wir prüfen deine Bewerbung und melden uns innerhalb von 2 Werktagen bei dir. Bei Fragen erreichst du uns unter <a href="mailto:info@businessplans24.com">info@businessplans24.com</a>.
+            Dein Code: <code>{result.referralCode}</code> — jeder Kauf über diesen Link wird dir gutgeschrieben.
           </p>
-          <Link to={loc('')} className="btn btn-primary" style={{ marginTop: '1rem' }}>Zur Startseite</Link>
+          <Link to={loc('')} className="btn btn-ghost" style={{ marginTop: '1rem' }}>Zur Startseite</Link>
         </section>
       ) : (
         <section className="partner-form-wrap">
-          <h2>Bewerbung</h2>
-          <form onSubmit={submit} className="partner-form">
+          <h2>Code jetzt erstellen</h2>
+          <p className="muted" style={{ marginBottom: '1rem' }}>
+            Einfach E-Mail eingeben — du bekommst sofort deinen persönlichen Ref-Link.
+            Die E-Mail brauchen wir nur für die Auszahlung.
+          </p>
+          <form onSubmit={submit} className="partner-form partner-form--minimal">
             <label className="field">
-              <span className="field-label">Name *</span>
-              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            </label>
-            <label className="field">
-              <span className="field-label">E-Mail *</span>
-              <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-            </label>
-            <label className="field">
-              <span className="field-label">Firma / Organisation</span>
-              <input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
-            </label>
-            <label className="field">
-              <span className="field-label">Land</span>
-              <select value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })}>
-                <option value="DE">Deutschland</option>
-                <option value="AT">Österreich</option>
-                <option value="CH">Schweiz</option>
-                <option value="NL">Niederlande</option>
-                <option value="FR">Frankreich</option>
-                <option value="IT">Italien</option>
-                <option value="ES">Spanien</option>
-                <option value="PL">Polen</option>
-              </select>
-            </label>
-            <label className="field">
-              <span className="field-label">Warum passt ihr zusammen?</span>
-              <textarea
-                rows={4}
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                placeholder="z.B. wir haben 200 Mandant:innen, die gerade gründen"
+              <span className="field-label">E-Mail</span>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="du@deinefirma.de"
               />
             </label>
             {err && <p className="error-text">{err}</p>}
-            <button className="btn btn-primary btn-lg" disabled={saving}>
-              {saving ? 'Wird gesendet…' : 'Bewerbung absenden'}
+            <button className="btn btn-primary btn-lg" disabled={saving || !email}>
+              {saving ? 'Einen Moment…' : 'Ref-Link generieren'}
             </button>
           </form>
         </section>

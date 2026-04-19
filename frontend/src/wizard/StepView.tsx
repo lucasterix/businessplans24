@@ -32,7 +32,18 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
   const [triedSubmit, setTriedSubmit] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
-  const invalidFields = step.fields.filter((f) => f.required && isEmpty(stepAnswers[f.id]));
+  // Flatten all answers across steps so visibleWhen can reference any field
+  const flatAnswers: Record<string, unknown> = {};
+  Object.values(store.answers).forEach((a) => Object.assign(flatAnswers, a));
+
+  const isFieldVisible = (f: typeof step.fields[number]) => {
+    if (!f.visibleWhen) return true;
+    const val = flatAnswers[f.visibleWhen.field];
+    return typeof val === 'string' && f.visibleWhen.in.includes(val);
+  };
+
+  const visibleFields = step.fields.filter(isFieldVisible);
+  const invalidFields = visibleFields.filter((f) => f.required && isEmpty(stepAnswers[f.id]));
   const missingRequired = invalidFields.length > 0;
 
   const handleGenerate = async () => {
@@ -107,9 +118,9 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
         {step.descriptionKey && <p className="muted">{t(step.descriptionKey)}</p>}
       </div>
 
-      {step.fields.length > 0 && (
+      {visibleFields.length > 0 && (
         <div className="wizard-fields">
-          {step.fields.map((f) => {
+          {visibleFields.map((f) => {
             const showError =
               f.required && isEmpty(stepAnswers[f.id]) && (touched[f.id] || triedSubmit);
             return (
