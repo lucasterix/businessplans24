@@ -10,8 +10,9 @@ import Skeleton from './components/Skeleton';
 import AnalyticsBeacon from './components/AnalyticsBeacon';
 import ContactFAB from './components/ContactFAB';
 import { SUPPORTED_LANGUAGES, isSupportedLanguage } from './i18n/supportedLanguages';
-
-const Home = lazy(() => import('./pages/Home'));
+// Home is the landing page — ship it eagerly so LCP fires on first paint
+// instead of after a second chunk round-trip.
+import Home from './pages/Home';
 const Wizard = lazy(() => import('./pages/Wizard'));
 const Preview = lazy(() => import('./pages/Preview'));
 const Pricing = lazy(() => import('./pages/Pricing'));

@@ -5,6 +5,7 @@ import { useLocalizedPath } from '../i18n/useLocalizedPath';
 import { SECTIONS } from '../wizard/schema';
 import { StepView } from '../wizard/StepView';
 import LivePreview from '../components/LivePreview';
+import PreviewCustomizer from '../components/PreviewCustomizer';
 import TrustRow from '../components/TrustRow';
 import PriceAnchor from '../components/PriceAnchor';
 import Testimonials from '../components/Testimonials';
@@ -13,6 +14,7 @@ import ExpertsRow from '../components/ExpertsRow';
 import TemplatesGallery from '../components/TemplatesGallery';
 import NewsletterForm from '../components/NewsletterForm';
 import PlanCounter from '../components/PlanCounter';
+import LiveActivity from '../components/LiveActivity';
 import ExitIntent from '../components/ExitIntent';
 import WizardToast from '../components/WizardToast';
 import DocHead from '../components/DocHead';
@@ -165,6 +167,7 @@ export default function Home() {
               <strong>Kein KI-Rohtext.</strong> Jede Formulierung entstammt einer von Experten zertifizierten Vorlage — die KI setzt nur deine Fakten ein.
             </span>
           </div>
+          <LiveActivity />
           <PlanCounter />
           <TrustRow />
         </div>
@@ -217,6 +220,12 @@ export default function Home() {
 
           <aside className="home-preview-pane">
             <LivePreview activeSectionId={section.id} />
+            <div className="home-preview-customize">
+              <PreviewCustomizer
+                sections={SECTIONS.map((s) => ({ key: s.id, title: t(s.titleKey) }))}
+                defaultOpen={false}
+              />
+            </div>
           </aside>
         </div>
       </div>

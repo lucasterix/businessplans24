@@ -14,3 +14,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+// Register service worker for repeat-visitor caching. Production only — in
+// dev the SW would serve stale bundles across reloads.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('[sw] register failed', err);
+    });
+  });
+}

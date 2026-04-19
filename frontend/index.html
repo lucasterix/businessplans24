@@ -25,10 +25,25 @@
     <meta name="twitter:title" content="Businessplan in 30 Minuten — von Experten entwickelt | Businessplan24" />
     <meta name="twitter:description" content="Vorlagen von Steuerberatern, Wirtschaftsprüfern &amp; Ex-Beratern. Bank-tauglich, IHK-Gliederung. Ab 49 €." />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="preload" href="/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href="/locales/de/common.json" as="fetch" crossorigin="anonymous" />
+    <style>
+      /* Self-hosted Inter variable — avoids Google Fonts round-trip + DNS */
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/InterVariable.woff2') format('woff2-variations');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: italic;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/InterVariable-Italic.woff2') format('woff2-variations');
+      }
+    </style>
 
     <script type="application/ld+json">
       {

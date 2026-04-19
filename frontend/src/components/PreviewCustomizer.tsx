@@ -16,11 +16,12 @@ import { toast } from '../store/useToasts';
 
 interface Props {
   sections: Array<{ key: string; title: string }>;
+  defaultOpen?: boolean;
 }
 
 const MAX_LOGO_BYTES = 500 * 1024;
 
-export default function PreviewCustomizer({ sections }: Props) {
+export default function PreviewCustomizer({ sections, defaultOpen = true }: Props) {
   const {
     accent,
     font,
@@ -112,7 +113,7 @@ export default function PreviewCustomizer({ sections }: Props) {
 
   return (
     <div className="preview-customizer">
-      <details open>
+      <details {...(defaultOpen ? { open: true } : {})}>
         <summary>
           <span className="preview-customizer-icon" aria-hidden>🎨</span>
           Dokument anpassen
