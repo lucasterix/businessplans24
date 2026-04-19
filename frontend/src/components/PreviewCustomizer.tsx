@@ -137,6 +137,7 @@ export default function PreviewCustomizer({ sections, defaultOpen = true }: Prop
                     type="button"
                     className={`preview-theme-card ${isActive ? 'is-active' : ''}`}
                     onClick={() => applyDesignTheme(t.id)}
+                    title={t.desc}
                   >
                     <span className="preview-theme-swatch" aria-hidden>
                       <span className="preview-theme-swatch-cover" style={{ background: accentHex }} />

@@ -103,6 +103,15 @@ export default function FinancePlanner({ onNext, onBack }: Props) {
         <p className="muted">{t('steps.plan.desc')}</p>
       </div>
 
+      <div className="wizard-prefill-banner">
+        <span className="wizard-prefill-badge">Vorschlag</span>
+        <span>
+          Die folgenden Zahlen sind <strong>realistische Vorschlagswerte</strong> basierend auf deinem Geschäftsmodell
+          (IHK- und KfW-Benchmarks). <strong>Passe sie an deine konkrete Planung an</strong> — oder klick direkt auf „Weiter",
+          wenn sie zu deiner Realität passen.
+        </span>
+      </div>
+
       <div className="finance-layout">
         <section className="finance-data-panel">
           <header className="finance-panel-head">

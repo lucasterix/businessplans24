@@ -97,7 +97,7 @@ export const SECTIONS: Section[] = [
           { id: 'company_name', type: 'short', labelKey: 'f.company_name', required: true },
           { id: 'business_model', type: 'single', labelKey: 'f.business_model', options: BUSINESS_MODELS, required: true },
           { id: 'one_liner', type: 'short', labelKey: 'f.one_liner', helpKey: 'f.one_liner.help' },
-          { id: 'products', type: 'long', labelKey: 'f.products', helpKey: 'f.products.help', required: true },
+          { id: 'products', type: 'long', labelKey: 'f.products', helpKey: 'f.products.help' },
           { id: 'customer_value', type: 'long', labelKey: 'f.customer_value' },
         ],
       },
@@ -176,7 +176,7 @@ export const SECTIONS: Section[] = [
         titleKey: 'steps.location_legal.title',
         fields: [
           { id: 'location', type: 'short', labelKey: 'f.location', visibleWhen: { field: 'business_model', in: PHYSICAL_MODELS } },
-          { id: 'legal_form', type: 'single', labelKey: 'f.legal_form', options: LEGAL_FORMS, required: true },
+          { id: 'legal_form', type: 'single', labelKey: 'f.legal_form', options: LEGAL_FORMS },
           { id: 'regulations', type: 'long', labelKey: 'f.regulations', visibleWhen: { field: 'business_model', in: REGULATED_MODELS } },
           { id: 'risks', type: 'long', labelKey: 'f.risks' },
         ],
@@ -191,7 +191,7 @@ export const SECTIONS: Section[] = [
         id: 'capital',
         titleKey: 'steps.capital.title',
         fields: [
-          { id: 'capital_need', type: 'money', labelKey: 'f.capital_need', required: true },
+          { id: 'capital_need', type: 'money', labelKey: 'f.capital_need' },
           { id: 'equity', type: 'money', labelKey: 'f.equity' },
           {
             id: 'financing',

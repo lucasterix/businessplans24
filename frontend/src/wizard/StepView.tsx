@@ -45,6 +45,7 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
   const visibleFields = step.fields.filter(isFieldVisible);
   const invalidFields = visibleFields.filter((f) => f.required && isEmpty(stepAnswers[f.id]));
   const missingRequired = invalidFields.length > 0;
+  const hasPrefilledInStep = visibleFields.some((f) => store.prefilled?.[`${step.id}.${f.id}`]);
 
   const handleGenerate = async () => {
     if (missingRequired) {
@@ -118,19 +119,42 @@ export function StepView({ section, step, isLastStepOfSection, isLastSection, on
         {step.descriptionKey && <p className="muted">{t(step.descriptionKey)}</p>}
       </div>
 
+      {hasPrefilledInStep && (
+        <div className="wizard-prefill-banner">
+          <span className="wizard-prefill-badge">Vorschlag</span>
+          <span>
+            Wir haben realistische Beispielwerte für dein Modell eingesetzt — <strong>einfach auf „Weiter" klicken</strong> oder anpassen.
+          </span>
+        </div>
+      )}
+
       {visibleFields.length > 0 && (
         <div className="wizard-fields">
           {visibleFields.map((f) => {
             const showError =
               f.required && isEmpty(stepAnswers[f.id]) && (touched[f.id] || triedSubmit);
+            const isPrefilled = !!store.prefilled?.[`${step.id}.${f.id}`];
             return (
-              <div key={f.id} className={showError ? 'field-wrap field-wrap--error' : 'field-wrap'}>
+              <div
+                key={f.id}
+                className={[
+                  'field-wrap',
+                  showError ? 'field-wrap--error' : '',
+                  isPrefilled ? 'field-wrap--prefilled' : '',
+                ].filter(Boolean).join(' ')}
+              >
+                {isPrefilled && <span className="field-prefill-tag">Vorschlag</span>}
                 <FieldRenderer
                   field={f}
                   value={stepAnswers[f.id]}
                   onChange={(v) => {
                     store.setAnswer(step.id, f.id, v);
                     setTouched((t) => ({ ...t, [f.id]: true }));
+                    // Picking a business model triggers realistic prefills
+                    // across the whole wizard (empty fields only).
+                    if (f.id === 'business_model' && typeof v === 'string' && v) {
+                      store.applyModelDefaults(v);
+                    }
                   }}
                 />
                 {showError && <p className="field-error">Bitte ausfüllen</p>}
