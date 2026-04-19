@@ -1,141 +1,92 @@
 import { useTranslation } from 'react-i18next';
 import { usePlanStore } from '../store/usePlanStore';
 import { SECTIONS } from '../wizard/schema';
+import A4Document, { type A4Section } from './A4Document';
 
 interface Props {
   activeSectionId?: string;
 }
 
-function friendlyValue(v: unknown): string {
-  if (v == null) return '';
-  if (Array.isArray(v)) return v.join(', ');
+function friendlyValue(v: unknown): string | undefined {
+  if (v == null) return undefined;
+  if (Array.isArray(v)) return v.length ? v.join(', ') : undefined;
   if (typeof v === 'object') return JSON.stringify(v);
-  return String(v);
+  const s = String(v).trim();
+  return s || undefined;
 }
+
+const SECTIONS_ORDER = ['executive_summary', 'business_idea', 'customers', 'company', 'finance', 'appendix'] as const;
 
 export default function LivePreview({ activeSectionId }: Props) {
   const { t } = useTranslation();
   const answers = usePlanStore((s) => s.answers);
   const texts = usePlanStore((s) => s.texts);
 
-  const flatAnswers: Record<string, unknown> = {};
-  Object.values(answers).forEach((a) => Object.assign(flatAnswers, a));
+  const flat: Record<string, unknown> = {};
+  Object.values(answers).forEach((a) => Object.assign(flat, a));
 
-  const sectionsOrder = ['executive_summary', 'business_idea', 'customers', 'company', 'finance', 'appendix'];
-  const order = sectionsOrder
-    .map((id) => SECTIONS.find((s) => s.id === id))
-    .filter((s): s is (typeof SECTIONS)[number] => !!s);
-
-  const title = (flatAnswers.company_name as string) || t('app.name');
+  const title = (flat.company_name as string)?.trim() || 'Dein Unternehmen';
+  const subtitle = (flat.one_liner as string)?.trim();
   const today = new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  return (
-    <div className="live-preview">
-      <div className="live-preview-toolbar">
-        <h3>Vorschau</h3>
-        <span className="live-preview-status">Live</span>
-      </div>
+  const built: Array<A4Section | null> = SECTIONS_ORDER.map((id) => {
+    const section = SECTIONS.find((s) => s.id === id);
+    if (!section) return null;
 
-      <article className="preview-paper" aria-label="Businessplan-Vorschau">
-        <header className="preview-cover">
-          <p className="preview-cover-eyebrow">Businessplan</p>
-          <h1 className="preview-cover-title">{title}</h1>
-          <p className="preview-cover-date">{today}</p>
-        </header>
+    const facts: Array<[string, string]> = [];
+    if (id === 'business_idea') {
+      const modelLabel = flat.business_model ? t(`models.${flat.business_model}`, { defaultValue: String(flat.business_model) }) : undefined;
+      const v1 = friendlyValue(flat.company_name); if (v1) facts.push(['Unternehmen', v1]);
+      const v2 = friendlyValue(modelLabel); if (v2) facts.push(['Modell', v2]);
+      const v3 = friendlyValue(flat.one_liner); if (v3) facts.push(['Einzeiler', v3]);
+    }
+    if (id === 'customers') {
+      const v1 = friendlyValue(flat.target_description); if (v1) facts.push(['Zielgruppe', v1]);
+      const v2 = friendlyValue(flat.channels); if (v2) facts.push(['Vertriebswege', v2]);
+    }
+    if (id === 'company') {
+      const legalLabel = flat.legal_form ? t(`legal.${flat.legal_form}`, { defaultValue: String(flat.legal_form) }) : undefined;
+      const v1 = friendlyValue(flat.location); if (v1) facts.push(['Standort', v1]);
+      const v2 = friendlyValue(legalLabel); if (v2) facts.push(['Rechtsform', v2]);
+      const v3 = friendlyValue(flat.founders); if (v3) facts.push(['Gründer', v3]);
+    }
+    if (id === 'finance') {
+      if (flat.capital_need) facts.push(['Kapitalbedarf', `${flat.capital_need} €`]);
+      if (flat.equity) facts.push(['Eigenkapital', `${flat.equity} €`]);
+      const fin = friendlyValue(flat.financing); if (fin) facts.push(['Finanzierung', fin]);
+    }
 
-        {order.map((section) => {
-          const hasText = !!texts[section.id];
-          const isActive = activeSectionId === section.id;
-          const state = hasText ? 'done' : isActive ? 'active' : 'pending';
-          const stateClass = state === 'done' ? 'is-done' : state === 'active' ? 'is-active' : '';
+    const active = activeSectionId === id;
+    const placeholder = active
+      ? 'Beantworte die Fragen links — der Text erscheint hier, sobald generiert.'
+      : 'Wird im Wizard ausgefüllt.';
 
-          return (
-            <section key={section.id} className={`preview-paper-section ${stateClass}`}>
-              <header className="preview-paper-section-head">
-                <h2>{t(section.titleKey)}</h2>
-                <span className={`preview-section-state ${stateClass}`}>
-                  {state === 'done' ? '✓ fertig' : state === 'active' ? 'aktiv' : 'offen'}
-                </span>
-              </header>
+    return {
+      key: id,
+      title: t(section.titleKey),
+      body: texts[id],
+      facts: facts.length > 0 ? facts : undefined,
+      placeholder,
+    };
+  });
+  const sections: A4Section[] = built.filter((x): x is A4Section => x !== null);
 
-              {section.id === 'business_idea' && (
-                <FactList
-                  items={[
-                    ['Unternehmen', flatAnswers.company_name],
-                    ['Modell', flatAnswers.business_model],
-                    ['Einzeiler', flatAnswers.one_liner],
-                  ]}
-                />
-              )}
-              {section.id === 'customers' && (
-                <FactList
-                  items={[
-                    ['Zielgruppe', flatAnswers.target_description],
-                    ['Vertriebswege', flatAnswers.channels],
-                  ]}
-                />
-              )}
-              {section.id === 'company' && (
-                <FactList
-                  items={[
-                    ['Standort', flatAnswers.location],
-                    ['Rechtsform', flatAnswers.legal_form],
-                    ['Gründer', flatAnswers.founders],
-                  ]}
-                />
-              )}
-              {section.id === 'finance' && (
-                <FactList
-                  items={[
-                    ['Kapitalbedarf', flatAnswers.capital_need ? `${flatAnswers.capital_need} €` : undefined],
-                    ['Eigenkapital', flatAnswers.equity ? `${flatAnswers.equity} €` : undefined],
-                    ['Finanzierung', flatAnswers.financing],
-                  ]}
-                />
-              )}
-
-              {hasText ? (
-                <div className="preview-paper-text">
-                  {texts[section.id]
-                    .split(/\n{2,}/)
-                    .slice(0, 8)
-                    .map((p, i) => (
-                      <p key={i}>{p}</p>
-                    ))}
-                </div>
-              ) : (
-                <p className="preview-empty">
-                  {isActive
-                    ? 'Beantworte die Fragen links — Claude schreibt diesen Abschnitt für dich.'
-                    : 'Wird im Wizard ausgefüllt.'}
-                </p>
-              )}
-            </section>
-          );
-        })}
-
-        <footer className="preview-paper-footer">
-          <span>{title} · Businessplan · {today}</span>
-        </footer>
-      </article>
+  const toolbar = (
+    <div className="a4-toolbar">
+      <span className="a4-toolbar-label">Vorschau · aktualisiert live</span>
+      <span className="a4-toolbar-status">A4</span>
     </div>
   );
-}
 
-function FactList({ items }: { items: Array<[string, unknown]> }) {
-  const present = items.filter(([, v]) => {
-    const s = friendlyValue(v);
-    return s.trim().length > 0;
-  });
-  if (present.length === 0) return null;
   return (
-    <dl className="preview-facts">
-      {present.map(([label, value]) => (
-        <div key={label}>
-          <dt>{label}</dt>
-          <dd>{friendlyValue(value)}</dd>
-        </div>
-      ))}
-    </dl>
+    <A4Document
+      title={title}
+      subtitle={subtitle}
+      date={today}
+      sections={sections}
+      watermark
+      toolbar={toolbar}
+      compact
+    />
   );
 }

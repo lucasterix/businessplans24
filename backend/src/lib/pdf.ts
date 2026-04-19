@@ -2,10 +2,13 @@ import puppeteer from 'puppeteer';
 
 interface RenderInput {
   title: string;
+  subtitle?: string;
   language: string;
   texts: Record<string, string>;
   finance: Record<string, unknown>;
   watermarked: boolean;
+  /** Optional extra cover facts (Gründer, Standort, …). */
+  facts?: Record<string, Array<[string, string]>>;
 }
 
 const SECTION_TITLES: Record<string, Record<string, string>> = {
@@ -27,7 +30,7 @@ const SECTION_TITLES: Record<string, Record<string, string>> = {
   },
 };
 
-function htmlEscape(s: string): string {
+function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!)
   );
@@ -44,62 +47,229 @@ function buildHtml(input: RenderInput): string {
     'finance',
     'appendix',
   ];
-  const sections = order
+
+  const today = new Date().toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const coverToc = order
     .filter((k) => input.texts[k])
     .map(
-      (k) => `
-      <section>
-        <h2>${htmlEscape(titles[k])}</h2>
-        ${input.texts[k]
-          .split(/\n{2,}/)
-          .map((p) => `<p>${htmlEscape(p.trim()).replace(/\n/g, '<br/>')}</p>`)
-          .join('')}
-      </section>`
+      (k, i) => `
+      <li>
+        <span class="toc-num">${String(i + 1).padStart(2, '0')}</span>
+        <span>${esc(titles[k])}</span>
+      </li>`
     )
+    .join('');
+
+  const contentPages = order
+    .filter((k) => input.texts[k])
+    .map((k, i) => {
+      const facts = (input.facts?.[k] || [])
+        .map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`)
+        .join('');
+      const factsBlock = facts ? `<dl class="facts">${facts}</dl>` : '';
+      const body = input.texts[k]
+        .split(/\n{2,}/)
+        .map((p) => `<p>${esc(p.trim())}</p>`)
+        .join('');
+      return `
+      <section class="page content-page">
+        <div class="inner">
+          <header class="section-head">
+            <span class="section-num">${String(i + 1).padStart(2, '0')}</span>
+            <h2>${esc(titles[k])}</h2>
+          </header>
+          ${factsBlock}
+          <div class="body">${body}</div>
+        </div>
+      </section>`;
+    })
     .join('');
 
   const watermarkCss = input.watermarked
     ? `
-    body::before {
-      content: 'PREVIEW';
-      position: fixed;
-      top: 40%;
+    .page::after {
+      content: 'VORSCHAU';
+      position: absolute;
+      top: 45%;
       left: 0;
-      width: 100%;
+      right: 0;
       text-align: center;
       font-size: 120pt;
-      color: rgba(200, 0, 0, 0.12);
-      font-weight: 800;
+      color: rgba(210, 63, 63, 0.08);
+      font-weight: 900;
       transform: rotate(-30deg);
-      z-index: 9999;
+      z-index: 10;
       pointer-events: none;
-    }
-    `
+      letter-spacing: 0.1em;
+    }`
+    : '';
+
+  const subtitleHtml = input.subtitle
+    ? `<p class="cover-subtitle">${esc(input.subtitle)}</p>`
     : '';
 
   return `<!doctype html>
 <html lang="${lang}">
 <head>
 <meta charset="utf-8" />
-<title>${htmlEscape(input.title)}</title>
+<title>${esc(input.title)}</title>
 <style>
-  @page { size: A4; margin: 20mm; }
-  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #0b1120; line-height: 1.55; }
-  h1 { font-size: 28pt; margin: 0 0 8pt; }
-  h2 { font-size: 18pt; margin-top: 20pt; border-bottom: 1pt solid #e5e7eb; padding-bottom: 4pt; }
-  p { font-size: 11pt; margin: 8pt 0; text-align: justify; }
-  .cover { text-align: center; padding-top: 30vh; page-break-after: always; }
-  .cover h1 { font-size: 40pt; }
-  .cover p { font-size: 14pt; color: #475569; }
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #0b1120;
+    line-height: 1.55;
+    font-size: 11pt;
+  }
+  * { box-sizing: border-box; }
+  .page {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+  .inner { padding: 20mm; height: 100%; }
+
+  /* Cover */
+  .cover .inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+  }
+  .cover-eyebrow {
+    font-size: 10pt;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    font-weight: 600;
+    margin: 20mm 0 0;
+  }
+  .cover-title {
+    font-size: 38pt;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #0b5cff;
+    margin: 10mm 0 5mm;
+  }
+  .cover-subtitle {
+    font-size: 14pt;
+    color: #374151;
+    font-style: italic;
+    max-width: 70%;
+    margin: 0 auto;
+    line-height: 1.4;
+  }
+  .cover-date {
+    font-size: 11pt;
+    color: #6b7280;
+    margin-top: 8mm;
+  }
+  .cover-toc {
+    text-align: left;
+    margin: 0 auto;
+    max-width: 75%;
+    padding-top: 12mm;
+    border-top: 1px solid #e5e7eb;
+  }
+  .toc-label {
+    font-size: 9pt;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    font-weight: 600;
+    margin: 0 0 8mm;
+  }
+  .cover-toc ol { list-style: none; margin: 0; padding: 0; }
+  .cover-toc li {
+    display: grid;
+    grid-template-columns: 14mm 1fr;
+    gap: 3mm;
+    align-items: baseline;
+    font-size: 13pt;
+    padding-bottom: 2mm;
+    margin-bottom: 3mm;
+    border-bottom: 1px dotted #d1d5db;
+  }
+  .toc-num { font-weight: 700; color: #0b5cff; }
+
+  /* Content */
+  .content-page .inner {
+    display: flex;
+    flex-direction: column;
+    gap: 7mm;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 5mm;
+    padding-bottom: 5mm;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .section-num {
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fff;
+    background: #0b5cff;
+    padding: 2mm 4mm;
+    border-radius: 2mm;
+  }
+  .section-head h2 {
+    font-size: 20pt;
+    font-weight: 700;
+    margin: 0;
+    color: #0b1120;
+    letter-spacing: -0.01em;
+  }
+  .facts {
+    padding: 5mm;
+    background: #fafafb;
+    border-radius: 2mm;
+    font-size: 10pt;
+    margin: 0;
+  }
+  .facts > div {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    gap: 3mm;
+    padding: 1.5mm 0;
+  }
+  .facts dt { font-weight: 600; color: #4b5563; margin: 0; }
+  .facts dd { margin: 0; color: #0b1120; }
+
+  .body p {
+    font-size: 11pt;
+    line-height: 1.7;
+    text-align: justify;
+    hyphens: auto;
+    margin: 0 0 3mm;
+  }
+
   ${watermarkCss}
 </style>
 </head>
 <body>
-  <div class="cover">
-    <h1>${htmlEscape(input.title)}</h1>
-    <p>${lang === 'de' ? 'Businessplan' : 'Business Plan'} · ${new Date().toLocaleDateString(lang)}</p>
-  </div>
-  ${sections}
+  <section class="page cover">
+    <div class="inner">
+      <div>
+        <p class="cover-eyebrow">Businessplan</p>
+        <h1 class="cover-title">${esc(input.title)}</h1>
+        ${subtitleHtml}
+        <p class="cover-date">${esc(today)}</p>
+      </div>
+      <div class="cover-toc">
+        <p class="toc-label">Inhalt</p>
+        <ol>${coverToc}</ol>
+      </div>
+    </div>
+  </section>
+  ${contentPages}
 </body>
 </html>`;
 }
@@ -113,7 +283,11 @@ export async function renderPlanPdf(input: RenderInput): Promise<Buffer> {
   try {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-    const pdf = await page.pdf({ format: 'A4', printBackground: true });
+    const pdf = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '0', right: '0', bottom: '0', left: '0' },
+    });
     return Buffer.from(pdf);
   } finally {
     await browser.close();

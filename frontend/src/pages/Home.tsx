@@ -29,7 +29,6 @@ export default function Home() {
   const { t, i18n } = useTranslation();
   const store = usePlanStore();
   const navigate = useNavigate();
-  const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
   const [toast, setToast] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
   const loc = useLocalizedPath();
   const [saveState, setSaveState] = useState<SaveState>('idle');
@@ -236,31 +235,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-
-      {/* Mobile preview sheet */}
-      <button
-        className="preview-fab"
-        type="button"
-        onClick={() => setMobilePreviewOpen(true)}
-        aria-label="Vorschau"
-      >
-        📄 Vorschau
-      </button>
-      {mobilePreviewOpen && (
-        <div className="mobile-preview-hidden" onClick={() => setMobilePreviewOpen(false)}>
-          <div className="home-preview-pane" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="preview-close"
-              onClick={() => setMobilePreviewOpen(false)}
-              aria-label="Schließen"
-            >
-              ×
-            </button>
-            <LivePreview activeSectionId={section.id} />
-          </div>
-        </div>
-      )}
 
       <WizardToast
         show={toast.show}
