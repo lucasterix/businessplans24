@@ -131,6 +131,17 @@
     "private_need": "Private capital need per month",
     "extra_notes": "Additional notes or attachments"
   },
+  "groups": {
+    "retail": "Retail & Online",
+    "gastro": "Hospitality",
+    "health": "Health & Care",
+    "beauty": "Beauty & Fitness",
+    "craft": "Crafts & Services",
+    "transport": "Mobility & Transport",
+    "service": "Professional Services",
+    "tech": "Tech & Agency",
+    "other": "Manufacturing & Other"
+  },
   "models": {
     "retail": "Retail / Shop",
     "ecommerce": "E-commerce / Online shop",

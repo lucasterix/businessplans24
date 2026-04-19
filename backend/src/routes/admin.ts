@@ -12,6 +12,7 @@ import {
   type CampaignSummary,
 } from '../lib/googleAds.js';
 import { priceForCountry } from '../lib/pricing.js';
+import { getZoneSnapshot } from '../lib/cloudflare.js';
 
 const router = Router();
 
@@ -297,6 +298,12 @@ router.get('/economics', (_req, res) => {
   }
 
   res.json({ periodDays: 30, countries: Array.from(map.values()) });
+});
+
+router.get('/cloudflare', async (req, res) => {
+  const hours = Math.min(720, Math.max(1, Number(req.query.hours) || 24));
+  const snapshot = await getZoneSnapshot(hours);
+  res.json(snapshot);
 });
 
 router.post('/grant-admin', (req, res) => {

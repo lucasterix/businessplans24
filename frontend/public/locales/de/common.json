@@ -131,6 +131,17 @@
     "private_need": "Privater Kapitalbedarf pro Monat",
     "extra_notes": "Zusätzliche Notizen oder Anlagen"
   },
+  "groups": {
+    "retail": "Handel & Online",
+    "gastro": "Gastronomie",
+    "health": "Gesundheit & Pflege",
+    "beauty": "Beauty & Fitness",
+    "craft": "Handwerk & Service",
+    "transport": "Mobilität & Transport",
+    "service": "Dienstleistung",
+    "tech": "Tech & Agentur",
+    "other": "Produktion & Sonstiges"
+  },
   "models": {
     "retail": "Einzelhandel / Geschäft",
     "ecommerce": "E-Commerce / Online-Shop",

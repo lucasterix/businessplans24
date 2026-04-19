@@ -1818,6 +1818,150 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   margin-top: 1px;
 }
 
+/* ===== Searchable single-choice field (business model picker) ===== */
+.searchable-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  min-height: 48px;
+}
+.searchable-trigger:hover { border-color: var(--border-hi); background: #fafafa; }
+.searchable-trigger.is-filled { color: var(--text); font-weight: 500; }
+.searchable-trigger-caret { color: var(--text-dim); font-size: 0.8rem; margin-left: 0.75rem; }
+
+.searchable-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 9000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: sheet-fade 0.18s ease-out;
+}
+@keyframes sheet-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sheet-rise { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes sheet-pop { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.searchable-sheet {
+  background: #fff;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
+  animation: sheet-rise 0.22s ease-out;
+  overscroll-behavior: contain;
+}
+@media (min-width: 720px) {
+  .searchable-overlay { align-items: center; }
+  .searchable-sheet {
+    border-radius: 16px;
+    max-height: 72vh;
+    animation: sheet-pop 0.18s ease-out;
+  }
+}
+
+.searchable-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem 0.5rem;
+  flex: 0 0 auto;
+}
+.searchable-sheet-head h3 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+.searchable-close {
+  background: transparent;
+  border: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.searchable-close:hover { background: rgba(15, 23, 42, 0.06); }
+
+.searchable-sheet-search {
+  padding: 0.5rem 1.25rem 0.75rem;
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--border);
+}
+.searchable-sheet-search input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  background: #fafafa;
+}
+.searchable-sheet-search input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.searchable-sheet-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 0.5rem 1rem 1.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+.searchable-group { margin-top: 0.5rem; }
+.searchable-group-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  padding: 0.75rem 0.25rem 0.4rem;
+}
+.searchable-group-items {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+}
+.searchable-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  font-size: 1rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  min-height: 46px;
+}
+.searchable-option:hover { background: rgba(11, 92, 255, 0.06); }
+.searchable-option.is-selected {
+  background: rgba(11, 92, 255, 0.1);
+  border-color: rgba(11, 92, 255, 0.35);
+  color: var(--accent);
+  font-weight: 600;
+}
+.searchable-option.is-selected::after {
+  content: '✓';
+  float: right;
+  color: var(--accent);
+  font-weight: 700;
+}
+
 /* 10% discount banner on Pricing page */
 .pricing-promo-banner {
   display: flex;

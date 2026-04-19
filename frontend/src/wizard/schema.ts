@@ -3,6 +3,7 @@ export type FieldType = 'single' | 'multi' | 'short' | 'long' | 'number' | 'mone
 export interface Option {
   value: string;
   labelKey: string;
+  group?: string;
 }
 
 export interface Field {
@@ -46,31 +47,31 @@ export interface Section {
 }
 
 const BUSINESS_MODELS: Option[] = [
-  { value: 'retail', labelKey: 'models.retail' },
-  { value: 'ecommerce', labelKey: 'models.ecommerce' },
-  { value: 'gastro', labelKey: 'models.gastro' },
-  { value: 'cafe', labelKey: 'models.cafe' },
-  { value: 'bar', labelKey: 'models.bar' },
-  { value: 'craft', labelKey: 'models.craft' },
-  { value: 'taxi', labelKey: 'models.taxi' },
-  { value: 'care', labelKey: 'models.care' },
-  { value: 'beauty', labelKey: 'models.beauty' },
-  { value: 'fitness', labelKey: 'models.fitness' },
-  { value: 'medical', labelKey: 'models.medical' },
-  { value: 'therapy', labelKey: 'models.therapy' },
-  { value: 'realestate', labelKey: 'models.realestate' },
-  { value: 'education', labelKey: 'models.education' },
-  { value: 'events', labelKey: 'models.events' },
-  { value: 'photography', labelKey: 'models.photography' },
-  { value: 'autoservice', labelKey: 'models.autoservice' },
-  { value: 'cleaning', labelKey: 'models.cleaning' },
-  { value: 'logistics', labelKey: 'models.logistics' },
-  { value: 'saas', labelKey: 'models.saas' },
-  { value: 'agency', labelKey: 'models.agency' },
-  { value: 'consulting', labelKey: 'models.consulting' },
-  { value: 'service', labelKey: 'models.service' },
-  { value: 'manufacturing', labelKey: 'models.manufacturing' },
-  { value: 'other', labelKey: 'models.other' },
+  { value: 'retail', labelKey: 'models.retail', group: 'groups.retail' },
+  { value: 'ecommerce', labelKey: 'models.ecommerce', group: 'groups.retail' },
+  { value: 'gastro', labelKey: 'models.gastro', group: 'groups.gastro' },
+  { value: 'cafe', labelKey: 'models.cafe', group: 'groups.gastro' },
+  { value: 'bar', labelKey: 'models.bar', group: 'groups.gastro' },
+  { value: 'care', labelKey: 'models.care', group: 'groups.health' },
+  { value: 'medical', labelKey: 'models.medical', group: 'groups.health' },
+  { value: 'therapy', labelKey: 'models.therapy', group: 'groups.health' },
+  { value: 'beauty', labelKey: 'models.beauty', group: 'groups.beauty' },
+  { value: 'fitness', labelKey: 'models.fitness', group: 'groups.beauty' },
+  { value: 'craft', labelKey: 'models.craft', group: 'groups.craft' },
+  { value: 'autoservice', labelKey: 'models.autoservice', group: 'groups.craft' },
+  { value: 'cleaning', labelKey: 'models.cleaning', group: 'groups.craft' },
+  { value: 'taxi', labelKey: 'models.taxi', group: 'groups.transport' },
+  { value: 'logistics', labelKey: 'models.logistics', group: 'groups.transport' },
+  { value: 'consulting', labelKey: 'models.consulting', group: 'groups.service' },
+  { value: 'service', labelKey: 'models.service', group: 'groups.service' },
+  { value: 'education', labelKey: 'models.education', group: 'groups.service' },
+  { value: 'realestate', labelKey: 'models.realestate', group: 'groups.service' },
+  { value: 'events', labelKey: 'models.events', group: 'groups.service' },
+  { value: 'photography', labelKey: 'models.photography', group: 'groups.service' },
+  { value: 'saas', labelKey: 'models.saas', group: 'groups.tech' },
+  { value: 'agency', labelKey: 'models.agency', group: 'groups.tech' },
+  { value: 'manufacturing', labelKey: 'models.manufacturing', group: 'groups.other' },
+  { value: 'other', labelKey: 'models.other', group: 'groups.other' },
 ];
 
 const LEGAL_FORMS: Option[] = [

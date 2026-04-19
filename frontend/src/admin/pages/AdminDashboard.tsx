@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react';
-import { admin, type AdminStats, type EconomicsResponse } from '../api';
+import { admin, type AdminStats, type EconomicsResponse, type CloudflareSnapshot } from '../api';
+
+function fmtBytes(n: number): string {
+  if (n >= 1e9) return `${(n / 1e9).toFixed(2)} GB`;
+  if (n >= 1e6) return `${(n / 1e6).toFixed(1)} MB`;
+  if (n >= 1e3) return `${(n / 1e3).toFixed(0)} KB`;
+  return `${n} B`;
+}
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [econ, setEcon] = useState<EconomicsResponse | null>(null);
+  const [cf, setCf] = useState<CloudflareSnapshot | null>(null);
   useEffect(() => {
     admin.stats().then(setStats);
     admin.economics().then(setEcon).catch(() => {});
+    admin.cloudflare(24).then(setCf).catch(() => setCf({ configured: false, error: 'fetch_failed' }));
   }, []);
   if (!stats) return <div className="admin-loading">Lade…</div>;
   return (
@@ -87,6 +96,37 @@ export default function AdminDashboard() {
         <p className="muted tiny" style={{ marginTop: '0.5rem' }}>
           * Break-Even = wie viele Einzelplan-Verkäufe pro Monat nötig wären, um das aktuelle Ads-Tagesbudget zu decken (ohne Marge/Abo).
         </p>
+      </section>
+
+      {/* Cloudflare edge metrics */}
+      <section className="panel">
+        <h2>Cloudflare (24 h)</h2>
+        {!cf ? (
+          <p className="muted">Lade…</p>
+        ) : !cf.configured ? (
+          <p className="muted">
+            Nicht konfiguriert. Setze <code>CLOUDFLARE_API_TOKEN</code> und <code>CLOUDFLARE_ZONE_ID</code> in der Backend-Umgebung, um Edge-Metriken zu sehen.
+          </p>
+        ) : cf.error ? (
+          <p className="muted">Fehler: {cf.error}</p>
+        ) : cf.analytics ? (
+          <>
+            <div className="stat-grid">
+              <StatCard label="Requests" value={cf.analytics.requests.all.toLocaleString()} />
+              <StatCard label="Cache-Hit-Rate" value={`${cf.analytics.requests.cachedPct} %`} />
+              <StatCard label="Bandbreite" value={fmtBytes(cf.analytics.bandwidth.allBytes)} />
+              <StatCard label="Bedrohungen blockiert" value={cf.analytics.threats.total.toLocaleString()} />
+            </div>
+            {cf.settings && (
+              <p className="muted tiny" style={{ marginTop: '0.75rem' }}>
+                Einstellungen: Rocket Loader <strong>{cf.settings.rocketLoader}</strong> ·
+                Brotli <strong>{cf.settings.brotli}</strong> ·
+                HTTP/3 <strong>{cf.settings.http3}</strong> ·
+                Early Hints <strong>{cf.settings.earlyHints}</strong>
+              </p>
+            )}
+          </>
+        ) : null}
       </section>
 
       <section className="panel">

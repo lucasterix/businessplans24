@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Field } from '../schema';
+import { SearchableSingle } from './SearchableSingle';
+
+// Threshold above which 'single' fields switch to a searchable bottom-sheet
+// pattern instead of a flat chip grid. Keeps mobile lists manageable.
+const SEARCHABLE_THRESHOLD = 10;
 
 interface Props {
   field: Field;
@@ -61,6 +66,9 @@ export function FieldRenderer({ field, value, onChange }: Props) {
   }
 
   if (field.type === 'single') {
+    if ((field.options?.length || 0) > SEARCHABLE_THRESHOLD) {
+      return <SearchableSingle field={field} value={value} onChange={onChange} />;
+    }
     return (
       <fieldset className="field field-choice">
         <legend className="field-label">{label}</legend>

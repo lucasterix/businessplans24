@@ -97,9 +97,27 @@ export interface EconomicsResponse {
   countries: EconomicsCountry[];
 }
 
+export interface CloudflareSnapshot {
+  configured: boolean;
+  zoneId?: string;
+  planName?: string;
+  status?: string;
+  analytics?: {
+    periodHours: number;
+    requests: { all: number; cached: number; uncached: number; cachedPct: number };
+    bandwidth: { allBytes: number; cachedBytes: number; cachedPct: number };
+    threats: { total: number };
+    uniques: number;
+  };
+  settings?: { rocketLoader?: string; brotli?: string; http3?: string; earlyHints?: string };
+  error?: string;
+}
+
 export const admin = {
   stats: () => api.get<AdminStats>('/admin/stats').then((r) => r.data),
   economics: () => api.get<EconomicsResponse>('/admin/economics').then((r) => r.data),
+  cloudflare: (hours = 24) =>
+    api.get<CloudflareSnapshot>(`/admin/cloudflare?hours=${hours}`).then((r) => r.data),
   users: () => api.get<{ users: AdminUser[] }>('/admin/users').then((r) => r.data.users),
   payments: () => api.get<{ payments: AdminPayment[] }>('/admin/payments').then((r) => r.data.payments),
   plans: () => api.get<{ plans: AdminPlan[] }>('/admin/plans').then((r) => r.data.plans),
